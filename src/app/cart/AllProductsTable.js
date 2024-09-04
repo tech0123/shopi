@@ -1,6 +1,5 @@
 "use client"
-
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -16,11 +15,14 @@ import { MultiSelect } from 'primereact/multiselect';
 import { Slider } from 'primereact/slider';
 import { Tag } from 'primereact/tag';
 import { productsData } from '@/helper/commonValues';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedProducts } from '@/store/slice/productSlice';
 
-export default function CustomersDemo({ type }) {
+const AllProductsTable = () => {
+    const dispatch = useDispatch()
+    const { selectedProducts } = useSelector(({ productSliceName }) => productSliceName);
     const [customers, setCustomers] = useState([]);
     const [selectedCustomers, setSelectedCustomers] = useState([]);
-    const [selectedProducts, setSelectedProducts] = useState([]);
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -207,12 +209,10 @@ export default function CustomersDemo({ type }) {
 
     const actionBodyTemplate = (data) => {
         return <Button type="button" disabled={!data.addText} icon="pi pi-plus-circle" className='action-icon-size p-5' onClick={(e) => {
-            setSelectedProducts((prev) => [...prev, data])
+            dispatch(setSelectedProducts([...selectedProducts , data]))
         }}
             rounded></Button>;
     };
-
-    console.log('selectedProducts', selectedProducts)
 
     const addTextBody = (data) => {
         return <InputText keyfilter="int" placeholder="Integers" onChange={(e) => {
@@ -225,34 +225,34 @@ export default function CustomersDemo({ type }) {
 
     const header = renderHeader();
     const footer = renderFooter();
-
-
     // globalFilterValue === "" ? [] :
-    return (
-        <div className="card">
-            <DataTable value={type === "allProducts" ? customers : selectedProducts} paginator header={header} footer={footer} rows={10}
-                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                rowsPerPageOptions={[10, 25, 50]} dataKey="id"
-                // selectionMode="checkbox"
-                //  selection={selectedCustomers} 
-                //  onSelectionChange={(e) => {
-                //     console.log('%c%s', 'color: lime', '===> setSelectedCustomers:')
-                //     setSelectedCustomers(e.value)
-                // }}
-                filters={filters} filterDisplay="menu" globalFilterFields={['name', 'country.name', 'representative.name', 'balance', 'status']}
-                emptyMessage="No customers found." currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
-                {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
-                <Column header="Agent" sortable sortField="representative.name" filterField="representative" showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }}
-                    body={representativeBodyTemplate} filter filterElement={representativeFilterTemplate} />
-                {/* <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" style={{ minWidth: '14rem' }} /> */}
-                <Column header="Add Text" field="addText" body={addTextBody} style={{ minWidth: '14rem' }} />
-                {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" /> */}
-                <Column field="date" header="Date" sortable filterField="date" dataType="date" style={{ minWidth: '12rem' }} body={dateBodyTemplate} filter filterElement={dateFilterTemplate} />
-                <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} />
-                {/* <Column field="status" header="Status" sortable filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusFilterTemplate} /> */}
-                {/* <Column field="activity" header="Activity" sortable showFilterMatchModes={false} style={{ minWidth: '12rem' }} body={activityBodyTemplate} filter filterElement={activityFilterTemplate} /> */}
-                <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={actionBodyTemplate} />
-            </DataTable>
-        </div>
-    );
+  return (
+    <div className="card">
+                    <DataTable value={customers} paginator header={header} footer={footer} rows={10}
+                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                        rowsPerPageOptions={[10, 25, 50]} dataKey="id"
+                        // selectionMode="checkbox"
+                        //  selection={selectedCustomers} 
+                        //  onSelectionChange={(e) => {
+                        //     console.log('%c%s', 'color: lime', '===> setSelectedCustomers:')
+                        //     setSelectedCustomers(e.value)
+                        // }}
+                        filters={filters} filterDisplay="menu" globalFilterFields={['name', 'country.name', 'representative.name', 'balance', 'status']}
+                        emptyMessage="No customers found." currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                        {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
+                        <Column header="Agent" sortable sortField="representative.name" filterField="representative" showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }}
+                            body={representativeBodyTemplate} filter filterElement={representativeFilterTemplate} />
+                        {/* <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" style={{ minWidth: '14rem' }} /> */}
+                        <Column header="Add Text" field="addText" body={addTextBody} style={{ minWidth: '14rem' }} />
+                        {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" /> */}
+                        <Column field="date" header="Date" sortable filterField="date" dataType="date" style={{ minWidth: '12rem' }} body={dateBodyTemplate} filter filterElement={dateFilterTemplate} />
+                        <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} />
+                        {/* <Column field="status" header="Status" sortable filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusFilterTemplate} /> */}
+                        {/* <Column field="activity" header="Activity" sortable showFilterMatchModes={false} style={{ minWidth: '12rem' }} body={activityBodyTemplate} filter filterElement={activityFilterTemplate} /> */}
+                        <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={actionBodyTemplate} />
+                    </DataTable>
+                </div>
+  )
 }
+
+export default AllProductsTable

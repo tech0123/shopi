@@ -1,13 +1,14 @@
-import CustomersDemo from "./MyDataTable";
+import AllProductsTable from "./AllProductsTable";
+import SelectedProductsTable from "./SelectedProductsTable";
 
 export default function Cart() {
     return (
         <div className="main flex flex-col justify-center items-center">
             <div className="container w-ful p-6 mt-6 mx-10 lg:mx-24 ">
-                <CustomersDemo type={"allProducts"} />
+                <AllProductsTable />
             </div>
             <div className="container w-ful p-6 mt-3 mx-10 lg:mx-24 ">
-                <CustomersDemo type={"selectedProducts"} />
+                <SelectedProductsTable />
             </div>
             {/* <div className="container w-ful p-6 mt-6 mx-10 lg:mx-24 border-2 border-white">
                 <div className="container flex flex-row">
