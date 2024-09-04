@@ -228,7 +228,7 @@ const AllProductsTable = () => {
     // globalFilterValue === "" ? [] :
   return (
     <div className="card">
-                    <DataTable value={customers} paginator header={header} footer={footer} rows={10}
+                    <DataTable value={customers?.filter((p) => !selectedProducts.some(s => s.id === p.id))} paginator header={header} footer={footer} rows={10}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         rowsPerPageOptions={[10, 25, 50]} dataKey="id"
                         // selectionMode="checkbox"
