@@ -20,6 +20,7 @@ import { setSelectedProducts } from '@/store/slice/productSlice';
 
 const AllProductsTable = () => {
     const dispatch = useDispatch()
+    const [error, setError] = useState([]);
     const { selectedProducts } = useSelector(({ productSliceName }) => productSliceName);
     const [customers, setCustomers] = useState([]);
     const [selectedCustomers, setSelectedCustomers] = useState([]);
@@ -74,12 +75,13 @@ const AllProductsTable = () => {
     const getCustomers = (data) => {
         return [...(data || [])].map((d) => {
             d.date = new Date(d.date);
+            d.qty = Math.floor(Math.random() * 21);
             d.addText = 0;
+            d.discount = 0;
+            d.amount = 0;
             return d;
         });
     };
-
-
 
     const formatDate = (value) => {
         return value.toLocaleDateString('en-US', {
@@ -174,6 +176,10 @@ const AllProductsTable = () => {
         return formatCurrency(rowData.balance);
     };
 
+    const amountBody = (rowData) => {
+        return parseFloat(rowData.amount).toFixed(2);
+    };
+
     const balanceFilterTemplate = (options) => {
         return <InputNumber value={options.value} onChange={(e) => options.filterCallback(e.value, options.index)} mode="currency" currency="USD" locale="en-US" />;
     };
@@ -208,51 +214,157 @@ const AllProductsTable = () => {
     }
 
     const actionBodyTemplate = (data) => {
-        return <Button type="button" disabled={!data.addText} icon="pi pi-plus-circle" className='action-icon-size p-5' onClick={(e) => {
-            dispatch(setSelectedProducts([...selectedProducts , data]))
+        return <Button type="button" disabled={!data.addText || error[data.id]} icon="pi pi-plus-circle" className='action-icon-size p-5' onClick={(e) => {
+            dispatch(setSelectedProducts([...selectedProducts, data]))
         }}
             rounded></Button>;
     };
 
     const addTextBody = (data) => {
-        return <InputText keyfilter="int" placeholder="Integers" onChange={(e) => {
-            const index = customers?.findIndex(customer => customer.id === data.id)
+        const handleChange = (e) => {
+            const value = parseInt(e.target.value || 0);
+            const index = customers?.findIndex(customer => customer.id === data.id);
             const newCustomers = [...customers];
-            newCustomers[index] = { ...newCustomers[index], addText: parseInt(e.target.value) };
+            const amount = value <= data.qty ? value * parseFloat(data.balance): data.amount;
+            newCustomers[index] = { ...newCustomers[index], addText: value, amount:amount};
             setCustomers(newCustomers);
-        }} className='h-10 p-3' />;
+            setError(prevErrors => {
+                const { [data.id]: currentErrors = {} } = prevErrors;
+                const { addText, ...remainingErrors } = currentErrors;
+                if (Object.keys(remainingErrors).length === 0) {
+                    const { [data.id]: _, ...otherErrors } = prevErrors; // Remove `data.id` entry completely
+                    return otherErrors;
+                }
+                return {
+                    ...prevErrors,
+                    [data.id]: remainingErrors
+                };
+            });
+            if (value > data.qty) {
+                setError(prevErrors => ({
+                    ...prevErrors,
+                    [data.id]: {
+                        ...prevErrors[data.id],
+                        addText: `Only ${data.qty} is Left`
+                    }
+                }));
+            }
+
+        };
+
+        return (
+            <>
+                <InputText
+                    keyfilter="int"
+                    placeholder="Integers"
+                    disabled={!data.qty || data.qty === 0}
+                    value={data.addText === 0 ? "" : data.addText}
+                    onKeyDown={(e) => {
+                        if (e.key === '-' || e.key === 'minus') {
+                            e.preventDefault();
+                        }
+                    }}
+                    onChange={handleChange}
+                    className={`h-10 p-3 ${error[data.id]?.addText ? 'border-red-500 border-2' : ''}`}
+                />
+                {error[data.id]?.addText && <p className="text-red-500 mt-1">{error[data.id]?.addText}</p>}
+            </>
+        );
+    };
+
+    console.log('error', error)
+
+    const discountBody = (data) => {
+        const handleChange = (e) => {
+            const value = parseInt(e.target.value || 0);
+            const index = customers?.findIndex(customer => customer.id === data.id);
+            const newCustomers = [...customers];
+
+
+            const amount = value <= data.balance ? (parseInt(data.addText) * parseFloat(data.balance)) - value : data.amount;
+
+
+            newCustomers[index] = { ...newCustomers[index], discount: value, amount:amount};
+            setCustomers(newCustomers);
+            setError(prevErrors => {
+                const { [data.id]: currentErrors = {} } = prevErrors;
+                const { addText, ...remainingErrors } = currentErrors;
+                if (Object.keys(remainingErrors).length === 0) {
+                    const { [data.id]: _, ...otherErrors } = prevErrors; // Remove `data.id` entry completely
+                    return otherErrors;
+                }
+                return {
+                    ...prevErrors,
+                    [data.id]: remainingErrors
+                };
+            });
+
+
+            if (value > data.balance) {
+                setError(prevErrors => ({
+                    ...prevErrors,
+                    [data.id]: {
+                        ...prevErrors[data.id],
+                        discount: `Equal or Less Than ${data.balance}`
+                    }
+                }));
+            }
+
+        };
+
+        return (
+            <>
+                <InputText
+                    keyfilter="int"
+                    placeholder="Integers"
+                    disabled={!data.qty || data.qty === 0 || !data.balance || !data.addText}
+                    value={data.discount === 0 ? "" : data.discount}
+                    onKeyDown={(e) => {
+                        if (e.key === '-' || e.key === 'minus') {
+                            e.preventDefault();
+                        }
+                    }}
+                    onChange={handleChange}
+                    className={`h-10 p-3 ${error[data.id]?.discount ? 'border-red-500 border-2' : ''}`}
+                />
+                {error[data.id]?.discount && <p className="text-red-500 mt-1">{error[data.id]?.discount}</p>}
+            </>
+        );
     };
 
     const header = renderHeader();
     const footer = renderFooter();
     // globalFilterValue === "" ? [] :
-  return (
-    <div className="card">
-                    <DataTable value={customers?.filter((p) => !selectedProducts.some(s => s.id === p.id))} paginator header={header} footer={footer} rows={10}
-                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        rowsPerPageOptions={[10, 25, 50]} dataKey="id"
-                        // selectionMode="checkbox"
-                        //  selection={selectedCustomers} 
-                        //  onSelectionChange={(e) => {
-                        //     console.log('%c%s', 'color: lime', '===> setSelectedCustomers:')
-                        //     setSelectedCustomers(e.value)
-                        // }}
-                        filters={filters} filterDisplay="menu" globalFilterFields={['name', 'country.name', 'representative.name', 'balance', 'status']}
-                        emptyMessage="No customers found." currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
-                        {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
-                        <Column header="Agent" sortable sortField="representative.name" filterField="representative" showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }}
-                            body={representativeBodyTemplate} filter filterElement={representativeFilterTemplate} />
-                        {/* <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" style={{ minWidth: '14rem' }} /> */}
-                        <Column header="Add Text" field="addText" body={addTextBody} style={{ minWidth: '14rem' }} />
-                        {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" /> */}
-                        <Column field="date" header="Date" sortable filterField="date" dataType="date" style={{ minWidth: '12rem' }} body={dateBodyTemplate} filter filterElement={dateFilterTemplate} />
-                        <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} />
-                        {/* <Column field="status" header="Status" sortable filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusFilterTemplate} /> */}
-                        {/* <Column field="activity" header="Activity" sortable showFilterMatchModes={false} style={{ minWidth: '12rem' }} body={activityBodyTemplate} filter filterElement={activityFilterTemplate} /> */}
-                        <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={actionBodyTemplate} />
-                    </DataTable>
-                </div>
-  )
+    return (
+        <div className="card">
+            <DataTable value={customers?.filter((p) => !selectedProducts?.some(s => s.id === p.id))} paginator header={header} footer={footer} rows={10}
+                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                rowsPerPageOptions={[10, 25, 50]} dataKey="id"
+                // selectionMode="checkbox"
+                //  selection={selectedCustomers} 
+                //  onSelectionChange={(e) => {
+                //     console.log('%c%s', 'color: lime', '===> setSelectedCustomers:')
+                //     setSelectedCustomers(e.value)
+                // }}
+                filters={filters} filterDisplay="menu" globalFilterFields={['name', 'country.name', 'representative.name', 'balance', 'status']}
+                emptyMessage="No customers found." currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                <Column header="Agent" sortable sortField="representative.name" filterField="representative" showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }}
+                    body={representativeBodyTemplate} filter filterElement={representativeFilterTemplate} />
+                <Column header="Add Text" field="addText" body={addTextBody} style={{ minWidth: '14rem' }} />
+                <Column header="QTY" field="qty" style={{ minWidth: '14rem' }} />
+                <Column header="Discount" field="discount" body={discountBody} style={{ minWidth: '14rem' }} />
+                <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} />
+                <Column header="Amount" field="amount" body={amountBody}  style={{ minWidth: '14rem' }} />
+                {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
+                {/* <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" style={{ minWidth: '14rem' }} /> */}
+                {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" /> */}
+                {/* <Column field="date" header="Date" sortable filterField="date" dataType="date" style={{ minWidth: '12rem' }} body={dateBodyTemplate} filter filterElement={dateFilterTemplate} /> */}
+                {/* <Column field="status" header="Status" sortable filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusFilterTemplate} /> */}
+                {/* <Column field="activity" header="Activity" sortable showFilterMatchModes={false} style={{ minWidth: '12rem' }} body={activityBodyTemplate} filter filterElement={activityFilterTemplate} /> */}
+                <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={actionBodyTemplate} />
+            </DataTable>
+        </div>
+    )
 }
 
 export default AllProductsTable

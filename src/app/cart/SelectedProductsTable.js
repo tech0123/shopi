@@ -15,10 +15,12 @@ import { MultiSelect } from 'primereact/multiselect';
 import { Slider } from 'primereact/slider';
 import { Tag } from 'primereact/tag';
 import { productsData } from '@/helper/commonValues';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedProducts } from '@/store/slice/productSlice';
 
 const SelectedProductsTable = () => {
     const { selectedProducts } = useSelector(({ productSliceName }) => productSliceName);
+    const dispatch = useDispatch()
 
     const [customers, setCustomers] = useState([]);
     const [selectedCustomers, setSelectedCustomers] = useState([]);
@@ -67,17 +69,17 @@ const SelectedProductsTable = () => {
         }
     };
 
-    useEffect(() => {
-        setCustomers(getCustomers(productsData))
-    }, []);
+    // useEffect(() => {
+    //     setCustomers(getCustomers(productsData))
+    // }, []);
 
-    const getCustomers = (data) => {
-        return [...(data || [])].map((d) => {
-            d.date = new Date(d.date);
-            d.addText = 0;
-            return d;
-        });
-    };
+    // const getCustomers = (data) => {
+    //     return [...(data || [])].map((d) => {
+    //         d.date = new Date(d.date);
+    //         d.addText = 0;
+    //         return d;
+    //     });
+    // };
 
 
 
@@ -208,22 +210,23 @@ const SelectedProductsTable = () => {
     }
 
     const actionBodyTemplate = (data) => {
-        return <Button type="button" disabled={!data.addText} icon="pi pi-plus-circle" className='action-icon-size p-5' onClick={(e) => {
-            setSelectedProducts((prev) => [...prev, data])
+        return <Button type="button" disabled={!data.addText} icon="pi pi-minus-circle" className='action-icon-size p-5' onClick={(e) => {
+            console.log('first', selectedProducts.filter(item => item.id !== data.id))
+            dispatch(setSelectedProducts(selectedProducts?.filter(item => item.id !== data.id)));
         }}
             rounded></Button>;
     };
 
     console.log('selectedProducts', selectedProducts)
 
-    const addTextBody = (data) => {
-        return <InputText keyfilter="int" placeholder="Integers" onChange={(e) => {
-            const index = customers?.findIndex(customer => customer.id === data.id)
-            const newCustomers = [...customers];
-            newCustomers[index] = { ...newCustomers[index], addText: parseInt(e.target.value) };
-            setCustomers(newCustomers);
-        }} className='h-10 p-3' />;
-    };
+    // const addTextBody = (data) => {
+    //     return <InputText keyfilter="int" placeholder="Integers" onChange={(e) => {
+    //         const index = customers?.findIndex(customer => customer.id === data.id)
+    //         const newCustomers = [...customers];
+    //         newCustomers[index] = { ...newCustomers[index], addText: parseInt(e.target.value) };
+    //         setCustomers(newCustomers);
+    //     }} className='h-10 p-3' />;
+    // };
 
     const header = renderHeader();
     const footer = renderFooter();
@@ -245,7 +248,7 @@ const SelectedProductsTable = () => {
         <Column header="Agent" sortable sortField="representative.name" filterField="representative" showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }}
             body={representativeBodyTemplate} filter filterElement={representativeFilterTemplate} />
         {/* <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" style={{ minWidth: '14rem' }} /> */}
-        <Column header="Add Text" field="addText" body={addTextBody} style={{ minWidth: '14rem' }} />
+        {/* <Column header="Add Text" field="addText" body={addTextBody} style={{ minWidth: '14rem' }} /> */}
         {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" /> */}
         <Column field="date" header="Date" sortable filterField="date" dataType="date" style={{ minWidth: '12rem' }} body={dateBodyTemplate} filter filterElement={dateFilterTemplate} />
         <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} />
