@@ -4,7 +4,30 @@ import { useForm } from 'react-hook-form';
 
 export default function AddUser() {
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit = data => console.log(data);
+  const onSubmit = async (data) => {
+    console.log('data', data);
+    try {
+        const response = await fetch("/api/user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("result", result); // Log the full response
+        return result; // Return the result for further processing
+    } catch (error) {
+        console.error("Error:", error);
+        throw error; // Re-throw the error for error boundaries or other error handling
+    }
+};
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-[#0F172A]">
