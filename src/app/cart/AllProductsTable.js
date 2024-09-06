@@ -16,12 +16,12 @@ import { Slider } from 'primereact/slider';
 import { Tag } from 'primereact/tag';
 import { productsData } from '@/helper/commonValues';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedProducts } from '@/store/slice/productSlice';
+import { setCalcValues, setSelectedProducts, setSubTotal } from '@/store/slice/productSlice';
 
 const AllProductsTable = () => {
     const dispatch = useDispatch()
     const [error, setError] = useState([]);
-    const { selectedProducts } = useSelector(({ productSliceName }) => productSliceName);
+    const { selectedProducts, calcValues, subTotal } = useSelector(({ productSliceName }) => productSliceName);
     const [customers, setCustomers] = useState([]);
     const [selectedCustomers, setSelectedCustomers] = useState([]);
     const [filters, setFilters] = useState({
@@ -96,7 +96,6 @@ const AllProductsTable = () => {
     };
 
     const onGlobalFilterChange = (e) => {
-        console.log("onglobal")
         const value = e.target.value;
         let _filters = { ...filters };
 
@@ -215,7 +214,17 @@ const AllProductsTable = () => {
 
     const actionBodyTemplate = (data) => {
         return <Button type="button" disabled={!data.addText || error[data.id]} icon="pi pi-plus-circle" className='action-icon-size p-5' onClick={(e) => {
-            dispatch(setSelectedProducts([...selectedProducts, data]))
+            const updatedSelectedProducts = [...selectedProducts, data];
+            const calSubTotal = parseFloat(updatedSelectedProducts?.reduce((total, product) => parseFloat(total || 0) + parseFloat(product.amount || 0), 0)).toFixed(2)
+            const afterDiscount = parseFloat((calSubTotal - parseFloat((calcValues.discount * calSubTotal) / 100)));
+            dispatch(setSelectedProducts(updatedSelectedProducts));
+            dispatch(setSubTotal(
+                calSubTotal
+            ))
+            dispatch(setCalcValues({
+                ...calcValues,
+                grandTotal: parseFloat(afterDiscount + parseFloat((calcValues.tax * afterDiscount) / 100)).toFixed(2)
+            }))
         }}
             rounded></Button>;
     };
@@ -225,8 +234,9 @@ const AllProductsTable = () => {
             const value = parseInt(e.target.value || 0);
             const index = customers?.findIndex(customer => customer.id === data.id);
             const newCustomers = [...customers];
-            const amount = value <= data.qty ? value * parseFloat(data.balance): data.amount;
-            newCustomers[index] = { ...newCustomers[index], addText: value, amount:amount};
+            const amount = value <= data.qty ? value * parseFloat(data.balance) : data.amount;
+            const discount = value <= data.qty ? data.discount : 0;
+            newCustomers[index] = { ...newCustomers[index], addText: value, amount: amount, discount: discount };
             setCustomers(newCustomers);
             setError(prevErrors => {
                 const { [data.id]: currentErrors = {} } = prevErrors;
@@ -272,23 +282,18 @@ const AllProductsTable = () => {
         );
     };
 
-    console.log('error', error)
-
     const discountBody = (data) => {
         const handleChange = (e) => {
             const value = parseInt(e.target.value || 0);
             const index = customers?.findIndex(customer => customer.id === data.id);
             const newCustomers = [...customers];
-
-
-            const amount = value <= data.balance ? (parseInt(data.addText) * parseFloat(data.balance)) - value : data.amount;
-
-
-            newCustomers[index] = { ...newCustomers[index], discount: value, amount:amount};
+            const ogAmt = parseInt(data.addText) * parseFloat(data.balance);
+            const amount = value <= ogAmt ? ((ogAmt) - value).toFixed(2) : (ogAmt);
+            newCustomers[index] = { ...newCustomers[index], discount: value, amount: amount };
             setCustomers(newCustomers);
             setError(prevErrors => {
                 const { [data.id]: currentErrors = {} } = prevErrors;
-                const { addText, ...remainingErrors } = currentErrors;
+                const { discount, ...remainingErrors } = currentErrors;
                 if (Object.keys(remainingErrors).length === 0) {
                     const { [data.id]: _, ...otherErrors } = prevErrors; // Remove `data.id` entry completely
                     return otherErrors;
@@ -300,14 +305,15 @@ const AllProductsTable = () => {
             });
 
 
-            if (value > data.balance) {
+            if (value > ogAmt) {
                 setError(prevErrors => ({
                     ...prevErrors,
                     [data.id]: {
                         ...prevErrors[data.id],
-                        discount: `Equal or Less Than ${data.balance}`
+                        discount: `Equal or Less Than ${ogAmt}`
                     }
                 }));
+
             }
 
         };
@@ -317,14 +323,21 @@ const AllProductsTable = () => {
                 <InputText
                     keyfilter="int"
                     placeholder="Integers"
-                    disabled={!data.qty || data.qty === 0 || !data.balance || !data.addText}
+                    disabled={!data.qty || data.qty === 0 || !data.balance || !data.addText || error[data.id]?.addText}
                     value={data.discount === 0 ? "" : data.discount}
                     onKeyDown={(e) => {
                         if (e.key === '-' || e.key === 'minus') {
                             e.preventDefault();
                         }
                     }}
-                    onChange={handleChange}
+                    onBlur={handleChange}
+                    onChange={(e) => {
+                        const value = parseInt(e.target.value || 0);
+                        const index = customers?.findIndex(customer => customer.id === data.id);
+                        const newCustomers = [...customers];
+                        newCustomers[index] = { ...newCustomers[index], discount: value };
+                        setCustomers(newCustomers);
+                    }}
                     className={`h-10 p-3 ${error[data.id]?.discount ? 'border-red-500 border-2' : ''}`}
                 />
                 {error[data.id]?.discount && <p className="text-red-500 mt-1">{error[data.id]?.discount}</p>}
@@ -337,13 +350,12 @@ const AllProductsTable = () => {
     // globalFilterValue === "" ? [] :
     return (
         <div className="card">
-            <DataTable value={customers?.filter((p) => !selectedProducts?.some(s => s.id === p.id))} paginator header={header} footer={footer} rows={10}
+            <DataTable value={globalFilterValue === "" ? [] : customers?.filter((p) => !selectedProducts?.some(s => s.id === p.id))} paginator header={header} footer={footer} rows={10}
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 rowsPerPageOptions={[10, 25, 50]} dataKey="id"
                 // selectionMode="checkbox"
                 //  selection={selectedCustomers} 
                 //  onSelectionChange={(e) => {
-                //     console.log('%c%s', 'color: lime', '===> setSelectedCustomers:')
                 //     setSelectedCustomers(e.value)
                 // }}
                 filters={filters} filterDisplay="menu" globalFilterFields={['name', 'country.name', 'representative.name', 'balance', 'status']}
@@ -354,7 +366,7 @@ const AllProductsTable = () => {
                 <Column header="QTY" field="qty" style={{ minWidth: '14rem' }} />
                 <Column header="Discount" field="discount" body={discountBody} style={{ minWidth: '14rem' }} />
                 <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} />
-                <Column header="Amount" field="amount" body={amountBody}  style={{ minWidth: '14rem' }} />
+                <Column header="Amount" field="amount" body={amountBody} style={{ minWidth: '14rem' }} />
                 {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
                 {/* <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" style={{ minWidth: '14rem' }} /> */}
                 {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" /> */}
