@@ -3,24 +3,19 @@ import connectToMongo from "@/lib/db";
 import User from "@/lib/models/UserModel";
 import { NextResponse } from 'next/server';
 
-connectToMongo();
-
 export async function POST(request) {
+    await connectToMongo();
     try {
-        const payload = await request.json();
-        console.log('Received payload:', payload);
-
-        // Ensure email and password exist
-        if (!payload.email || !payload.password) {
-            return NextResponse.json({ success: false, error: 'Email and password are required' }, { status: 400 });
+        const {email,password} = await request.json();
+    
+        if (!email || !password) {
+            return NextResponse.json({ success: false, error: 'Email and password are required' }, { status: 500 });
         }
 
-        const user = new User(payload);
-        const result = await user.save();
-
-        console.log('Saved user:', result);
-
-        return NextResponse.json({ result, success: true });
+        const newUser = new User({email,password});
+        const result = await newUser.save();
+        return NextResponse.json({ result, success: true }, { status: 201 });
+    
     } catch (error) {
         console.error('Error processing request:', error.message);
         return NextResponse.json({ success: false, error: 'Internal Server Error' }, { status: 500 });
