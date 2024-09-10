@@ -1,6 +1,6 @@
 import Image from "next/image";
 import CustomersDemo from "./MyDataTable";
-export default function Cart() {
+export default function TrashCartPage() {
     return (
         <div className="main flex flex-col justify-center items-center">
             <div className="container w-full  mt-10 mx-10 lg:mx-24 lg:mt-16">
