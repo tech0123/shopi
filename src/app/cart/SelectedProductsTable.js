@@ -107,17 +107,17 @@ const SelectedProductsTable = () => {
         setGlobalFilterValue(value);
     };
 
-    const renderHeader = () => {
-        return (
-            <div className="flex flex-wrap gap-2 justify-content-between align-items-center">
-                {/* <h4 className="m-0">Customers</h4> */}
-                <IconField iconPosition="right" className='min-w-full min-h-10'>
-                    <InputIcon className="pi pi-search" />
-                    <InputText className='min-w-full h-10 p-5 text-white' value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
-                </IconField>
-            </div>
-        );
-    };
+    // const renderHeader = () => {
+    //     return (
+    //         <div className="flex flex-wrap gap-2 justify-content-between align-items-center">
+    //             {/* <h4 className="m-0">Customers</h4> */}
+    //             <IconField iconPosition="right" className='min-w-full min-h-10'>
+    //                 <InputIcon className="pi pi-search" />
+    //                 <InputText className='min-w-full h-10 p-5 text-white' value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
+    //             </IconField>
+    //         </div>
+    //     );
+    // };
 
     // const renderFooter = () => {
     //     return (
@@ -126,8 +126,6 @@ const SelectedProductsTable = () => {
     //         </div>
     //     );
     // };
-
-
 
     const renderFooter = () => {
 
@@ -142,7 +140,7 @@ const SelectedProductsTable = () => {
                 grandTotal = parseFloat(afterDiscount + parseFloat((parsedValue * afterDiscount) / 100)).toFixed(2);
             }
             else {
-                const afterDiscount =  parseFloat((subTotal - parseFloat((parsedValue * subTotal) / 100)))
+                const afterDiscount = parseFloat((subTotal - parseFloat((parsedValue * subTotal) / 100)))
                 grandTotal = parseFloat(afterDiscount + parseFloat((calcValues.tax * afterDiscount) / 100)).toFixed(2);
             }
 
@@ -270,17 +268,18 @@ const SelectedProductsTable = () => {
         return <Button type="button" disabled={!data.addText} icon="pi pi-minus-circle" className='action-icon-size p-5' onClick={(e) => {
             const remainingSelectedProducts = selectedProducts?.filter(item => item.id !== data.id);
             const calcSubTotal = parseFloat(remainingSelectedProducts?.reduce((total, product) => parseFloat(total || 0) + parseFloat(product.amount || 0), 0)).toFixed(2)
-            const afterDiscount =  parseFloat((calcSubTotal - parseFloat((calcValues.discount * calcSubTotal) / 100)))
+            const afterDiscount = parseFloat((calcSubTotal - parseFloat((calcValues.discount * calcSubTotal) / 100)))
             dispatch(setSelectedProducts(remainingSelectedProducts));
             dispatch(setSubTotal(
                 calcSubTotal
             ))
-            if(remainingSelectedProducts?.length)
-            {dispatch(setCalcValues({
-                ...calcValues,
-                grandTotal: parseFloat(afterDiscount + parseFloat((calcValues.tax * afterDiscount) / 100)).toFixed(2)
-            }))}
-            else{
+            if (remainingSelectedProducts?.length) {
+                dispatch(setCalcValues({
+                    ...calcValues,
+                    grandTotal: parseFloat(afterDiscount + parseFloat((calcValues.tax * afterDiscount) / 100)).toFixed(2)
+                }))
+            }
+            else {
                 dispatch(setCalcValues(calcInitialValues))
             }
 
@@ -324,14 +323,15 @@ const SelectedProductsTable = () => {
     // };
 
 
-    const header = renderHeader();
+    // const header = renderHeader();
     const footer = renderFooter();
+    { console.log('selectedProducts', selectedProducts) }
     // globalFilterValue === "" ? [] :
     return (
         <div className="card">
             <DataTable
                 // className={`hidden xl:block`}
-                value={selectedProducts} paginator header={header} footer={footer} rows={10}
+                value={selectedProducts} paginator footer={footer} rows={10}
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 rowsPerPageOptions={[10, 25, 50]} dataKey="id"
                 // selectionMode="checkbox"
@@ -348,6 +348,10 @@ const SelectedProductsTable = () => {
                 {/* <Column header="Add Text" field="addText" body={addTextBody} style={{ minWidth: '14rem' }} /> */}
                 {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" /> */}
                 <Column field="date" header="Date" sortable filterField="date" dataType="date" style={{ minWidth: '12rem' }} body={dateBodyTemplate} filter filterElement={dateFilterTemplate} />
+
+                <Column field="qty" header="Qty" sortable filterField="qty" dataType="qty" style={{ minWidth: '12rem' }} filter />
+                <Column field="discount" header="discount" sortable filterField="discount" dataType="discount" style={{ minWidth: '12rem' }} filter />
+
                 <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} />
                 {/* <Column field="status" header="Status" sortable filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusFilterTemplate} /> */}
                 {/* <Column field="activity" header="Activity" sortable showFilterMatchModes={false} style={{ minWidth: '12rem' }} body={activityBodyTemplate} filter filterElement={activityFilterTemplate} /> */}

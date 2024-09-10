@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -17,6 +17,8 @@ import { Tag } from 'primereact/tag';
 import { productsData } from '@/helper/commonValues';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCalcValues, setSelectedProducts, setSubTotal } from '@/store/slice/productSlice';
+import _ from 'lodash';
+
 
 const AllProductsTable = () => {
     const dispatch = useDispatch()
@@ -75,8 +77,8 @@ const AllProductsTable = () => {
     const getCustomers = (data) => {
         return [...(data || [])].map((d) => {
             d.date = new Date(d.date);
-            d.qty = Math.floor(Math.random() * 21);
-            d.addText = 0;
+            d.stock = Math.floor(Math.random() * 21);
+            d.qty = 0;
             d.discount = 0;
             d.amount = 0;
             return d;
@@ -97,14 +99,19 @@ const AllProductsTable = () => {
 
     const onGlobalFilterChange = (e) => {
         const value = e.target.value;
-        let _filters = { ...filters };
+        setGlobalFilterValue(value);  // Update input value immediately
 
-        _filters['global'].value = value;
-
-        setFilters(_filters);
-        setGlobalFilterValue(value);
+        debounceFilter(value);
     };
 
+    const debounceFilter = useCallback(
+        _.debounce((value) => {
+            let _filters = { ...filters };
+            _filters['global'].value = value;
+            setFilters(_filters);
+        }, 800),
+        [filters]
+    );
     const renderHeader = () => {
         return (
             <div className="flex flex-wrap gap-2 justify-content-between align-items-center">
@@ -213,7 +220,7 @@ const AllProductsTable = () => {
     }
 
     const actionBodyTemplate = (data) => {
-        return <Button type="button" disabled={!data.addText || error[data.id]} icon="pi pi-plus-circle" className='action-icon-size p-5' onClick={(e) => {
+        return <Button type="button" disabled={!data.qty || error[data.id]} icon="pi pi-plus-circle" className='action-icon-size p-5' onClick={(e) => {
             const updatedSelectedProducts = [...selectedProducts, data];
             const calSubTotal = parseFloat(updatedSelectedProducts?.reduce((total, product) => parseFloat(total || 0) + parseFloat(product.amount || 0), 0)).toFixed(2)
             const afterDiscount = parseFloat((calSubTotal - parseFloat((calcValues.discount * calSubTotal) / 100)));
@@ -225,22 +232,27 @@ const AllProductsTable = () => {
                 ...calcValues,
                 grandTotal: parseFloat(afterDiscount + parseFloat((calcValues.tax * afterDiscount) / 100)).toFixed(2)
             }))
+            setGlobalFilterValue('');
+            setFilters({
+                ...filters,
+                global: { value: '', matchMode: FilterMatchMode.CONTAINS }
+            });
         }}
             rounded></Button>;
     };
 
-    const addTextBody = (data) => {
+    const qtyBody = (data) => {
         const handleChange = (e) => {
             const value = parseInt(e.target.value || 0);
             const index = customers?.findIndex(customer => customer.id === data.id);
             const newCustomers = [...customers];
-            const amount = value <= data.qty ? value * parseFloat(data.balance) : data.amount;
-            const discount = value <= data.qty ? data.discount : 0;
-            newCustomers[index] = { ...newCustomers[index], addText: value, amount: amount, discount: discount };
+            const amount = value <= data.stock ? value * parseFloat(data.balance) : data.amount;
+            const discount = value <= data.stock ? data.discount : 0;
+            newCustomers[index] = { ...newCustomers[index], qty: value, amount: amount, discount: discount };
             setCustomers(newCustomers);
             setError(prevErrors => {
                 const { [data.id]: currentErrors = {} } = prevErrors;
-                const { addText, ...remainingErrors } = currentErrors;
+                const { qty, ...remainingErrors } = currentErrors;
                 if (Object.keys(remainingErrors).length === 0) {
                     const { [data.id]: _, ...otherErrors } = prevErrors; // Remove `data.id` entry completely
                     return otherErrors;
@@ -250,12 +262,12 @@ const AllProductsTable = () => {
                     [data.id]: remainingErrors
                 };
             });
-            if (value > data.qty) {
+            if (value > data.stock) {
                 setError(prevErrors => ({
                     ...prevErrors,
                     [data.id]: {
                         ...prevErrors[data.id],
-                        addText: `Only ${data.qty} is Left`
+                        qty: `Only ${data.stock} is Left`
                     }
                 }));
             }
@@ -267,17 +279,17 @@ const AllProductsTable = () => {
                 <InputText
                     keyfilter="int"
                     placeholder="Integers"
-                    disabled={!data.qty || data.qty === 0}
-                    value={data.addText === 0 ? "" : data.addText}
+                    disabled={!data.stock || data.stock === 0}
+                    value={data.qty === 0 ? "" : data.qty}
                     onKeyDown={(e) => {
                         if (e.key === '-' || e.key === 'minus') {
                             e.preventDefault();
                         }
                     }}
                     onChange={handleChange}
-                    className={`h-10 p-3 ${error[data.id]?.addText ? 'border-red-500 border-2' : ''}`}
+                    className={`h-10 p-3 ${error[data.id]?.qty ? 'border-red-500 border-2' : ''}`}
                 />
-                {error[data.id]?.addText && <p className="text-red-500 mt-1">{error[data.id]?.addText}</p>}
+                {error[data.id]?.qty && <p className="text-red-500 mt-1">{error[data.id]?.qty}</p>}
             </>
         );
     };
@@ -287,7 +299,7 @@ const AllProductsTable = () => {
             const value = parseInt(e.target.value || 0);
             const index = customers?.findIndex(customer => customer.id === data.id);
             const newCustomers = [...customers];
-            const ogAmt = parseInt(data.addText) * parseFloat(data.balance);
+            const ogAmt = parseInt(data.qty) * parseFloat(data.balance);
             const amount = value <= ogAmt ? ((ogAmt) - value).toFixed(2) : (ogAmt);
             newCustomers[index] = { ...newCustomers[index], discount: value, amount: amount };
             setCustomers(newCustomers);
@@ -323,7 +335,7 @@ const AllProductsTable = () => {
                 <InputText
                     keyfilter="int"
                     placeholder="Integers"
-                    disabled={!data.qty || data.qty === 0 || !data.balance || !data.addText || error[data.id]?.addText}
+                    disabled={!data.stock || data.stock === 0 || !data.balance || !data.qty || error[data.id]?.qty}
                     value={data.discount === 0 ? "" : data.discount}
                     onKeyDown={(e) => {
                         if (e.key === '-' || e.key === 'minus') {
@@ -350,7 +362,7 @@ const AllProductsTable = () => {
     // globalFilterValue === "" ? [] :
     return (
         <div className="card">
-            <DataTable value={globalFilterValue === "" ? [] : customers?.filter((p) => !selectedProducts?.some(s => s.id === p.id))} paginator header={header} footer={footer} rows={10}
+            <DataTable value={globalFilterValue === "" ? [] : customers?.filter((p) => !selectedProducts?.some(s => s.id === p.id))} paginator={!!globalFilterValue} header={header} footer={globalFilterValue && footer} rows={10}
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 rowsPerPageOptions={[10, 25, 50]} dataKey="id"
                 // selectionMode="checkbox"
@@ -359,21 +371,22 @@ const AllProductsTable = () => {
                 //     setSelectedCustomers(e.value)
                 // }}
                 filters={filters} filterDisplay="menu" globalFilterFields={['name', 'country.name', 'representative.name', 'balance', 'status']}
-                emptyMessage="No customers found." currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
-                <Column header="Agent" sortable sortField="representative.name" filterField="representative" showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }}
-                    body={representativeBodyTemplate} filter filterElement={representativeFilterTemplate} />
-                <Column header="Add Text" field="addText" body={addTextBody} style={{ minWidth: '14rem' }} />
-                <Column header="QTY" field="qty" style={{ minWidth: '14rem' }} />
-                <Column header="Discount" field="discount" body={discountBody} style={{ minWidth: '14rem' }} />
-                <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} />
-                <Column header="Amount" field="amount" body={amountBody} style={{ minWidth: '14rem' }} />
+                emptyMessage={globalFilterValue ? "No Products found." : undefined} // Conditionally pass emptyMessage
+                className={`data-table ${!globalFilterValue ? 'hide-empty-message' : ''}`} currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                {globalFilterValue && <Column header="Agent" sortable sortField="representative.name" filterField="representative" showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }}
+                    body={representativeBodyTemplate} filter filterElement={representativeFilterTemplate} />}
+                {globalFilterValue && <Column header="Qty" field="qty" body={qtyBody} style={{ minWidth: '14rem' }} />}
+                {globalFilterValue && <Column header="Stock" field="stock" style={{ minWidth: '14rem' }} />}
+                {globalFilterValue && <Column header="Discount" field="discount" body={discountBody} style={{ minWidth: '14rem' }} />}
+                {globalFilterValue && <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} />}
+                {globalFilterValue && <Column header="Amount" field="amount" body={amountBody} style={{ minWidth: '14rem' }} />}
                 {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
                 {/* <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" style={{ minWidth: '14rem' }} /> */}
                 {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" /> */}
                 {/* <Column field="date" header="Date" sortable filterField="date" dataType="date" style={{ minWidth: '12rem' }} body={dateBodyTemplate} filter filterElement={dateFilterTemplate} /> */}
                 {/* <Column field="status" header="Status" sortable filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusFilterTemplate} /> */}
                 {/* <Column field="activity" header="Activity" sortable showFilterMatchModes={false} style={{ minWidth: '12rem' }} body={activityBodyTemplate} filter filterElement={activityFilterTemplate} /> */}
-                <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={actionBodyTemplate} />
+                {globalFilterValue && <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={actionBodyTemplate} />}
             </DataTable>
         </div>
     )
