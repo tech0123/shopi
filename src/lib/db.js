@@ -1,28 +1,22 @@
-import mongoose from "mongoose";
+import mongoose, { connection } from 'mongoose';
+
+const DB_PASSWORD = process.env.DB_PASSWORD
+const DB_USERNAME = process.env.DB_USERNAME
+const mongoURI = `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@cluster0.csq7air.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"`;
 
 const connectToMongo = async () => {
-    if (mongoose.connection.readyState !== 1) { // Only connect if not already connected
-        try {
-            await mongoose.connect(mongoURI);
-            console.log("Connected to MongoDB successfully!");
-        } catch (error) {
-            console.error("Error connecting to MongoDB:", error.message);
-        }
-    } else {
-        console.log("MongoDB is already connected.");
+    if (connection.isConnected) {
+        console.log('----------------------------- Already Connected -----------------------------')
+        return
     }
-    mongoose.connection.on('error', (err) => {
-        console.error('MongoDB connection error:', err);
-    });
-    mongoose.connection.on('connected', () => {
-        console.log('MongoDB connected');
-    });
-    mongoose.connection.on('disconnected', () => {
-        console.log('MongoDB disconnected');
-    });
-    
+    try {
+        const db = await mongoose.connect(mongoURI || "");
+        connection.isConnected = db.connections[0].readyState
+        console.log("Connected to MongoDB successfully!");
+    } catch (error) {
+        console.error("Error connecting to MongoDB:", error.message);
+        process.exit(1)
+    }
 };
-
-connectToMongo();
 
 export default connectToMongo;
