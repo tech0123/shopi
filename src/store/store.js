@@ -1,9 +1,14 @@
-import { configureStore } from '@reduxjs/toolkit'
-import productReducer from './slice/productSlice'
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import product from "./slice/productSlice";
+import employee from "./slice/employeeSlice";
 
+const reducers = combineReducers({
+  product,
+  employee
+});
 
-export const store = configureStore({
-    reducer: {
-        productSliceName: productReducer,    
-    },
-})
+const store = configureStore({
+  reducer: reducers
+});
+
+export { store };

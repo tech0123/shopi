@@ -1,9 +1,15 @@
 import { linksOption } from "@/helper/commonValues";
+import { SignOutButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="main flex justify-center items-center min-h-screen">
+    <>
+    <div className="text-right">
+      <UserButton/>
+      {/* <SignOutButton redirectUrl={routes.push('/sign-in')}/> */}
+    </div>
+    <div className="main flex justify-center items-center">
       <div className="container grid grid-cols-1 lg:grid-cols-2 gap-5">
         {linksOption?.map(({ text, href }) => (
           <Link
@@ -14,9 +20,9 @@ export default function Home() {
             {text}
           </Link>
         ))}
-
       </div>
     </div>
+    </>
   );
 }
 
