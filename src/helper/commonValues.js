@@ -19,6 +19,10 @@ export const calcInitialValues = {
   tax: 0
 };
 
+export const roastError = e => {
+  toast.error("Something goes wrong, please try again later");
+};
+
 export const FakeData = [
   {
     id: 1,
@@ -959,7 +963,7 @@ export const productsData = [
   }
 ];
 
-export const sampleProducts = [
+export const sampleUser = [
   {
     id: "1",
     name: "Laptop",
@@ -970,7 +974,7 @@ export const sampleProducts = [
     gstNo: "GST123456",
     category: "Electronics",
     price: 999.99,
-    quantity: 20,
+    available_quantity: 20,
     rating: 4,
     inventoryStatus: "INSTOCK",
     image: "laptop.jpg"
@@ -985,7 +989,7 @@ export const sampleProducts = [
     gstNo: "GST234567",
     category: "Electronics",
     price: 699.99,
-    quantity: 50,
+    available_quantity: 50,
     rating: 5,
     inventoryStatus: "INSTOCK",
     image: "smartphone.jpg"
@@ -1000,7 +1004,7 @@ export const sampleProducts = [
     gstNo: "GST345678",
     category: "Accessories",
     price: 199.99,
-    quantity: 30,
+    available_quantity: 30,
     rating: 4,
     inventoryStatus: "LOWSTOCK",
     image: "headphones.jpg"
@@ -1015,7 +1019,7 @@ export const sampleProducts = [
     gstNo: "GST456789",
     category: "Electronics",
     price: 299.99,
-    quantity: 15,
+    available_quantity: 15,
     rating: 4,
     inventoryStatus: "OUTOFSTOCK",
     image: "smartwatch.jpg"
@@ -1030,7 +1034,7 @@ export const sampleProducts = [
     gstNo: "GST567890",
     category: "Electronics",
     price: 499.99,
-    quantity: 25,
+    available_quantity: 25,
     rating: 3,
     inventoryStatus: "INSTOCK",
     image: "tablet.jpg"
@@ -1045,7 +1049,7 @@ export const sampleProducts = [
     gstNo: "GST678901",
     category: "Electronics",
     price: 899.99,
-    quantity: 10,
+    available_quantity: 10,
     rating: 5,
     inventoryStatus: "LOWSTOCK",
     image: "camera.jpg"
@@ -1060,7 +1064,7 @@ export const sampleProducts = [
     gstNo: "GST789012",
     category: "Fitness",
     price: 149.99,
-    quantity: 40,
+    available_quantity: 40,
     rating: 4,
     inventoryStatus: "INSTOCK",
     image: "fitnesstracker.jpg"
@@ -1075,7 +1079,7 @@ export const sampleProducts = [
     gstNo: "GST890123",
     category: "Accessories",
     price: 99.99,
-    quantity: 35,
+    available_quantity: 35,
     rating: 4,
     inventoryStatus: "INSTOCK",
     image: "speaker.jpg"
@@ -1090,7 +1094,7 @@ export const sampleProducts = [
     gstNo: "GST901234",
     category: "Electronics",
     price: 499.99,
-    quantity: 10,
+    available_quantity: 10,
     rating: 5,
     inventoryStatus: "OUTOFSTOCK",
     image: "console.jpg"
@@ -1105,7 +1109,7 @@ export const sampleProducts = [
     gstNo: "GST012345",
     category: "Electronics",
     price: 399.99,
-    quantity: 15,
+    available_quantity: 15,
     rating: 5,
     inventoryStatus: "LOWSTOCK",
     image: "vr.jpg"
@@ -1120,7 +1124,7 @@ export const sampleProducts = [
     gstNo: "GST123456",
     category: "Accessories",
     price: 49.99,
-    quantity: 50,
+    available_quantity: 50,
     rating: 4,
     inventoryStatus: "INSTOCK",
     image: "laptopbag.jpg"
@@ -1135,7 +1139,7 @@ export const sampleProducts = [
     gstNo: "GST234567",
     category: "Accessories",
     price: 29.99,
-    quantity: 100,
+    available_quantity: 100,
     rating: 4,
     inventoryStatus: "INSTOCK",
     image: "mouse.jpg"
@@ -1150,7 +1154,7 @@ export const sampleProducts = [
     gstNo: "GST345678",
     category: "Accessories",
     price: 59.99,
-    quantity: 70,
+    available_quantity: 70,
     rating: 3,
     inventoryStatus: "INSTOCK",
     image: "keyboard.jpg"
@@ -1165,7 +1169,7 @@ export const sampleProducts = [
     gstNo: "GST456789",
     category: "Electronics",
     price: 299.99,
-    quantity: 25,
+    available_quantity: 25,
     rating: 4,
     inventoryStatus: "INSTOCK",
     image: "monitor.jpg"
@@ -1180,9 +1184,177 @@ export const sampleProducts = [
     gstNo: "GST567890",
     category: "Electronics",
     price: 79.99,
-    quantity: 45,
+    available_quantity: 45,
     rating: 4,
     inventoryStatus: "INSTOCK",
+    image: "webcam.jpg"
+  }
+];
+
+export const sampleProducts = [
+  {
+    id: "1",
+    name: "Laptop",
+    available_quantity: 20,
+    discount: 10, // Example discount in percentage
+    tax: 18, // Example tax in percentage
+    description: "A high-performance laptop suitable for all purposes.",
+    selling_price: 999.99,
+    cost_price: 850.0, // Example cost price
+    image: "laptop.jpg"
+  },
+  {
+    id: "2",
+    name: "Smartphone",
+    available_quantity: 50,
+    discount: 5, // Example discount in percentage
+    tax: 12, // Example tax in percentage
+    description: "A latest model smartphone with all advanced features.",
+    selling_price: 699.99,
+    cost_price: 600.0, // Example cost price
+    image: "smartphone.jpg"
+  },
+  {
+    id: "3",
+    name: "Headphones",
+    available_quantity: 30,
+    discount: 15, // Example discount in percentage
+    tax: 10, // Example tax in percentage
+    description: "Noise-canceling headphones with superior sound quality.",
+    selling_price: 199.99,
+    cost_price: 160.0, // Example cost price
+    image: "headphones.jpg"
+  },
+  {
+    id: "4",
+    name: "Smartwatch",
+    available_quantity: 15,
+    discount: 20, // Example discount in percentage
+    tax: 18, // Example tax in percentage
+    description: "A smartwatch with fitness tracking and notifications.",
+    selling_price: 299.99,
+    cost_price: 250.0, // Example cost price
+    image: "smartwatch.jpg"
+  },
+  {
+    id: "5",
+    name: "Tablet",
+    available_quantity: 25,
+    discount: 8, // Example discount in percentage
+    tax: 12, // Example tax in percentage
+    description: "A versatile tablet for work and entertainment.",
+    selling_price: 499.99,
+    cost_price: 400.0, // Example cost price
+    image: "tablet.jpg"
+  },
+  {
+    id: "6",
+    name: "Camera",
+    available_quantity: 10,
+    discount: 12, // Example discount in percentage
+    tax: 18, // Example tax in percentage
+    description: "A professional camera with high resolution and features.",
+    selling_price: 899.99,
+    cost_price: 750.0, // Example cost price
+    image: "camera.jpg"
+  },
+  {
+    id: "7",
+    name: "Fitness Tracker",
+    available_quantity: 40,
+    discount: 7, // Example discount in percentage
+    tax: 5, // Example tax in percentage
+    description: "A fitness tracker with heart rate monitoring and GPS.",
+    selling_price: 149.99,
+    cost_price: 120.0, // Example cost price
+    image: "fitnesstracker.jpg"
+  },
+  {
+    id: "8",
+    name: "Bluetooth Speaker",
+    available_quantity: 35,
+    discount: 10, // Example discount in percentage
+    tax: 15, // Example tax in percentage
+    description: "A portable Bluetooth speaker with deep bass and clarity.",
+    selling_price: 99.99,
+    cost_price: 80.0, // Example cost price
+    image: "speaker.jpg"
+  },
+  {
+    id: "9",
+    name: "Gaming Console",
+    available_quantity: 10,
+    discount: 5, // Example discount in percentage
+    tax: 18, // Example tax in percentage
+    description: "A high-performance gaming console for serious gamers.",
+    selling_price: 499.99,
+    cost_price: 450.0, // Example cost price
+    image: "console.jpg"
+  },
+  {
+    id: "10",
+    name: "VR Headset",
+    available_quantity: 15,
+    discount: 15, // Example discount in percentage
+    tax: 18, // Example tax in percentage
+    description: "A virtual reality headset for immersive experiences.",
+    selling_price: 399.99,
+    cost_price: 350.0, // Example cost price
+    image: "vr.jpg"
+  },
+  {
+    id: "11",
+    name: "Laptop Bag",
+    available_quantity: 50,
+    discount: 20, // Example discount in percentage
+    tax: 5, // Example tax in percentage
+    description: "A durable and stylish laptop bag for daily use.",
+    selling_price: 49.99,
+    cost_price: 40.0, // Example cost price
+    image: "laptopbag.jpg"
+  },
+  {
+    id: "12",
+    name: "Wireless Mouse",
+    available_quantity: 100,
+    discount: 5, // Example discount in percentage
+    tax: 8, // Example tax in percentage
+    description: "A wireless mouse with ergonomic design and precision.",
+    selling_price: 29.99,
+    cost_price: 20.0, // Example cost price
+    image: "mouse.jpg"
+  },
+  {
+    id: "13",
+    name: "Keyboard",
+    available_quantity: 70,
+    discount: 10, // Example discount in percentage
+    tax: 8, // Example tax in percentage
+    description: "A mechanical keyboard with backlighting and fast response.",
+    selling_price: 59.99,
+    cost_price: 50.0, // Example cost price
+    image: "keyboard.jpg"
+  },
+  {
+    id: "14",
+    name: "Monitor",
+    available_quantity: 25,
+    discount: 7, // Example discount in percentage
+    tax: 18, // Example tax in percentage
+    description: "A 4K monitor with stunning display quality.",
+    selling_price: 299.99,
+    cost_price: 250.0, // Example cost price
+    image: "monitor.jpg"
+  },
+  {
+    id: "15",
+    name: "Webcam",
+    available_quantity: 45,
+    discount: 8, // Example discount in percentage
+    tax: 12, // Example tax in percentage
+    description: "A HD webcam with clear video and microphone.",
+    selling_price: 79.99,
+    cost_price: 60.0, // Example cost price
     image: "webcam.jpg"
   }
 ];

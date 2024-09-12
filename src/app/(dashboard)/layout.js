@@ -32,9 +32,9 @@ export default function RootLayout({ children }) {
             <UserButton />
             </SignedIn> */}
       <Providers>
-        <ToastContainer theme="light" />
         <ClerkProvider>
           <body className={inter.className}>
+            <ToastContainer theme="light" />
             {children}
           </body>
         </ClerkProvider>

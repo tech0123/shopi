@@ -1,6 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { createSlice } from "@reduxjs/toolkit";
+import { roastError } from "@/helper/commonValues";
 
 let initialState = {
   employeeLoading: false,
@@ -63,19 +64,6 @@ const employeeSlice = createSlice({
       state.allEmployeeList = action.payload;
     }
   }
-  //   extraReducers: {
-  //     [getEmployeeList.pending]: state => {
-  //       state.employeeLoading = true;
-  //     },
-  //     [getEmployeeList.rejected]: state => {
-  //       state.allEmployeeList = [];
-  //       state.employeeLoading = false;
-  //     },
-  //     [getEmployeeList.fulfilled]: (state, action) => {
-  //       state.allEmployeeList = action.payload;
-  //       state.employeeLoading = false;
-  //     }
-  //   }
 });
 
 export const { setEmployeeLoading, setAllEmployeeList } = employeeSlice.actions;

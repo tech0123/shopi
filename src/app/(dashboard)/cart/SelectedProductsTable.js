@@ -23,6 +23,7 @@ const SelectedProductsTable = () => {
     const { selectedProducts, subTotal, calcValues } = useSelector(({ productSliceName }) => productSliceName);
     console.log('%c%s', 'color: lime', '===> calcValues:', calcValues);
     const dispatch = useDispatch()
+    const [error, setError] = useState([]);
 
     const [customers, setCustomers] = useState([]);
     const [selectedCustomers, setSelectedCustomers] = useState([]);
@@ -128,19 +129,15 @@ const SelectedProductsTable = () => {
     // };
 
     const renderFooter = () => {
-
-
         const handleCalcValueChange = (value, name) => {
             const parsedValue = parseFloat(value || 0);
-            console.log('name', name)
             let grandTotal = 0;
 
             if (name === "tax") {
-                const afterDiscount = parseFloat((subTotal - parseFloat((calcValues.discount * subTotal) / 100)))
+                const afterDiscount = parseFloat((subTotal - parseFloat((calcValues.discount * subTotal) / 100)));
                 grandTotal = parseFloat(afterDiscount + parseFloat((parsedValue * afterDiscount) / 100)).toFixed(2);
-            }
-            else {
-                const afterDiscount = parseFloat((subTotal - parseFloat((parsedValue * subTotal) / 100)))
+            } else {
+                const afterDiscount = parseFloat((subTotal - parseFloat((parsedValue * subTotal) / 100)));
                 grandTotal = parseFloat(afterDiscount + parseFloat((calcValues.tax * afterDiscount) / 100)).toFixed(2);
             }
 
@@ -148,38 +145,56 @@ const SelectedProductsTable = () => {
                 ...calcValues,
                 [name]: value,
                 grandTotal: grandTotal
-            }))
-        }
-
+            }));
+        };
 
         return (
-            <div className="flex flex-wrap gap-2 justify-content-between align-items-center">
-                <h5>SubTotal: {subTotal}</h5>
+            <div className="card w-1/3 p-2 bg-white shadow-sm rounded-md">
+                <h5 className="text-md font-medium mb-2">Summary</h5>
+                <div className="flex flex-col gap-1">
+                    <div className="flex justify-between items-center">
+                        <span className="text-gray-600 text-sm">SubTotal:</span>
+                        <span className="font-medium text-sm">{subTotal}</span>
+                    </div>
 
-                <InputNumber
-                    placeholder="Discount"
-                    name="discount"
-                    className="w-100"
-                    maxFractionDigits={2}
-                    useGrouping={false}
-                    value={calcValues?.discount}
-                    onValueChange={(e) => handleCalcValueChange(e.target.value, e.target.name)}
-                />
+                    <div className="flex justify-between items-center">
+                        <InputNumber
+                            placeholder="Discount"
+                            name="discount"
+                            className="w-full text-sm text-white bg-gray-800 border-gray-600" // Set text color to white and background color to dark
+                            maxFractionDigits={2}
+                            useGrouping={false}
+                            value={calcValues?.discount}
+                            onValueChange={(e) => handleCalcValueChange(e.target.value, e.target.name)}
+                        />
+                    </div>
 
-                <InputNumber
-                    placeholder="Tax"
-                    name="tax"
-                    className="w-100"
-                    maxFractionDigits={2}
-                    useGrouping={false}
-                    value={calcValues?.tax}
-                    onValueChange={(e) => handleCalcValueChange(e.target.value, e.target.name)}
-                />
+                    <div className="flex justify-between items-center">
+                        <InputNumber
+                            placeholder="Tax"
+                            name="tax"
+                            className="w-full text-sm text-white bg-gray-800 border-gray-600" // Set text color to white and background color to dark
+                            maxFractionDigits={2}
+                            useGrouping={false}
+                            value={calcValues?.tax}
+                            onValueChange={(e) => handleCalcValueChange(e.target.value, e.target.name)}
+                        />
+                    </div>
 
-                <h5>Grand Total: {calcValues.grandTotal}</h5>
+                    <div className="flex justify-between items-center mt-2">
+                        <span className="text-gray-600 text-sm">Grand Total:</span>
+                        <span className="font-medium text-sm">{calcValues.grandTotal}</span>
+                    </div>
+                </div>
             </div>
         );
     };
+
+
+
+
+
+
 
     const countryBodyTemplate = (rowData) => {
         return (
@@ -235,6 +250,10 @@ const SelectedProductsTable = () => {
         return <InputNumber value={options.value} onChange={(e) => options.filterCallback(e.value, options.index)} mode="currency" currency="USD" locale="en-US" />;
     };
 
+    const amountBody = (rowData) => {
+        return parseFloat(rowData.amount).toFixed(2);
+    };
+
     const statusBodyTemplate = (rowData) => {
         return <Tag value={rowData.status} severity={getSeverity(rowData.status)} />;
     };
@@ -265,7 +284,7 @@ const SelectedProductsTable = () => {
     }
 
     const actionBodyTemplate = (data) => {
-        return <Button type="button" disabled={!data.addText} icon="pi pi-minus-circle" className='action-icon-size p-5' onClick={(e) => {
+        return <Button type="button" disabled={!data.qty} icon="pi pi-minus-circle" className='action-icon-size p-5' onClick={(e) => {
             const remainingSelectedProducts = selectedProducts?.filter(item => item.id !== data.id);
             const calcSubTotal = parseFloat(remainingSelectedProducts?.reduce((total, product) => parseFloat(total || 0) + parseFloat(product.amount || 0), 0)).toFixed(2)
             const afterDiscount = parseFloat((calcSubTotal - parseFloat((calcValues.discount * calcSubTotal) / 100)))
@@ -296,32 +315,212 @@ const SelectedProductsTable = () => {
     //     }} className='h-10 p-3' />;
     // };
 
-    // const multiBodyTemplate = (data) => {
-    //     return (
-    //         <>
-    //             <div className="container flex md:flex-row flex-col w-full border-white border-2">
-    //                 <div className="border-2 border-white">
-    //                     <Image src="/img1.jpg" alt="image" width={350} height={350} />
-    //                 </div>
-    //                 <div className="border-2 border-white w-full ml-3 p-3">
-    //                     <p>Name: {data.name}</p>
-    //                     <p>ID: {data.id}</p>
-    //                     <p>Company: {data.company}</p>
-    //                     <p>Date: {new Date(data.date).toLocaleDateString()}</p>
-    //                     <p>Status: {data.status}</p>
-    //                     <p>Verified: {data.verified ? 'Yes' : 'No'}</p>
-    //                     <p>Activity: {data.activity}</p>
-    //                     <p>Qty: {data.qty}</p>
-    //                     <p>Add Text: {data.addText}</p>
-    //                     <p>Discount: {data.discount}</p>
-    //                     <p>Amount: {data.amount}</p>
-    //                     <p>Balance: {data.balance}</p>
-    //                 </div>
-    //             </div>
-    //         </>
-    //     )
-    // };
+    const multiBodyTemplate = (data) => {
+        console.log('data', data.representative.image)
+        return (
+            <div className="container flex flex-col border-white border-2 w-full">
+                <div className="flex justify-center border-b-2 border-white p-3">
+                    <Image src={`/${data.representative.image}`} alt="image" width={350} height={350} />
+                </div>
 
+                <div className="flex flex-1">
+                    <div className="flex-1 border-r-2 border-white p-3">
+                        <p className='text-left'>ID: {data.id}</p>
+                        <p className='text-left'>Date: {new Date(data.date).toLocaleDateString()}</p>
+                        <p className='text-left'>Quantity: {qtyBody(data)}</p>
+                        <p className='text-left'>Stock: {data.stock}</p>
+                    </div>
+
+                    <div className="flex-1 border-l-2 border-white p-3 flex flex-col">
+                        <p className='text-left'>Discount: {discountBody(data)}</p>
+                        <p className='text-left'>Balance: {data.balance}</p>
+                        <p className='text-left'>Amount: {data.amount}</p>
+                        <p className='text-left cursor-pointer' onClick={(e) => {
+                            const remainingSelectedProducts = selectedProducts?.filter(item => item.id !== data.id);
+                            const calcSubTotal = parseFloat(remainingSelectedProducts?.reduce((total, product) => parseFloat(total || 0) + parseFloat(product.amount || 0), 0)).toFixed(2);
+                            const afterDiscount = parseFloat((calcSubTotal - parseFloat((calcValues.discount * calcSubTotal) / 100)));
+                            dispatch(setSelectedProducts(remainingSelectedProducts));
+                            dispatch(setSubTotal(calcSubTotal));
+                            if (remainingSelectedProducts?.length) {
+                                dispatch(setCalcValues({
+                                    ...calcValues,
+                                    grandTotal: parseFloat(afterDiscount + parseFloat((calcValues.tax * afterDiscount) / 100)).toFixed(2)
+                                }));
+                            } else {
+                                dispatch(setCalcValues(calcInitialValues));
+                            }
+                        }}>Remove</p>
+
+                        {/* <Button
+                            type="button"
+                            disabled={!data.qty}
+                            icon="pi pi-minus-circle"
+                            onClick={(e) => {
+                                const remainingSelectedProducts = selectedProducts?.filter(item => item.id !== data.id);
+                                const calcSubTotal = parseFloat(remainingSelectedProducts?.reduce((total, product) => parseFloat(total || 0) + parseFloat(product.amount || 0), 0)).toFixed(2);
+                                const afterDiscount = parseFloat((calcSubTotal - parseFloat((calcValues.discount * calcSubTotal) / 100)));
+                                dispatch(setSelectedProducts(remainingSelectedProducts));
+                                dispatch(setSubTotal(calcSubTotal));
+                                if (remainingSelectedProducts?.length) {
+                                    dispatch(setCalcValues({
+                                        ...calcValues,
+                                        grandTotal: parseFloat(afterDiscount + parseFloat((calcValues.tax * afterDiscount) / 100)).toFixed(2)
+                                    }));
+                                } else {
+                                    dispatch(setCalcValues(calcInitialValues));
+                                }
+                            }}
+                        /> */}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+
+
+
+
+
+
+
+    console.log('selectedProducts', selectedProducts)
+
+    const qtyBody = (data) => {
+        const handleChange = (e) => {
+            const value = parseInt(e.target.value || 0);
+            const index = selectedProducts?.findIndex(customer => customer.id === data.id);
+            const newCustomers = [...selectedProducts];
+            const amount = value <= data.stock ? value * parseFloat(data.balance) : data.amount;
+            const discount = value <= data.stock ? data.discount : 0;
+            newCustomers[index] = { ...newCustomers[index], qty: value, amount: amount, discount: discount };
+            dispatch(setSelectedProducts(newCustomers));
+
+            setError(prevErrors => {
+                const { [data.id]: currentErrors = {} } = prevErrors;
+                const { qty, ...remainingErrors } = currentErrors;
+                if (Object.keys(remainingErrors).length === 0) {
+                    const { [data.id]: _, ...otherErrors } = prevErrors; // Remove `data.id` entry completely
+                    return otherErrors;
+                }
+                return {
+                    ...prevErrors,
+                    [data.id]: remainingErrors
+                };
+            });
+            if (value > data.stock) {
+                setError(prevErrors => ({
+                    ...prevErrors,
+                    [data.id]: {
+                        ...prevErrors[data.id],
+                        qty: `Only ${data.stock} is Left`
+                    }
+                }));
+            }
+            const calcSubTotal = parseFloat(newCustomers?.reduce((total, product) => parseFloat(total || 0) + parseFloat(product.amount || 0), 0)).toFixed(2)
+            dispatch(setSubTotal(calcSubTotal))
+            const afterDiscount = parseFloat((calcSubTotal - parseFloat((calcValues.discount * calcSubTotal) / 100)))
+            const grandTotal = parseFloat(afterDiscount + parseFloat((calcValues.tax * afterDiscount) / 100)).toFixed(2);
+
+            dispatch(setCalcValues({
+                ...calcValues,
+                grandTotal: grandTotal
+            }))
+        };
+
+        return (
+            <>
+                <InputText
+                    name='qty'
+                    keyfilter="int"
+                    placeholder="Quantity"
+                    disabled={!data.stock || data.stock === 0}
+                    value={data.qty === 0 ? "" : data.qty}
+                    onKeyDown={(e) => {
+                        if (e.key === '-' || e.key === 'minus') {
+                            e.preventDefault();
+                        }
+                    }}
+                    onChange={handleChange}
+                    className={`h-10 p-3 ${error[data.id]?.qty ? 'border-red-500 border-2' : ''}`}
+                />
+                {error[data.id]?.qty && <p className="text-red-500 mt-1">{error[data.id]?.qty}</p>}
+            </>
+        );
+    };
+
+    const discountBody = (data) => {
+        const handleChange = (e) => {
+            const value = parseInt(e.target.value || 0);
+            const index = selectedProducts?.findIndex(customer => customer.id === data.id);
+            const newCustomers = [...selectedProducts];
+            const ogAmt = parseInt(data.qty) * parseFloat(data.balance);
+            const amount = value <= ogAmt ? ((ogAmt) - value).toFixed(2) : (ogAmt);
+            newCustomers[index] = { ...newCustomers[index], discount: value, amount: amount };
+            dispatch(setSelectedProducts(newCustomers));
+            setError(prevErrors => {
+                const { [data.id]: currentErrors = {} } = prevErrors;
+                const { discount, ...remainingErrors } = currentErrors;
+                if (Object.keys(remainingErrors).length === 0) {
+                    const { [data.id]: _, ...otherErrors } = prevErrors; // Remove `data.id` entry completely
+                    return otherErrors;
+                }
+                return {
+                    ...prevErrors,
+                    [data.id]: remainingErrors
+                };
+            });
+
+
+            if (value > ogAmt) {
+                setError(prevErrors => ({
+                    ...prevErrors,
+                    [data.id]: {
+                        ...prevErrors[data.id],
+                        discount: `Equal or Less Than ${ogAmt}`
+                    }
+                }));
+
+            }
+
+            const calcSubTotal = parseFloat(newCustomers?.reduce((total, product) => parseFloat(total || 0) + parseFloat(product.amount || 0), 0)).toFixed(2)
+            dispatch(setSubTotal(calcSubTotal))
+            const afterDiscount = parseFloat((calcSubTotal - parseFloat((calcValues.discount * calcSubTotal) / 100)))
+            const grandTotal = parseFloat(afterDiscount + parseFloat((calcValues.tax * afterDiscount) / 100)).toFixed(2);
+
+            dispatch(setCalcValues({
+                ...calcValues,
+                grandTotal: grandTotal
+            }))
+        };
+
+        return (
+            <>
+                <InputText
+                    name='discount'
+                    keyfilter="int"
+                    placeholder="Discount"
+                    disabled={!data.stock || data.stock === 0 || !data.balance || !data.qty || error[data.id]?.qty}
+                    value={data.discount === 0 ? "" : data.discount}
+                    onKeyDown={(e) => {
+                        if (e.key === '-' || e.key === 'minus') {
+                            e.preventDefault();
+                        }
+                    }}
+                    onBlur={handleChange}
+                    onChange={(e) => {
+                        const value = parseInt(e.target.value || 0);
+                        const index = selectedProducts?.findIndex(customer => customer.id === data.id);
+                        const newCustomers = [...selectedProducts];
+                        newCustomers[index] = { ...newCustomers[index], discount: value };
+                        dispatch(setSelectedProducts(newCustomers));
+                    }}
+                    className={`h-10 p-3 ${error[data.id]?.discount ? 'border-red-500 border-2' : ''}`}
+                />
+                {error[data.id]?.discount && <p className="text-red-500 mt-1">{error[data.id]?.discount}</p>}
+            </>
+        );
+    };
 
     // const header = renderHeader();
     const footer = renderFooter();
@@ -331,6 +530,7 @@ const SelectedProductsTable = () => {
         <div className="card">
             <DataTable
                 // className={`hidden xl:block`}
+                // className="md:hidden"
                 value={selectedProducts} paginator footer={footer} rows={10}
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 rowsPerPageOptions={[10, 25, 50]} dataKey="id"
@@ -349,33 +549,38 @@ const SelectedProductsTable = () => {
                 {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" /> */}
                 <Column field="date" header="Date" sortable filterField="date" dataType="date" style={{ minWidth: '12rem' }} body={dateBodyTemplate} filter filterElement={dateFilterTemplate} />
 
-                <Column field="qty" header="Qty" sortable filterField="qty" dataType="qty" style={{ minWidth: '12rem' }} filter />
-                <Column field="discount" header="discount" sortable filterField="discount" dataType="discount" style={{ minWidth: '12rem' }} filter />
+                <Column header="Qty" sortable filterField="qty" dataType="qty" body={qtyBody} style={{ minWidth: '12rem' }} filter />
+                <Column field="stock" header="Stock" sortable filterField="stock" dataType="stock" style={{ minWidth: '12rem' }} filter />
+                <Column field="discount" header="discount" sortable filterField="discount" body={discountBody} style={{ minWidth: '12rem' }} filter />
 
                 <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} />
+                <Column field="amount" header="Amount" sortable style={{ minWidth: '12rem' }} body={amountBody} />
                 {/* <Column field="status" header="Status" sortable filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusFilterTemplate} /> */}
                 {/* <Column field="activity" header="Activity" sortable showFilterMatchModes={false} style={{ minWidth: '12rem' }} body={activityBodyTemplate} filter filterElement={activityFilterTemplate} /> */}
                 <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={actionBodyTemplate} />
             </DataTable>
 
-            {/* <DataTable className="mt-10 block xl:hidden" value={selectedProducts} paginator header={header} footer={footer} rows={10}
+            <DataTable className="mt-10 block xl:hidden" value={selectedProducts} paginator footer={footer} rows={10}
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 rowsPerPageOptions={[10, 25, 50]} dataKey="id"
-              
+
                 filters={filters} filterDisplay="menu" globalFilterFields={['name', 'country.name', 'representative.name', 'balance', 'status']}
-                emptyMessage="No customers found." currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"> */}
-            {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
-            {/* <Column header="Agent" sortable sortField="representative.name" filterField="representative" showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }}
+                emptyMessage="No customers found." currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
+                {/* <Column header="Agent" sortable sortField="representative.name" filterField="representative" showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }}
                     body={representativeBodyTemplate} filter filterElement={representativeFilterTemplate} /> */}
-            {/* <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" style={{ minWidth: '14rem' }} /> */}
-            {/* <Column header="Add Text" field="addText" body={addTextBody} style={{ minWidth: '14rem' }} /> */}
-            {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" /> */}
-            {/* <Column field="date" header="Date" sortable filterField="date" dataType="date" style={{ minWidth: '12rem' }} body={dateBodyTemplate} filter filterElement={dateFilterTemplate} />
-                <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} /> */}
-            {/* <Column field="status" header="Status" sortable filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusFilterTemplate} /> */}
-            {/* <Column field="activity" header="Activity" sortable showFilterMatchModes={false} style={{ minWidth: '12rem' }} body={activityBodyTemplate} filter filterElement={activityFilterTemplate} /> */}
-            {/* <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={multiBodyTemplate} /> */}
-            {/* </DataTable> */}
+                {/* <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" style={{ minWidth: '14rem' }} /> */}
+                {/* <Column header="Add Text" field="addText" body={addTextBody} style={{ minWidth: '14rem' }} /> */}
+                {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" /> */}
+                {/* <Column field="date" header="Date" sortable filterField="date" dataType="date" style={{ minWidth: '12rem' }} body={dateBodyTemplate} filter filterElement={dateFilterTemplate} /> */}
+                {/* <Column field="qty" header="Qty" sortable filterField="qty" dataType="qty" style={{ minWidth: '12rem' }} filter /> */}
+                {/* <Column field="discount" header="discount" sortable filterField="discount" dataType="discount" style={{ minWidth: '12rem' }} filter /> */}
+
+                {/* <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} /> */}
+                {/* <Column field="status" header="Status" sortable filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusFilterTemplate} /> */}
+                {/* <Column field="activity" header="Activity" sortable showFilterMatchModes={false} style={{ minWidth: '12rem' }} body={activityBodyTemplate} filter filterElement={activityFilterTemplate} /> */}
+                <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={multiBodyTemplate} />
+            </DataTable>
         </div>
     )
 }
