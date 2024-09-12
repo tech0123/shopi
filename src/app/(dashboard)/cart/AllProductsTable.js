@@ -18,6 +18,7 @@ import { productsData } from '@/helper/commonValues';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCalcValues, setSelectedProducts, setSubTotal } from '@/store/slice/productSlice';
 import _ from 'lodash';
+import Image from 'next/image';
 
 
 const AllProductsTable = () => {
@@ -99,7 +100,7 @@ const AllProductsTable = () => {
 
     const onGlobalFilterChange = (e) => {
         const value = e.target.value;
-        setGlobalFilterValue(value);  // Update input value immediately
+        setGlobalFilterValue(value);
 
         debounceFilter(value);
     };
@@ -117,17 +118,9 @@ const AllProductsTable = () => {
             <div className="flex flex-wrap gap-2 justify-content-between align-items-center">
                 {/* <h4 className="m-0">Customers</h4> */}
                 <IconField iconPosition="right" className='min-w-full min-h-10'>
-                    <InputIcon className="pi pi-search" />
+                    <InputIcon className="pi pi-search mr-5" />
                     <InputText className='min-w-full h-10 p-5 text-white' value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
                 </IconField>
-            </div>
-        );
-    };
-
-    const renderFooter = () => {
-        return (
-            <div className="flex flex-wrap gap-2 justify-content-between align-items-center">
-                <h4 className="m-0">Hii This is Footer</h4>
             </div>
         );
     };
@@ -222,6 +215,7 @@ const AllProductsTable = () => {
     const actionBodyTemplate = (data) => {
         return <Button type="button" disabled={!data.qty || error[data.id]} icon="pi pi-plus-circle" className='action-icon-size p-5' onClick={(e) => {
             const updatedSelectedProducts = [...selectedProducts, data];
+
             const calSubTotal = parseFloat(updatedSelectedProducts?.reduce((total, product) => parseFloat(total || 0) + parseFloat(product.amount || 0), 0)).toFixed(2)
             const afterDiscount = parseFloat((calSubTotal - parseFloat((calcValues.discount * calSubTotal) / 100)));
             dispatch(setSelectedProducts(updatedSelectedProducts));
@@ -237,9 +231,64 @@ const AllProductsTable = () => {
                 ...filters,
                 global: { value: '', matchMode: FilterMatchMode.CONTAINS }
             });
+            const i = customers.findIndex((item) => { return item.id === data.id });
+            customers[i] = { ...customers[i], qty: '', discount: '' };
+            setCustomers([...customers]);
         }}
             rounded></Button>;
     };
+
+    const multiBodyTemplate = (data) => {
+        return (
+            <div className="container flex flex-col border-white border-2 w-full">
+                {/* Centered Image */}
+                <div className="flex justify-center border-b-2 border-white p-3">
+                    <Image src={`/${data.representative.image}`} alt="image" width={350} height={350} />
+                </div>
+
+                {/* Bottom Sections */}
+                <div className="flex flex-1">
+                    {/* Left Section */}
+                    <div className="flex-1 border-r-2 border-white p-3">
+                        <p className='text-left'>ID: {data.id}</p>
+                        <p className='text-left'>Date: {new Date(data.date).toLocaleDateString()}</p>
+                        <p className='text-left'>Quantity: {qtyBody(data)}</p>
+                        <p className='text-left'>Stock: {data.stock}</p>
+                    </div>
+
+                    {/* Right Section */}
+                    <div className="flex-1 border-l-2 border-white p-3 flex flex-col">
+                        <p className='text-left'>Discount: {discountBody(data)}</p>
+                        <p className='text-left'>Balance: {data.balance}</p>
+                        <p className='text-left'>Amount: {data.amount}</p>
+
+                        <p className='text-left cursor-pointer' onClick={(e) => {
+                            const updatedSelectedProducts = [...selectedProducts, data];
+
+                            const calSubTotal = parseFloat(updatedSelectedProducts?.reduce((total, product) => parseFloat(total || 0) + parseFloat(product.amount || 0), 0)).toFixed(2)
+                            const afterDiscount = parseFloat((calSubTotal - parseFloat((calcValues.discount * calSubTotal) / 100)));
+                            dispatch(setSelectedProducts(updatedSelectedProducts));
+                            dispatch(setSubTotal(
+                                calSubTotal
+                            ))
+                            dispatch(setCalcValues({
+                                ...calcValues,
+                                grandTotal: parseFloat(afterDiscount + parseFloat((calcValues.tax * afterDiscount) / 100)).toFixed(2)
+                            }))
+                            setGlobalFilterValue('');
+                            setFilters({
+                                ...filters,
+                                global: { value: '', matchMode: FilterMatchMode.CONTAINS }
+                            });
+                            const i = customers.findIndex((item) => { return item.id === data.id });
+                            customers[i] = { ...customers[i], qty: '', discount: '' };
+                            setCustomers([...customers]);
+                        }}>Add</p>                    </div>
+                </div>
+            </div>
+        );
+    };
+
 
     const qtyBody = (data) => {
         const handleChange = (e) => {
@@ -358,11 +407,12 @@ const AllProductsTable = () => {
     };
 
     const header = renderHeader();
-    const footer = renderFooter();
     // globalFilterValue === "" ? [] :
     return (
         <div className="card">
-            <DataTable value={globalFilterValue === "" ? [] : customers?.filter((p) => !selectedProducts?.some(s => s.id === p.id))} paginator={!!globalFilterValue} header={header} footer={globalFilterValue && footer} rows={10}
+            <DataTable
+                // className="md:hidden"
+                value={globalFilterValue === "" ? [{}] : customers?.filter((p) => !selectedProducts?.some(s => s.id === p.id))} paginator={!!globalFilterValue} header={header} rows={10}
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 rowsPerPageOptions={[10, 25, 50]} dataKey="id"
                 // selectionMode="checkbox"
@@ -370,23 +420,49 @@ const AllProductsTable = () => {
                 //  onSelectionChange={(e) => {
                 //     setSelectedCustomers(e.value)
                 // }}
-                filters={filters} filterDisplay="menu" globalFilterFields={['name', 'country.name', 'representative.name', 'balance', 'status']}
-                emptyMessage={globalFilterValue ? "No Products found." : undefined} // Conditionally pass emptyMessage
-                className={`data-table ${!globalFilterValue ? 'hide-empty-message' : ''}`} currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
-                {globalFilterValue && <Column header="Agent" sortable sortField="representative.name" filterField="representative" showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }}
-                    body={representativeBodyTemplate} filter filterElement={representativeFilterTemplate} />}
-                {globalFilterValue && <Column header="Qty" field="qty" body={qtyBody} style={{ minWidth: '14rem' }} />}
-                {globalFilterValue && <Column header="Stock" field="stock" style={{ minWidth: '14rem' }} />}
-                {globalFilterValue && <Column header="Discount" field="discount" body={discountBody} style={{ minWidth: '14rem' }} />}
-                {globalFilterValue && <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} />}
-                {globalFilterValue && <Column header="Amount" field="amount" body={amountBody} style={{ minWidth: '14rem' }} />}
-                {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column> */}
-                {/* <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" style={{ minWidth: '14rem' }} /> */}
-                {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" /> */}
-                {/* <Column field="date" header="Date" sortable filterField="date" dataType="date" style={{ minWidth: '12rem' }} body={dateBodyTemplate} filter filterElement={dateFilterTemplate} /> */}
-                {/* <Column field="status" header="Status" sortable filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusFilterTemplate} /> */}
-                {/* <Column field="activity" header="Activity" sortable showFilterMatchModes={false} style={{ minWidth: '12rem' }} body={activityBodyTemplate} filter filterElement={activityFilterTemplate} /> */}
-                {globalFilterValue && <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={actionBodyTemplate} />}
+                filters={filters} filterDisplay="menu" globalFilterFields={['name']}
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                {globalFilterValue ? <Column header="Agent" sortable sortField="representative.name" filterField="representative" showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }}
+                    body={representativeBodyTemplate} filter filterElement={representativeFilterTemplate} /> : null}
+                {globalFilterValue ? <Column header="Qty" field="qty" body={qtyBody} style={{ minWidth: '14rem' }} /> : null}
+                {globalFilterValue ? <Column header="Stock" field="stock" style={{ minWidth: '14rem' }} /> : null}
+                {globalFilterValue ? <Column header="Discount" field="discount" body={discountBody} style={{ minWidth: '14rem' }} /> : null}
+                {globalFilterValue ? <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} /> : null}
+                {globalFilterValue ? <Column header="Amount" field="amount" body={amountBody} style={{ minWidth: '14rem' }} /> : null}
+                {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column >  */}
+                {/* <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" style={{ minWidth: '14rem' }} / > */}
+                {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" / > */}
+                {/* <Column field="date" header="Date" sortable filterField="date" dataType="date" style={{ minWidth: '12rem' }} body={dateBodyTemplate} filter filterElement={dateFilterTemplate} / > */}
+                {/* <Column field="status" header="Status" sortable filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusFilterTemplate} / > */}
+                {/* <Column field="activity" header="Activity" sortable showFilterMatchModes={false} style={{ minWidth: '12rem' }} body={activityBodyTemplate} filter filterElement={activityFilterTemplate} / > */}
+                {globalFilterValue ? <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={actionBodyTemplate} /> : null}
+            </DataTable>
+            <DataTable
+                className='mt-10 block xl:hidden'
+                value={globalFilterValue === "" ? [{}] : customers?.filter((p) => !selectedProducts?.some(s => s.id === p.id))} paginator={!!globalFilterValue} header={header} rows={10}
+                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                rowsPerPageOptions={[10, 25, 50]} dataKey="id"
+                // selectionMode="checkbox"
+                //  selection={selectedCustomers} 
+                //  onSelectionChange={(e) => {
+                //     setSelectedCustomers(e.value)
+                // }}
+                filters={filters} filterDisplay="menu" globalFilterFields={['name']}
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                {/* {globalFilterValue ? <Column header="Agent" sortable sortField="representative.name" filterField="representative" showFilterMatchModes={false} filterMenuStyle={{ width: '14rem' }}
+                    body={representativeBodyTemplate} filter filterElement={representativeFilterTemplate} /> : null}
+                {globalFilterValue ? <Column header="Qty" field="qty" body={qtyBody} style={{ minWidth: '14rem' }} /> : null}
+                {globalFilterValue ? <Column header="Stock" field="stock" style={{ minWidth: '14rem' }} /> : null}
+                {globalFilterValue ? <Column header="Discount" field="discount" body={discountBody} style={{ minWidth: '14rem' }} /> : null}
+                {globalFilterValue ? <Column field="balance" header="Balance" sortable dataType="numeric" style={{ minWidth: '12rem' }} body={balanceBodyTemplate} filter filterElement={balanceFilterTemplate} /> : null}
+                {globalFilterValue ? <Column header="Amount" field="amount" body={amountBody} style={{ minWidth: '14rem' }} /> : null} */}
+                {/* <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column >  */}
+                {/* <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" style={{ minWidth: '14rem' }} / > */}
+                {/* <Column field="country.name" header="Country" sortable filterField="country.name" style={{ minWidth: '14rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" / > */}
+                {/* <Column field="date" header="Date" sortable filterField="date" dataType="date" style={{ minWidth: '12rem' }} body={dateBodyTemplate} filter filterElement={dateFilterTemplate} / > */}
+                {/* <Column field="status" header="Status" sortable filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusFilterTemplate} / > */}
+                {/* <Column field="activity" header="Activity" sortable showFilterMatchModes={false} style={{ minWidth: '12rem' }} body={activityBodyTemplate} filter filterElement={activityFilterTemplate} / > */}
+                {globalFilterValue ? <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={multiBodyTemplate} /> : null}
             </DataTable>
         </div>
     )
