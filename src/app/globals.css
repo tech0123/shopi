@@ -3,11 +3,122 @@
 @tailwind utilities;
 
 body {
-  background-color: #31363F;
-  color: white;
+  /* background-color: #F4EEE0; */
+  background-color: #ffffff;
+  color: black;
+  font-size: 14px;
 }
 
-@layer base {
+/* .p-inputtext {
+  background-color: transparent;
+  border: 1.5px solid rgb(154, 154, 154);
+} */
+
+.input_wrap {
+  width: 100%;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  padding: 11px;
+  border: 1px solid #e5ebf0;
+  background-color: transparent;
+}
+
+.input_wrap:hover,
+.input_wrap:focus {
+  box-shadow: none;
+  border-color: #000;
+}
+
+.input_select {
+  width: 100%;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  padding: 11px;
+  border: 1px solid #e5ebf0;
+  background-color: transparent;
+}
+.input_select:hover,
+.input_select:focus {
+  box-shadow: none;
+  border-color: #000;
+}
+
+
+/* .date_select input {
+  padding: 12px;
+  border-right: 0;
+  font-size: 12px;
+  border-radius: 8px 0 0 8px;
+  border: 1px solid #e5ebf0;
+  background-color: transparent;
+}
+
+.date_select .p-button {
+  padding: 12px;
+  border-left: 0;
+  position: relative;
+  border-radius: 0 8px 8px 0;
+  border: 1px solid #e5ebf0;
+  background-color: transparent;
+} */
+
+.form_container {
+  margin: 10px;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.43);
+}
+
+.btn_primary {
+  background: #000;
+  color: #ffffff;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 80px;
+  box-shadow: none;
+}
+
+.btn_primary:hover {
+  color: #e0e0e0;
+}
+
+.btn_transperent{
+  background: transparent;
+  border: 1px solid;
+  color: #000;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 80px;
+  box-shadow: none;
+}
+
+.btn_transperent:hover {
+  color: #ffffff;
+  background-color: #000;
+  border: 1px solid;
+}
+
+/* .radio_wrapper {
+  gap: 20px;
+}
+
+.radio_wrapper .radio-inner-wrap {
+    gap: 8px;
+}
+
+.radio_wrapper label {
+  font-size: 14px;
+  line-height: 20px;
+  color: #000;
+  font-weight: 400;
+} */
+
+
+/* @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
@@ -62,9 +173,9 @@ body {
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
-}
+} */
 
-@layer base {
+/* @layer base {
   * {
     @apply border-border;
   }
@@ -72,7 +183,7 @@ body {
   body {
     @apply bg-background text-foreground;
   }
-}
+} */
 
 .action-icon-size .pi {
   font-size: 2rem;
