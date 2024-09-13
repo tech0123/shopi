@@ -337,7 +337,6 @@ export default function UserCrud() {
     );
   };
 
-  console.log("products", products);
   const responciveTemplete = rowData => {
     return (
       <div className="container flex flex-col border-white border-2 w-full">

@@ -58,8 +58,6 @@ const EmployeeForm = () => {
   const { role } = getValues();
 
   const onSubmit = async data => {
-    console.log(data);
-
     const payload = {
       email: data.email,
       password: data.password,

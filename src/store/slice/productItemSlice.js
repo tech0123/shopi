@@ -1,22 +1,22 @@
 import { calcInitialValues, roastError } from "@/helper/commonValues";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 import { toast } from "react-toastify";
 
 const initialState = {
-  allProductList: [],
-  selectedProducts: [],
-  subTotal: 0,
-  calcValues: calcInitialValues
+  productLoading: false,
+  allProductList: []
 };
 
-export const addProduct = payload => async dispatch => {
+export const getAllProductList = () => async dispatch => {
   try {
     dispatch(setProductLoading(true));
-    const response = await axios.get(`/api/products/getProduct`, payload);
+    const response = await axios.get(`/api/products/getProduct`);
     const { data, msg, err } = response.data;
 
     if (err === 0) {
       toast.success(msg);
+      dispatch(setAllProductList(data));
       return data;
     } else if (err === 1) {
       toast.error(msg);
@@ -30,8 +30,8 @@ export const addProduct = payload => async dispatch => {
   }
 };
 
-export const productSlice = createSlice({
-  name: "productSliceName",
+export const productItemSlice = createSlice({
+  name: "productItem",
   initialState,
   reducers: {
     setProductLoading: (state, action) => {
@@ -39,25 +39,13 @@ export const productSlice = createSlice({
     },
     setAllProductList: (state, action) => {
       state.allProductList = action.payload;
-    },
-    setSelectedProducts: (state, action) => {
-      state.selectedProducts = action.payload;
-    },
-    setSubTotal: (state, action) => {
-      state.subTotal = action.payload;
-    },
-    setCalcValues: (state, action) => {
-      state.calcValues = action.payload;
     }
   }
 });
 
 export const {
   setProductLoading,
-  setAllProductList,
-  setSelectedProducts,
-  setCalcValues,
-  setSubTotal
-} = productSlice.actions;
+  setAllProductList
+} = productItemSlice.actions;
 
-export default productSlice.reducer;
+export default productItemSlice.reducer;

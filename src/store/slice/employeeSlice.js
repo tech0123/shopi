@@ -36,11 +36,9 @@ export const addEmployeeList = payload => async dispatch => {
     const response = await axios.get(`/api/Employee/addEmployee`, payload);
     const { data, msg, err } = response.data;
 
-    console.log("data", data);
-
     if (err === 0) {
       toast.success(msg);
-      return true;
+      return data;
     } else if (err === 1) {
       toast.error(msg);
       return false;
