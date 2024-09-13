@@ -16,8 +16,6 @@ export async function POST(request) {
       const newEmployee = new Employee(request);
       const result = await newEmployee.save();
 
-      console.log("result", result);
-
       return NextResponse.json(
         { data: result, err: 0, msg: "Add Employee Succesfuly" },
         { status: 201 }
