@@ -6,7 +6,7 @@ const Loader = () => {
       <ProgressSpinner
         className="loader"
         strokeWidth="3"
-        fill="var(--surface-ground)"
+        fill="transparent"
         animationDuration=".8s"
       />
     </div>

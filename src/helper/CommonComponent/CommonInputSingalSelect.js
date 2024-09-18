@@ -11,7 +11,7 @@ const CommonInputSingalSelect = props => {
   return (
     <div className="form_input">
       <label className="w-6rem">
-        {title} {isRequired && <span className="text-danger fs-6">*</span>}
+        {title} {isRequired && <span className="fs-6" style={{ color: "red"}}>*</span>}
       </label>
       <div className="mt-2 mb-3">
         <Dropdown

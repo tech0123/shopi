@@ -1,11 +1,17 @@
-import { calcInitialValues, roastError } from "@/helper/commonValues";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  calcInitialValues,
+  roastError,
+  successMsg
+} from "@/helper/commonValues";
+import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { toast } from "react-toastify";
 
 const initialState = {
   productLoading: false,
-  allProductList: []
+  allProductList: [],
+  productDialog: false,
+  productData: [],
+  deleteProductDialog: false
 };
 
 export const getAllProductList = () => async dispatch => {
@@ -15,11 +21,10 @@ export const getAllProductList = () => async dispatch => {
     const { data, msg, err } = response.data;
 
     if (err === 0) {
-      toast.success(msg);
       dispatch(setAllProductList(data));
       return data;
     } else if (err === 1) {
-      toast.error(msg);
+      errorMsg(msg);
       return false;
     } else return false;
   } catch (e) {
@@ -39,13 +44,25 @@ export const productItemSlice = createSlice({
     },
     setAllProductList: (state, action) => {
       state.allProductList = action.payload;
+    },
+    setProductDialog: (state, action) => {
+      state.productDialog = action.payload;
+    },
+    setProductData: (state, action) => {
+      state.productData = action.payload;
+    },
+    setDeleteProductDialog: (state, action) => {
+      state.deleteProductDialog = action.payload;
     }
   }
 });
 
 export const {
   setProductLoading,
-  setAllProductList
+  setAllProductList,
+  setProductDialog,
+  setProductData,
+  setDeleteProductDialog
 } = productItemSlice.actions;
 
 export default productItemSlice.reducer;

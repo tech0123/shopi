@@ -1,8 +1,9 @@
 import connectToMongo from "@/lib/db";
+import { NextResponse } from "next/server";
+import Product from "@/lib/models/ProductModel";
 import Customer from "@/lib/models/CustomerModel";
 import Employee from "@/lib/models/EmployeeModel";
-import Product from "@/lib/models/ProductModel";
-import { NextResponse } from "next/server";
+import Manufacturer from "@/lib/models/ManufacturerModel";
 
 export async function POST(request) {
   await connectToMongo();
@@ -16,6 +17,8 @@ export async function POST(request) {
       modalToUse = Product;
     } else if (modal_to_pass === "Employees") {
       modalToUse = Employee;
+    } else if (modal_to_pass === "Manufacturers") {
+      modalToUse = Manufacturer;
     } else {
       console.log("err");
     }

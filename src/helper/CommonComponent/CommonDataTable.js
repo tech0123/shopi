@@ -1,56 +1,49 @@
 'use client'
 import React, { memo } from "react";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { IconField } from "primereact/iconfield";
 import { InputText } from "primereact/inputtext";
-import { deleteItem } from "@/store/slice/commonSlice";
 import CommonDeleteConfirmation from "./CommonDeleteConfirmation";
-import { setAllProductList } from "@/store/slice/productItemSlice";
 
 const CommonDataTable = (props) => {
-  const dispatch = useDispatch();
-
-  const {tableName, tableColumns, allItemList, handleAddItem, handleEditItem, handleDeleteItem, responsiveTableTemplete, deleteItemDialog,setDeleteItemDialog, selectedItemData, selectedItemName } = props
+  const {
+    tableName, 
+    tableColumns, 
+    allItemList, 
+    handleAddItem, 
+    handleEditItem, 
+    handleDeleteItem, 
+    responsiveTableTemplete, 
+    deleteItemDialog,
+    hideDeleteDialog,
+    deleteItem,
+  } = props
 
   const [globalFilter, setGlobalFilter] = useState(null);
- 
-  const hideProductDeleteDialog = () => {
-    setDeleteItemDialog(false);
-  };
-
-  const deleteProduct = async () => {
-    const payload = { modal_to_pass:"product", id: selectedItemData?._id };
-    const res = await dispatch(deleteItem(payload))
-    if(res){
-      dispatch(setAllProductList(res))
-      setDeleteItemDialog(false);
-    }
-  };
 
   const deleteProductDialogFooter = (
-    <>
+    <div className="d-flex justify-end gap-4">
       <Button
         label="No"
         icon="pi pi-times"
         outlined
-        onClick={hideProductDeleteDialog}
+        onClick={hideDeleteDialog}
       />
       <Button
         label="Yes"
         icon="pi pi-check"
         severity="danger"
-        onClick={deleteProduct}
+        onClick={deleteItem}
       />
-    </>
+    </div>
   );
 
   const actionBodyTemplate = rowData => {
     return (
-      <>
+      <div>
         <Button
           icon="pi pi-pencil"
           rounded
@@ -65,17 +58,14 @@ const CommonDataTable = (props) => {
           severity="danger"
           onClick={() => handleDeleteItem(rowData)}
         />
-      </>
+      </div>
     );
   };
 
   return (
-    <div>
-      <div className="my-5 me-5 d-flex justify-between">
-        <div className="ml-5">
-          <h4 className="text-white">{tableName}</h4>
-        </div>
-
+    <>
+      <div className="m-5 d-flex justify-between">
+        <h4 className="text-white">{tableName}</h4>
         <div className="d-flex gap-3">
           <div>
             <IconField iconPosition="left">
@@ -111,8 +101,10 @@ const CommonDataTable = (props) => {
                 key={i}
                 field={column?.field}
                 header={column?.header}
+                body={column?.body}
                 sortable
                 style={{ minWidth: "12rem" }}
+                className=""
               />
             )
           })}
@@ -139,11 +131,10 @@ const CommonDataTable = (props) => {
 
       <CommonDeleteConfirmation
         open={deleteItemDialog} 
-        itemName={selectedItemName}
-        hideContent={hideProductDeleteDialog} 
+        hideContent={hideDeleteDialog} 
         footerContent={deleteProductDialogFooter} 
       />
-    </div>
+    </>
   );
 };
 

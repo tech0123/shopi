@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 export const linksOption = [
   { href: "/sales", text: "Sales" },
@@ -7,11 +7,12 @@ export const linksOption = [
   { href: "/product", text: "Product" },
   { href: "/reports", text: "Reports" },
   { href: "/company", text: "Company" },
-  { href: "/employee", text: "Employee" }
+  { href: "/employee", text: "Employee" },
+  { href: "/manufacturer", text: "Manufacturer" }
 ];
 
 export const usersOption = [
-  { href: "/addUser", text: "New User" },
+  { href: "/customer", text: "New User" },
   { href: "/cart", text: "Existing User" }
 ];
 
@@ -23,6 +24,20 @@ export const calcInitialValues = {
 
 export const roastError = e => {
   toast.error("Something goes wrong, please try again later");
+};
+
+export const successMsg = e => {
+  toast.success(e);
+};
+
+export const errorMsg = e => {
+  toast.error(e);
+};
+
+export const generateUniqueId = () => {
+  const timestamp = new Date().getTime().toString(16);
+  const randomPart = Math.random().toString(16).substr(2, 12);
+  return timestamp + randomPart;
 };
 
 export const FakeData = [

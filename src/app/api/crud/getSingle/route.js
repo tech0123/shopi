@@ -3,6 +3,7 @@ import Product from "@/lib/models/ProductModel";
 import Customer from "@/lib/models/CustomerModel";
 import { NextResponse } from "next/server";
 import Employee from "@/lib/models/EmployeeModel";
+import Manufacturer from "@/lib/models/ManufacturerModel";
 
 export async function POST(request) {
   await connectToMongo();
@@ -25,6 +26,8 @@ export async function POST(request) {
       modalToUse = Customer;
     } else if (modal_to_pass === "employee") {
       modalToUse = Employee;
+    } else if (modal_to_pass === "manufacturer") {
+      modalToUse = Manufacturer;
     } else {
       return NextResponse.json(
         { err: 1, success: false, msg: "Invalid Modal provided" },

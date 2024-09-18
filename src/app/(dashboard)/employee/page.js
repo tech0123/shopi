@@ -1,10 +1,13 @@
-import React from "react";
-import EmployeeList from "./EmployeeList";
-
-export default function Employee() {
-  return (
-    <>
-    <EmployeeList/>
-    </>
+import dynamic from "next/dynamic";
+import Loader from "@/helper/CommonComponent/Loader";
+const EmployeeList = dynamic(
+  () => import("../../../Components/Employee/EmployeeList"),
+  {
+    loading: () => <Loader />
+  }
 );
-}
+
+const Employee = () => {
+  return <EmployeeList />;
+};
+export default Employee;
