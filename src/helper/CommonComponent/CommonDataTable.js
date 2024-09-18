@@ -1,6 +1,5 @@
 'use client'
-import React, { memo } from "react";
-import { useState } from "react";
+import React, { memo, useState } from "react";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
@@ -94,6 +93,7 @@ const CommonDataTable = (props) => {
           rows={10}
           rowsPerPageOptions={[5, 10, 25]}
           globalFilter={globalFilter}
+          className="max-lg:hidden"
         >
           {tableColumns?.map((column, i) => {
             return (
@@ -104,7 +104,7 @@ const CommonDataTable = (props) => {
                 body={column?.body}
                 sortable
                 style={{ minWidth: "12rem" }}
-                className=""
+                className="max-lg:hidden"
               />
             )
           })}
@@ -113,6 +113,7 @@ const CommonDataTable = (props) => {
             body={actionBodyTemplate}
             exportable={false}
             style={{ minWidth: "12rem" }}
+            className="max-lg:hidden"
           />
         </DataTable>
 
