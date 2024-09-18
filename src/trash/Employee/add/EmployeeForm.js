@@ -64,10 +64,7 @@ const EmployeeForm = () => {
       role: data.role
     };
 
-    console.log("payload", payload);
-
     // const res = await dispatch(addEmployeeList(payload));
-    // console.log("res", res);
 
     // try {
     //   const response = await fetch("/api/Employee/addEmployee", {
@@ -78,10 +75,7 @@ const EmployeeForm = () => {
     //     body: JSON.stringify(payload)
     //   });
 
-    //   console.log("response", response);
-
     //   const result = await response.json();
-    //   console.log("result", result);
     // } catch (error) {
     //   console.error("Error:", error);
     //   throw error;
@@ -208,28 +202,6 @@ const EmployeeForm = () => {
                 isRequired
               />
             </Col>
-            {/* <Col lg={3}>
-              <div className="w-full">
-                <label className="w-6rem">
-                  Role <span className="text-danger fs-6">*</span>
-                </label>
-                <div className="mt-2 mb-3">
-                  <Dropdown
-                    filter
-                    id="role"
-                    name="role"
-                    options={[]}
-                    placeholder="Role"
-                    className="input_select"
-                    {...methods.register("role", { required: true })}
-                  />
-                  {methods.formState.errors.role &&
-                    <p className="text-red-500 text-xs mt-1">
-                      Please enter Role.
-                    </p>}
-                </div>
-              </div>
-            </Col> */}
             <Col lg={3}>
               <CommonInputSingalSelect
                 title="Role"

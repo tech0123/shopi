@@ -1,7 +1,6 @@
 import axios from "axios";
-import { toast } from "react-toastify";
 import { createSlice } from "@reduxjs/toolkit";
-import { roastError } from "@/helper/commonValues";
+import { errorMsg, roastError, successMsg } from "@/helper/commonValues";
 
 let initialState = {
   commonLoading: false
@@ -16,7 +15,7 @@ export const getAllDataList = payload => async dispatch => {
     if (err === 0) {
       return data;
     } else if (err === 1) {
-      toast.error(msg);
+      errorMsg(msg);
       return false;
     } else return false;
   } catch (e) {
@@ -36,7 +35,7 @@ export const getSingleItem = payload => async dispatch => {
     if (err === 0) {
       return data;
     } else if (err === 1) {
-      toast.error(msg);
+      errorMsg(msg);
       return false;
     } else return false;
   } catch (e) {
@@ -54,10 +53,10 @@ export const addItem = payload => async dispatch => {
     const { data, msg, err } = response.data;
 
     if (err === 0) {
-      toast.success(msg);
+      successMsg(msg);
       return data;
     } else if (err === 1) {
-      toast.error(msg);
+      errorMsg(msg);
       return false;
     } else return false;
   } catch (e) {
@@ -75,10 +74,10 @@ export const updateItem = payload => async dispatch => {
     const { data, msg, err } = response.data;
 
     if (err === 0) {
-      toast.success(msg);
+      successMsg(msg);
       return data;
     } else if (err === 1) {
-      toast.error(msg);
+      errorMsg(msg);
       return false;
     } else return false;
   } catch (e) {
@@ -96,10 +95,10 @@ export const deleteItem = payload => async dispatch => {
     const { data, msg, err } = response.data;
 
     if (err === 0) {
-      toast.success(msg);
+      successMsg(msg);
       return data;
     } else if (err === 1) {
-      toast.error(msg);
+      errorMsg(msg);
       return false;
     } else return false;
   } catch (e) {

@@ -1,5 +1,5 @@
 import React from "react";
-import EmployeeForm from "@/Components/Employee/EmployeeForm";
+import EmployeeForm from "@/trash/Employee/add/EmployeeForm";
 
 const page = () => {
   return (

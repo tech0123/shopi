@@ -1,6 +1,5 @@
 import { calcInitialValues, roastError } from "@/helper/commonValues";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { toast } from "react-toastify";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   allProductList: [],
@@ -16,10 +15,10 @@ export const addProduct = payload => async dispatch => {
     const { data, msg, err } = response.data;
 
     if (err === 0) {
-      toast.success(msg);
+      successMsg(msg);
       return data;
     } else if (err === 1) {
-      toast.error(msg);
+      errorMsg(msg);
       return false;
     } else return false;
   } catch (e) {

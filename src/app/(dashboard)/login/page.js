@@ -1,8 +1,3 @@
-import { Button } from "primereact/button";
-import { Card } from "primereact/card";
-import { Divider } from "primereact/divider";
-import { InputText } from "primereact/inputtext";
-import React from "react";
 import LoginForm from "./LoginForm";
 
 export default function page() {

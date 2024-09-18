@@ -2,7 +2,7 @@ import { Dialog } from "primereact/dialog";
 import React, { memo } from "react";
 
 const CommonDeleteConfirmation = props => {
-  const { itemName, open, hideContent, footerContent } = props;
+  const { open, hideContent, footerContent } = props;
   return (
     <Dialog
       modal
@@ -18,8 +18,7 @@ const CommonDeleteConfirmation = props => {
           className="pi pi-exclamation-triangle mr-3"
           style={{ fontSize: "2rem" }}
         />
-        <span
-        >{`Are you sure you want to delete the selected ${itemName}`}</span>
+        <span>{`Are you sure you want to delete the selected item`}</span>
       </div>
     </Dialog>
   );

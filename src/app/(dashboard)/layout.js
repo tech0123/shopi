@@ -3,17 +3,10 @@ import "primeicons/primeicons.css";
 import { Inter } from "next/font/google";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Providers } from "@/store/providers";
+import { ClerkProvider } from "@clerk/nextjs";
 import "primereact/resources/primereact.min.css";
 import "primereact/resources/themes/lara-dark-cyan/theme.css";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton
-} from "@clerk/nextjs";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import ToastElement from "@/helper/CommonComponent/ToastElement";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,17 +18,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      {/* <SignedOut>
-            <SignInButton />
-            </SignedOut>
-            <SignedIn>
-            <UserButton />
-            </SignedIn> */}
       <Providers>
         <ClerkProvider>
           <body className={inter.className}>
-            <ToastContainer theme="light" />
-            {children}
+            <div>
+              <ToastElement />
+              {children}
+            </div>
           </body>
         </ClerkProvider>
       </Providers>

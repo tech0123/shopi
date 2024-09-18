@@ -1,11 +1,21 @@
 import axios from "axios";
-import { toast } from "react-toastify";
 import { createSlice } from "@reduxjs/toolkit";
-import { roastError } from "@/helper/commonValues";
+import { errorMsg, roastError, successMsg } from "@/helper/commonValues";
+
+const employeeInitialData = {
+  name: "",
+  email: "",
+  mobile_number: "",
+  role: "",
+  salary: 0
+};
 
 let initialState = {
   employeeLoading: false,
-  allEmployeeList: []
+  allEmployeeList: [],
+  selectedEmployeeData: employeeInitialData,
+  employeeDialog: false,
+  deleteEmployeeDialog: false
 };
 
 export const getEmployeeList = payload => async dispatch => {
@@ -16,10 +26,10 @@ export const getEmployeeList = payload => async dispatch => {
 
     dispatch(setAllEmployeeList(data));
     if (err === 0) {
-      toast.success(msg);
+      successMsg(msg);
       return data;
     } else if (err === 1) {
-      toast.error(msg);
+      errorMsg(msg);
       return false;
     } else return false;
   } catch (e) {
@@ -37,10 +47,10 @@ export const addEmployeeList = payload => async dispatch => {
     const { data, msg, err } = response.data;
 
     if (err === 0) {
-      toast.success(msg);
+      successMsg(msg);
       return data;
     } else if (err === 1) {
-      toast.error(msg);
+      errorMsg(msg);
       return false;
     } else return false;
   } catch (e) {
@@ -60,10 +70,25 @@ const employeeSlice = createSlice({
     },
     setAllEmployeeList: (state, action) => {
       state.allEmployeeList = action.payload;
+    },
+    setSelectedEmployeeData: (state, action) => {
+      state.selectedEmployeeData = action.payload;
+    },
+    setEmployeeDialog: (state, action) => {
+      state.employeeDialog = action.payload;
+    },
+    setDeleteEmployeeDialog: (state, action) => {
+      state.deleteEmployeeDialog = action.payload;
     }
   }
 });
 
-export const { setEmployeeLoading, setAllEmployeeList } = employeeSlice.actions;
+export const {
+  setEmployeeLoading,
+  setAllEmployeeList,
+  setSelectedEmployeeData,
+  setEmployeeDialog,
+  setDeleteEmployeeDialog
+} = employeeSlice.actions;
 
 export default employeeSlice.reducer;
