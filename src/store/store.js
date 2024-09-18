@@ -4,13 +4,15 @@ import employee from "./slice/employeeSlice";
 import productItem from "./slice/productItemSlice";
 import common from "./slice/commonSlice";
 import manufacturer from "./slice/manufacturerSlice";
+import purchase from "./slice/purchaseSlice";
 
 const reducers = combineReducers({
   product,
   employee,
   productItem,
   common,
-  manufacturer
+  manufacturer,
+  purchase
 });
 
 const store = configureStore({

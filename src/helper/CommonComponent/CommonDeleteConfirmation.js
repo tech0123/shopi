@@ -7,16 +7,16 @@ const CommonDeleteConfirmation = props => {
     <Dialog
       modal
       visible={open}
-      header="Confirm"
-      style={{ width: "32rem" }}
+      header="Delete Confirmation"
+      style={{ width: "32rem", fontFamily: "Helvetica" }}
       breakpoints={{ "960px": "75vw", "641px": "90vw" }}
       footer={footerContent}
       onHide={hideContent}
     >
-      <div className="confirmation-content">
+      <div className="d-flex align-middle justify-center gap-2 confirmation-content">
         <i
-          className="pi pi-exclamation-triangle mr-3"
-          style={{ fontSize: "2rem" }}
+          className="d-flex justify-center pi pi-exclamation-triangle"
+          style={{ alignItems: "center" }}
         />
         <span>{`Are you sure you want to delete the selected item`}</span>
       </div>

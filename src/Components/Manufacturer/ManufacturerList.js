@@ -22,7 +22,7 @@ const initialState = {
     code: "",
     full_name: "",
     email_address: "",
-    phone_number: "",
+    mobile_number: "",
     GST_no: "",
     country: "",
     state: "",
@@ -35,7 +35,7 @@ const schema = yup.object().shape({
     code: yup.string().required("Please enter Code."),
     full_name: yup.string().required("Please enter Full Name."),
     email_address: yup.string().required("Please enter Email Address."),
-    phone_number: yup.string().required("Please enter Phone Number."),
+    mobile_number: yup.string().required("Please enter Mobile Number."),
     GST_no: yup.string().required("Please enter Cost GST No."),
     country: yup.string().required("Please enter Country."),
     state: yup.string().required("Please enter State."),
@@ -54,7 +54,7 @@ const tableColumns = [
     {field: 'code', header:"Code"},
     {field: 'full_name', header:"Name"},
     {field: 'email_address', header:"Email"},
-    {field: 'phone_number', header:"Phone Number"},
+    {field: 'mobile_number', header:"Mobile Number"},
     {field: 'GST_no', header:"GST No."},
     {field: 'country', header:"Country"},
     {field: 'state', header:"State"},
@@ -66,7 +66,7 @@ const inputFieldsList = [
     {fieldTitle:"Code", fieldId:"Code",fieldName:'code', fieldRequired:true},
     {fieldTitle:"Full Name", fieldId:"FullName",fieldName:'full_name', fieldRequired:true},
     {fieldTitle:"Email Address", fieldId:"EmailAddress",fieldName:'email_address', fieldRequired:true},
-    {fieldTitle:"Phone Number", fieldId:"PhoneNumber",fieldName:'phone_number', fieldRequired:true},
+    {fieldTitle:"Mobile Number", fieldId:"MobileNumber",fieldName:'mobile_number', fieldRequired:true},
     {fieldTitle:"GST No.", fieldId:"GSTNo",fieldName:'GST_no', fieldRequired:true},
     {fieldTitle:"Country", fieldId:"Country",fieldName:'country', fieldRequired:true},
     {fieldTitle:"State", fieldId:"State",fieldName:'state', fieldRequired:true},
@@ -196,7 +196,7 @@ const ManufacturerList = () => {
                         Email Address: {rowData.email_address}
                     </p>
                     <p className="text-left text-sm">
-                        Phone Number: {rowData.phone_number}
+                        Phone Number: {rowData.mobile_number}
                     </p>
                 </div>
                 <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
