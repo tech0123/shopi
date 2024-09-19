@@ -61,17 +61,18 @@ const schema = yup.object().shape({
 
 const imageBodyTemplate = rowData => {
   return (
-    <img
-      src={`https://primefaces.org/cdn/primereact/images/product/${rowData?.image}`}
-      alt={rowData.image}
-      className="shadow-2 border-round"
-      style={{ width: "64px" }}
-    />
+    // <img
+    //   src={`https://primefaces.org/cdn/primereact/images/product/${rowData?.image}`}
+    //   alt={rowData.image}
+    //   className="shadow-2 border-round"
+    //   style={{ width: "64px" }}
+    // />
+    <p>Image...</p>
   );
 };
 
 const tableColumns = [
-  { field: "image", header: "Image", body: { imageBodyTemplate } },
+  { field: "image", header: "Image", body:imageBodyTemplate },
   { field: "name", header: "Name" },
   { field: "email", header: "Email" },
   { field: "mobile_number", header: "Mobile Number" },
