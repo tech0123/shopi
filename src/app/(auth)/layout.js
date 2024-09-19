@@ -5,7 +5,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Providers } from "@/store/providers";
 import "primereact/resources/primereact.min.css";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
-import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,20 +15,18 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={inter.className}>
-          {/* <SignedOut>
+    <html lang="en">
+      <body className={inter.className}>
+        {/* <SignedOut>
             <SignInButton />
             </SignedOut>
             <SignedIn>
             <UserButton />
             </SignedIn> */}
-          <Providers>
-            {children}
-          </Providers>
-        </body>
-      </html>
-    </ClerkProvider>
+        <Providers>
+          {children}
+        </Providers>
+      </body>
+    </html>
   );
 }

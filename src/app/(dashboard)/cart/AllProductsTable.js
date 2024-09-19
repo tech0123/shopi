@@ -16,7 +16,7 @@ import { Slider } from 'primereact/slider';
 import { Tag } from 'primereact/tag';
 import { productsData } from '@/helper/commonValues';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCalcValues, setSelectedProducts, setSubTotal } from '@/store/slice/productSlice';
+import { setCalcValues, setSelectedProducts, setSubTotal } from '@/store/slice/cartSlice';
 import _ from 'lodash';
 import Image from 'next/image';
 
@@ -24,7 +24,7 @@ import Image from 'next/image';
 const AllProductsTable = () => {
     const dispatch = useDispatch()
     const [error, setError] = useState([]);
-    const { selectedProducts, calcValues, subTotal } = useSelector(({ productSliceName }) => productSliceName);
+    const { selectedProducts, calcValues, subTotal } = useSelector(({ cart }) => cart);
     const [customers, setCustomers] = useState([]);
     const [selectedCustomers, setSelectedCustomers] = useState([]);
     const [filters, setFilters] = useState({
