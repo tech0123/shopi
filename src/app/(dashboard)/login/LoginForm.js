@@ -9,7 +9,7 @@ export default function LoginForm() {
 
   const onSubmit = async data => {
     try {
-      const response = await fetch("/api/login", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -17,8 +17,8 @@ export default function LoginForm() {
         body: JSON.stringify({ email: data.email, password: data.password })
       });
 
-      const result = await response.json();
-      console.log("result", result);
+      // const result = await response.json();
+      // console.log("result", result);
     } catch (error) {
       console.error("Error:", error);
       throw error;
@@ -27,7 +27,7 @@ export default function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="w-full mt-4">
+      <div className="w-full mt-4 min-x">
         <label className="w-6rem text-gray-700">Username</label>
         <div className="mt-2 mb-10">
           <InputText

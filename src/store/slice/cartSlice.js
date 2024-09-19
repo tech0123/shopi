@@ -29,8 +29,8 @@ export const addProduct = payload => async dispatch => {
   }
 };
 
-export const productSlice = createSlice({
-  name: "productSliceName",
+export const cartSlice = createSlice({
+  name: "cart",
   initialState,
   reducers: {
     setProductLoading: (state, action) => {
@@ -57,6 +57,6 @@ export const {
   setSelectedProducts,
   setCalcValues,
   setSubTotal
-} = productSlice.actions;
+} = cartSlice.actions;
 
-export default productSlice.reducer;
+export default cartSlice.reducer;

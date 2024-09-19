@@ -16,18 +16,18 @@ import { Slider } from 'primereact/slider';
 import { Tag } from 'primereact/tag';
 import { calcInitialValues, productsData } from '@/helper/commonValues';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedProducts, setCalcValues, setSubTotal } from '@/store/slice/productSlice';
+import { setSelectedProducts, setCalcValues, setSubTotal } from '@/store/slice/cartSlice';
 import Image from 'next/image';
 
 const SelectedProductsTable = () => {
     const dispatch = useDispatch()
-    
-    const { selectedProducts, subTotal, calcValues } = useSelector(({ productSliceName }) => productSliceName);
-    
+
+    const { selectedProducts, subTotal, calcValues } = useSelector(({ cart }) => cart);
+
     const [error, setError] = useState([]);
     const [customers, setCustomers] = useState([]);
     const [selectedCustomers, setSelectedCustomers] = useState([]);
-    
+
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
