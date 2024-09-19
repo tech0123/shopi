@@ -22,12 +22,12 @@ export async function POST(request) {
     }
 }
 
-router.post('/edit/:id', async(req, res) => {
-    try {
-        const {s_name, marks, result} = req.body;
-        const crud = await Crud.findByIdAndUpdate(req.params.id, {s_name, marks, result});
-        res.status(200).json({message: "Crud updated successfully", crud});
-    } catch (error) {
-        res.status(500).json({message: "Internal server error", error});
-    }
-})
+// router.post('/edit/:id', async(req, res) => {
+//     try {
+//         const {s_name, marks, result} = req.body;
+//         const crud = await Crud.findByIdAndUpdate(req.params.id, {s_name, marks, result});
+//         res.status(200).json({message: "Crud updated successfully", crud});
+//     } catch (error) {
+//         res.status(500).json({message: "Internal server error", error});
+//     }
+// })
