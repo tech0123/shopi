@@ -11,10 +11,10 @@ import Manufacturer from "@/lib/models/ManufacturerModel";
 export async function POST(request) {
   await connectToMongo();
   try {
-    const data = await request.formData();
-    const file = data.get("file");
-    const modalToPass = data.get("modal_to_pass");
-    const _id = data.get("_id");
+    const data = await request.json();
+    // const file = data.get("file");
+    const modalToPass = data.modal_to_pass;
+    const _id = data._id;
 
     if (!modalToPass || !_id) {
       return NextResponse.json(
@@ -47,24 +47,24 @@ export async function POST(request) {
       );
     }
 
-    const updateData = Object.fromEntries(data.entries());
-    if (file) {
-      const currentImage = existingDocument.image;
+    const updateData = { ...data };
+    // if (file) {
+    //   const currentImage = existingDocument.image;
 
-      const byteData = await file.arrayBuffer();
-      const buffer = Buffer.from(byteData);
-      const uniqueFileName = generateUniqueId();
-      const path = `./public/uploads/${uniqueFileName}.${file?.name?.split('.')?.pop()}`;
-      // const path = `./public${updateData?.image}`;  
-      await writeFile(path, buffer);
-      updateData.image = `/uploads/${uniqueFileName}.${file?.name?.split('.')?.pop()}`;
-      // updateData.image = `${updateData?.image}`;
-      if (currentImage) {
-        await Deleted.create({
-          imageId: currentImage,
-        });
-      }
-    }
+    //   const byteData = await file.arrayBuffer();
+    //   const buffer = Buffer.from(byteData);
+    //   const uniqueFileName = generateUniqueId();
+    //   const path = `./public/uploads/${uniqueFileName}.${file?.name?.split('.')?.pop()}`;
+    //   // const path = `./public${updateData?.image}`;  
+    //   await writeFile(path, buffer);
+    //   updateData.image = `/uploads/${uniqueFileName}.${file?.name?.split('.')?.pop()}`;
+    //   // updateData.image = `${updateData?.image}`;
+    //   if (currentImage) {
+    //     await Deleted.create({
+    //       imageId: currentImage,
+    //     });
+    //   }
+    // }
 
     const updatedDocument = await modalToUse.findByIdAndUpdate(
       _id,

@@ -10,10 +10,9 @@ import Manufacturer from "@/lib/models/ManufacturerModel";
 export async function POST(request) {
   await connectToMongo();
   try {
-    const data = await request.formData();
-    const file = data.get("file");
-    const modalToPass = data.get("modal_to_pass");
-
+    const data = await request.json();
+    // const file = data.get("file");
+    const modalToPass = data?.modal_to_pass;
     let modalToUse;
     if (modalToPass === "product") {
       modalToUse = Product;
@@ -31,18 +30,18 @@ export async function POST(request) {
     }
 
     // Handle file upload if a file is provided
-    if (file) {
-      const byteData = await file.arrayBuffer();
-      const buffer = Buffer.from(byteData);
-      const uniqueFileName = generateUniqueId();
-      const path = `./public/uploads/${uniqueFileName}.${file?.name?.split('.')?.pop()}`;
-      await writeFile(path, buffer);
-      data.set("image", `/uploads/${uniqueFileName}.${file?.name?.split('.')?.pop()}`);
-    }
+    // if (file) {
+    //   const byteData = await file.arrayBuffer();
+    //   const buffer = Buffer.from(byteData);
+    //   const uniqueFileName = generateUniqueId();
+    //   const path = `./public/uploads/${uniqueFileName}.${file?.name?.split('.')?.pop()}`;
+    //   await writeFile(path, buffer);
+    //   data.set("image", `/uploads/${uniqueFileName}.${file?.name?.split('.')?.pop()}`);
+    // }
 
-    const addData = Object.fromEntries(data.entries());
+    const addData = { ...data };
 
-    const newUser = await new modalToUse({ ...addData });
+    const newUser = await new modalToUse(addData);
     const result = await newUser.save();
 
     const allData = await modalToUse.find();
