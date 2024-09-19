@@ -11,7 +11,8 @@ const initialState = {
   allProductList: [],
   productDialog: false,
   productData: [],
-  deleteProductDialog: false
+  deleteProductDialog: false,
+  productImageState: null
 };
 
 export const getAllProductList = () => async dispatch => {
@@ -53,6 +54,9 @@ export const productItemSlice = createSlice({
     },
     setDeleteProductDialog: (state, action) => {
       state.deleteProductDialog = action.payload;
+    },
+    setProductImageState: (state, action) => {
+      state.productImageState = action.payload;
     }
   }
 });
@@ -62,7 +66,8 @@ export const {
   setAllProductList,
   setProductDialog,
   setProductData,
-  setDeleteProductDialog
+  setDeleteProductDialog,
+  setProductImageState
 } = productItemSlice.actions;
 
 export default productItemSlice.reducer;

@@ -63,12 +63,19 @@ const tableColumns = [
 ]
 
   const inputFieldsList = [
-    {fieldTitle:"Manufacturer Name", fieldId:"ManufacturerName",fieldName:'manufacturer_name', fieldRequired:true},
-    {fieldTitle:"Purchase Date", fieldId:"PurchaseDate",fieldName:'purchase_date', fieldRequired:true},
-    {fieldTitle:"Bill No", fieldId:"BillNo",fieldName:'bill_no', fieldRequired:true},
-    {fieldTitle:"GST No", fieldId:"GSTNo",fieldName:'gst_no', fieldRequired:true},
-    {fieldTitle:"Mobile Number", fieldId:"Mobile Number",fieldName:'mobile_number', fieldRequired:true},
-    {fieldTitle:"Address", fieldId:"Address",fieldName:'address', fieldRequired:true},
+    {
+      fieldTitle:"Manufacturer Name", 
+      fieldId:"ManufacturerName",
+      fieldName:'manufacturer_name', 
+      type:'single_select', 
+      options:[], 
+      isRequired:true
+    },
+    {fieldTitle:"Purchase Date", fieldId:"PurchaseDate",fieldName:'purchase_date', isRequired:true},
+    {fieldTitle:"Bill No", fieldId:"BillNo",fieldName:'bill_no', isRequired:true},
+    {fieldTitle:"GST No", fieldId:"GSTNo",fieldName:'gst_no', isRequired:true},
+    {fieldTitle:"Mobile Number", fieldId:"Mobile Number",fieldName:'mobile_number', isRequired:true},
+    {fieldTitle:"Address", fieldId:"Address",fieldName:'address', isRequired:true},
   ]
   
 
@@ -166,11 +173,13 @@ const AddPurchase = () => {
                 return(
                   <Col lg={3} key={i}>
                     <CommonInputText
-                      id={field.fieldId}
-                      title={field.fieldTitle}
+                      type={field?.type}
+                      id={field?.fieldId}
+                      name={field?.fieldName}
                       body={field?.fieldBody}
-                      name={field.fieldName}
-                      isRequired={field.fieldRequired}
+                      options={field?.options}
+                      title={field?.fieldTitle}
+                      isRequired={field?.isRequired}
                     />
                   </Col>
                 )

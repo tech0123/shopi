@@ -1,64 +1,8 @@
-// import connectToMongo from "@/lib/db";
-// import Product from "@/lib/models/ProductModel";
-// import Customer from "@/lib/models/CustomerModel"; // Assuming you have a Customer model
-// import { NextResponse } from "next/server";
-// import Employee from "@/lib/models/EmployeeModel";
-
-// export async function POST(request) {
-//   await connectToMongo();
-
-//   try {
-//     let modalToUse;
-//     const { modal_to_pass, _id, ...rest } = await request.json();
-
-//     if (!modal_to_pass || !_id) {
-//       return NextResponse.json(
-//         { err: 1, success: false, msg: "Type and ID are required" },
-//         { status: 400 }
-//       );
-//     }
-
-//     if (modal_to_pass === "product") {
-//       modalToUse = Product;
-//     } else if (modal_to_pass === "customer") {
-//       modalToUse = Customer;
-//     } else if (modal_to_pass === "employee") {
-//       modalToUse = Employee;
-//     } else {
-//       return NextResponse.json(
-//         { err: 1, success: false, msg: "Invalid Modal" },
-//         { status: 400 }
-//       );
-//     }
-
-//     const updatedDocument = await modalToUse.findByIdAndUpdate(
-//       _id,
-//       { $set: rest },
-//       { new: true }
-//     );
-
-//     const data = await modalToUse.find();
-
-//     return NextResponse.json(
-//       {
-//         data: data || [],
-//         err: 0,
-//         success: true,
-//         msg: `update ${modal_to_pass} successfully!`
-//       },
-//       { status: 200 }
-//     );
-//   } catch (error) {
-//     return NextResponse.json(
-//       { err: 1, success: false, msg: error.message },
-//       { status: 500 }
-//     );
-//   }
-// }
 import connectToMongo from "@/lib/db";
 import Product from "@/lib/models/ProductModel";
 import Customer from "@/lib/models/CustomerModel";
 import Employee from "@/lib/models/EmployeeModel";
+import Deleted from "@/lib/models/DeletedModel";
 import { writeFile } from "fs/promises";
 import { NextResponse } from "next/server";
 import { generateUniqueId } from "@/helper/commonValues";
@@ -68,9 +12,9 @@ export async function POST(request) {
   await connectToMongo();
   try {
     const data = await request.formData();
-    const file = data.get("file"); // Retrieve file from formData
-    const modalToPass = data.get("modal_to_pass"); // Retrieve modal_to_pass from formData
-    const _id = data.get("_id"); // Retrieve the ID from formData
+    const file = data.get("file");
+    const modalToPass = data.get("modal_to_pass");
+    const _id = data.get("_id");
 
     if (!modalToPass || !_id) {
       return NextResponse.json(
@@ -95,14 +39,31 @@ export async function POST(request) {
       );
     }
 
+    const existingDocument = await modalToUse.findById(_id);
+    if (!existingDocument) {
+      return NextResponse.json(
+        { err: 1, success: false, msg: `${modalToPass} not found` },
+        { status: 404 }
+      );
+    }
+
     const updateData = Object.fromEntries(data.entries());
     if (file) {
+      const currentImage = existingDocument.image;
+
       const byteData = await file.arrayBuffer();
       const buffer = Buffer.from(byteData);
       const uniqueFileName = generateUniqueId();
-      const path = `./public/uploads/${uniqueFileName}`;
+      const path = `./public/uploads/${uniqueFileName}.${file?.name?.split('.')?.pop()}`;
+      // const path = `./public${updateData?.image}`;  
       await writeFile(path, buffer);
-      updateData.image = `/uploads/${uniqueFileName}`;
+      updateData.image = `/uploads/${uniqueFileName}.${file?.name?.split('.')?.pop()}`;
+      // updateData.image = `${updateData?.image}`;
+      if (currentImage) {
+        await Deleted.create({
+          imageId: currentImage,
+        });
+      }
     }
 
     const updatedDocument = await modalToUse.findByIdAndUpdate(
@@ -111,7 +72,7 @@ export async function POST(request) {
       { new: true }
     );
 
-    const allData = await modalToUse.find(); // Fetch updated data
+    const allData = await modalToUse.find();
 
     return NextResponse.json(
       {

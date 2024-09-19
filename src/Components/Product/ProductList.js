@@ -8,10 +8,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { FormProvider, useForm } from "react-hook-form";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
-import { addItem, getAllDataList, getSingleItem, updateItem } from "@/store/slice/commonSlice";
-import { setAllProductList, setDeleteProductDialog, setProductData, setProductDialog } from "@/store/slice/productItemSlice";
-import { memo, useCallback, useEffect } from "react";
+import { addItem, getAllDataList, getSingleItem, updateItem, deleteItem } from "@/store/slice/commonSlice";
+import { setAllProductList, setDeleteProductDialog, setProductData, setProductDialog, setProductImageState } from "@/store/slice/productItemSlice";
+import { memo, useCallback, useEffect, useState } from "react";
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
+import Image from "next/image";
 
 const initialState = {
     image: "",
@@ -50,8 +51,8 @@ const getSeverity = product => {
 const imageBodyTemplate = rowData => {
   return (
     <Image
-      src={rowData.image}
-      alt={rowData.image || "Image not found"}
+      src={rowData?.image}
+      alt={rowData?.image || "Image not found"}
       className="shadow-2 border-round"
       width={150}
       height={150}
@@ -90,11 +91,11 @@ const ProductList = () => {
   // const [productData, setProductData] = useState(initialState);
   // const [deleteProductDialog, setDeleteProductDialog] = useState(false);
 
-  const { allProductList, productDialog, productData, deleteProductDialog } = useSelector(({productItem}) => productItem)
+  const { allProductList, productDialog, productData, deleteProductDialog, productImageState } = useSelector(({productItem}) => productItem)
   const {commonLoading } = useSelector(({common}) => common)
 
   const fetchProductList = useCallback(async () => {
-      const payload = { modal_to_pass: "Products" }
+      const payload = { modal_to_pass: "Products"}
       const res = await dispatch(getAllDataList(payload))
       if(res){
         dispatch(setAllProductList(res))
@@ -113,25 +114,20 @@ const ProductList = () => {
   const onSubmit = async (data) => {
     let res = '';
     const imgData = new FormData();
-
-    // Append all data except the file to FormData
     for (const key in data) {
       imgData.append(key, data[key]);
     }
 
-    // Append file only if it exists
-    if (file) {
-      imgData.append("file", file);
+    if (productImageState) {
+      imgData.append("file", productImageState);
     }
 
-    imgData.append("modal_to_pass", "product"); // Pass modal type
+    imgData.append("modal_to_pass", "product");
 
-    // Dispatch the action to add/update item
     if (data?._id) {
-      imgData.append("_id", data?._id);
-      res = await dispatch(updateItem(imgData)); // For update, you can handle file as needed
+      res = await dispatch(updateItem(imgData));
     } else {
-      res = await dispatch(addItem(imgData)); // For adding a new product
+      res = await dispatch(addItem(imgData));
     }
 
     if (res) {
@@ -140,15 +136,16 @@ const ProductList = () => {
     }
   };
 
-
   const handleAddItem = () => {
     dispatch(setProductData(initialState));
+    dispatch(setProductImageState(null));
     methods.reset(initialState);
     dispatch(setProductDialog(true))
   };
 
   const handleEditItem = async (product) => {
     dispatch(setProductDialog(true))
+    dispatch(setProductImageState(null));
     const payload = {modal_to_pass:"product", id: product?._id}
     const res = await dispatch(getSingleItem(payload))
     
@@ -198,8 +195,8 @@ const ProductList = () => {
       <div className="container flex flex-col border-white border-2 w-full">
         <div className="flex justify-center border-b-2 border-white p-2">
           <Image
-            src={rowData.image}
-            alt={rowData.image || "Image not found"}
+            src={rowData?.image}
+            alt={rowData?.image || "Image not found"}
             width={150}
             height={150}
           />
@@ -286,15 +283,16 @@ const ProductList = () => {
               })}
               </Row>
               <div class="file-upload">
-                <label for="file-upload" class={`custom-file-upload ${file ? 'text-black bg-transparent border-3 border-black' : 'bg-blak text-white'} font-bold py-2 px-4 rounded shadow-md hover:bg-cyan-600 cursor-pointer`}>
-                  + Browse
+                <label for="file-upload" class='custom-file-upload  bg-black text-white  font-bold py-2 px-4 rounded shadow-md hover:bg-cyan-600 cursor-pointer'>
+                  {productImageState ? 'Uploaded' : productData?._id ? 'Change Image' : "Choose Image"}
                 </label>
                 <input
                   id="file-upload"
                   type="file"
                   class="hidden"
                   name="file"
-                  onChange={(e) => setFile(e.target.files?.[0])}
+                  disabled={productImageState}
+                  onChange={(e) => dispatch(setProductImageState(e.target.files?.[0]))}
                 />
               </div>
             </div>

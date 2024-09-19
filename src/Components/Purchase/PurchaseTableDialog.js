@@ -24,32 +24,34 @@ const inputFieldsList = [
     fieldTitle: "Product Name",
     fieldId: "ProductName",
     fieldName: "product_name",
-    fieldRequired: true
+    type:'single_select', 
+    options:[], 
+    isequired: true
   },
   {
     fieldTitle: "Quantity",
     fieldId: "Quantity",
     fieldName: "quantity",
-    fieldRequired: true
+    isequired: true
   },
   {
     fieldTitle: "Selling Price",
     fieldId: "SellingPrice",
     fieldName: "selling_price",
-    fieldRequired: true
+    isequired: true
   },
   {
     fieldTitle: "Cost Price",
     fieldId: "CostPrice",
     fieldName: "cost_price",
-    fieldRequired: true
+    isequired: true
   },
-  { fieldTitle: "Tax", fieldId: "Tax", fieldName: "tax", fieldRequired: true },
+  { fieldTitle: "Tax", fieldId: "Tax", fieldName: "tax", isequired: true },
   {
     fieldTitle: "Description",
     fieldId: "Description",
     fieldName: "description",
-    fieldRequired: true
+    isequired: true
   }
 ];
 
@@ -117,11 +119,13 @@ const PurchaseTableDialog = props => {
                 return (
                   <Col lg={6} key={i}>
                     <CommonInputText
-                      id={field.fieldId}
-                      title={field.fieldTitle}
+                      id={field?.fieldId}
+                      title={field?.fieldTitle}
                       body={field?.fieldBody}
-                      name={field.fieldName}
-                      isRequired={field.fieldRequired}
+                      name={field?.fieldName}
+                      type={field?.type}
+                      options={field?.options}
+                      isRequired={field?.isequired}
                     />
                   </Col>
                 );
