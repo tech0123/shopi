@@ -20,14 +20,14 @@ import { setSelectedProducts, setCalcValues, setSubTotal } from '@/store/slice/p
 import Image from 'next/image';
 
 const SelectedProductsTable = () => {
-    const { selectedProducts, subTotal, calcValues } = useSelector(({ productSliceName }) => productSliceName);
-    console.log('%c%s', 'color: lime', '===> calcValues:', calcValues);
     const dispatch = useDispatch()
+    
+    const { selectedProducts, subTotal, calcValues } = useSelector(({ productSliceName }) => productSliceName);
+    
     const [error, setError] = useState([]);
-
     const [customers, setCustomers] = useState([]);
     const [selectedCustomers, setSelectedCustomers] = useState([]);
-
+    
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },

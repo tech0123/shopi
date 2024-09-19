@@ -9,7 +9,8 @@ export async function POST(request) {
   await connectToMongo();
   try {
     let modalToUse;
-    const { modal_to_pass } = await request.json();
+    let data = [];
+    const { modal_to_pass, field_options=[] } = await request.json();
 
     if (modal_to_pass === "Customers") {
       modalToUse = Customer;
@@ -20,10 +21,14 @@ export async function POST(request) {
     } else if (modal_to_pass === "Manufacturers") {
       modalToUse = Manufacturer;
     } else {
-      console.log("err");
+      return NextResponse.json(
+        { data: [], err: 1, success: false, msg: "Invalid Modal" + error.message, },
+        { status: 400 }
+      );
     }
 
-    const data = await modalToUse.find();
+    const modifiedOptionKeys = field_options?.join(" ");
+    data = await modalToUse.find().select(modifiedOptionKeys);
 
     return NextResponse.json(
       {

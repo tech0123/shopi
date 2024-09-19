@@ -37,7 +37,8 @@ const employeeRoleOptions = [
   { label: "Owner", value: 1 },
   { label: "Manager", value: 2 },
   { label: "Sales-Men", value: 3 },
-  { label: "C.A.", value: 4 }
+  { label: "C.A.", value: 4 },
+  { label: "Godown", value: 5 }
 ]
 
 const initialState = {
@@ -261,12 +262,9 @@ const EmployeeList = () => {
       handleDeleteItem={handleDeleteItem}
       responsiveTableTemplete={responsiveTableTemplete}
       deleteItemDialog={deleteEmployeeDialog}
-      // setDeleteItemDialog='setDeleteProductDialog'
-      // setAllItemList='setAllEmployeeList'
       hideDeleteDialog={hideProductDeleteDialog}
       deleteItem={handleDeleteProduct}
       selectedItemData={selectedEmployeeData}
-      // selectedItemName={selectedEmployeeData?.name}
     />
 
     <Dialog
