@@ -13,17 +13,18 @@ import { setAllProductList, setDeleteProductDialog, setProductData, setProductDi
 import { memo, useCallback, useEffect, useState } from "react";
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
 import Image from "next/image";
+import { fileToBase64 } from "@/helper/commonValues";
 
 const initialState = {
-    image: "",
-    name: "",
-    description: "",
-    available_quantity: "",
-    discount: "",
-    tax: "",
-    selling_price: "",
-    cost_price: ""
-  };
+  image: "",
+  name: "",
+  description: "",
+  available_quantity: "",
+  discount: "",
+  tax: "",
+  selling_price: "",
+  cost_price: ""
+};
 
 const schema = yup.object().shape({
   name: yup.string().required("Please enter Name."),
@@ -52,7 +53,7 @@ const imageBodyTemplate = rowData => {
   return (
     <Image
       src={rowData?.image}
-      alt={rowData?.image || "Image not found"}
+      alt={rowData?._id || "Image not found"}
       className="shadow-2 border-round"
       width={150}
       height={150}
@@ -62,49 +63,49 @@ const imageBodyTemplate = rowData => {
 };
 
 const tableColumns = [
-  {field: 'image', header:"Image", body: imageBodyTemplate},
-  {field: 'id', header:"Id"},
-  {field: 'name', header:"Name"},
-  {field: 'description', header:"Description"},
-  {field: 'available_quantity', header:"Available Quantity"},
-  {field: 'discount', header:"Discount"},
-  {field: 'tax', header:"Tax"},
-  {field: 'selling_price', header:"Selling Price"},
-  {field: 'cost_price', header:"Cost Price"},
+  { field: 'image', header: "Image", body: imageBodyTemplate },
+  { field: 'id', header: "Id" },
+  { field: 'name', header: "Name" },
+  { field: 'description', header: "Description" },
+  { field: 'available_quantity', header: "Available Quantity" },
+  { field: 'discount', header: "Discount" },
+  { field: 'tax', header: "Tax" },
+  { field: 'selling_price', header: "Selling Price" },
+  { field: 'cost_price', header: "Cost Price" },
 ]
 
 const inputFieldsList = [
-  {fieldTitle:"Name", fieldId:"Name",fieldName:'name', fieldRequired:true},
-  {fieldTitle:"Description", fieldId:"Description",fieldName:'description', fieldRequired:true},
-  {fieldTitle:"Available Quantity", fieldId:"AvailableQuantity",fieldName:'available_quantity', fieldRequired:true},
-  {fieldTitle:"Discount", fieldId:"Discount",fieldName:'discount', fieldRequired:true},
-  {fieldTitle:"Tax", fieldId:"Tax",fieldName:'tax', fieldRequired:true},
-  {fieldTitle:"Selling Price", fieldId:"SellingPrice",fieldName:'selling_price', fieldRequired:true},
-  {fieldTitle:"Cost Price", fieldId:"CostPrice",fieldName:'cost_price', fieldRequired:true},
+  { fieldTitle: "Name", fieldId: "Name", fieldName: 'name', fieldRequired: true },
+  { fieldTitle: "Description", fieldId: "Description", fieldName: 'description', fieldRequired: true },
+  { fieldTitle: "Available Quantity", fieldId: "AvailableQuantity", fieldName: 'available_quantity', fieldRequired: true },
+  { fieldTitle: "Discount", fieldId: "Discount", fieldName: 'discount', fieldRequired: true },
+  { fieldTitle: "Tax", fieldId: "Tax", fieldName: 'tax', fieldRequired: true },
+  { fieldTitle: "Selling Price", fieldId: "SellingPrice", fieldName: 'selling_price', fieldRequired: true },
+  { fieldTitle: "Cost Price", fieldId: "CostPrice", fieldName: 'cost_price', fieldRequired: true },
 ]
 
 const ProductList = () => {
   const dispatch = useDispatch();
 
-  const [file, setFile] = useState()
+  // const [file, setFile] = useState()
   // const [productDialog, setProductDialog] = useState(false);
   // const [productData, setProductData] = useState(initialState);
   // const [deleteProductDialog, setDeleteProductDialog] = useState(false);
 
-  const { allProductList, productDialog, productData, deleteProductDialog, productImageState } = useSelector(({productItem}) => productItem)
-  const {commonLoading } = useSelector(({common}) => common)
+  const { allProductList, productDialog, productData, deleteProductDialog, productImageState } = useSelector(({ productItem }) => productItem)
+  const { commonLoading } = useSelector(({ common }) => common)
 
   const fetchProductList = useCallback(async () => {
-      const payload = { modal_to_pass: "Products"}
-      const res = await dispatch(getAllDataList(payload))
-      if(res){
-        dispatch(setAllProductList(res))
-      }
-    },[])
-  
-    useEffect(() => {
-      fetchProductList()
-    }, []);
+    const payload = { modal_to_pass: "Products" }
+    const res = await dispatch(getAllDataList(payload))
+    if (res) {
+      dispatch(setAllProductList(res))
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchProductList()
+  }, []);
 
   const methods = useForm({
     resolver: yupResolver(schema),
@@ -113,21 +114,21 @@ const ProductList = () => {
 
   const onSubmit = async (data) => {
     let res = '';
-    const imgData = new FormData();
-    for (const key in data) {
-      imgData.append(key, data[key]);
+    let payload = {
+      ...data,
+      modal_to_pass: "product"
     }
 
     if (productImageState) {
-      imgData.append("file", productImageState);
+      const base64Image = await fileToBase64(productImageState);
+      payload = { ...payload, image: base64Image }
     }
 
-    imgData.append("modal_to_pass", "product");
 
     if (data?._id) {
-      res = await dispatch(updateItem(imgData));
+      res = await dispatch(updateItem(payload));
     } else {
-      res = await dispatch(addItem(imgData));
+      res = await dispatch(addItem(payload));
     }
 
     if (res) {
@@ -146,10 +147,10 @@ const ProductList = () => {
   const handleEditItem = async (product) => {
     dispatch(setProductDialog(true))
     dispatch(setProductImageState(null));
-    const payload = {modal_to_pass:"product", id: product?._id}
+    const payload = { modal_to_pass: "product", id: product?._id }
     const res = await dispatch(getSingleItem(payload))
-    
-    if(res){
+
+    if (res) {
       dispatch(setProductData(res));
       methods.reset(res);
     }
@@ -168,7 +169,7 @@ const ProductList = () => {
   const handleDeleteProduct = async () => {
     const payload = { modal_to_pass: 'product', id: productData?._id };
     const res = await dispatch(deleteItem(payload))
-    if(res){
+    if (res) {
       dispatch(setAllProductList(res))
       dispatch(setDeleteProductDialog(false));
     }
@@ -240,10 +241,10 @@ const ProductList = () => {
 
   return (
     <>
-    {commonLoading && <Loader/>}
+      {commonLoading && <Loader />}
       <CommonDataTable
         tableName="Products"
-        moduleName='product' 
+        moduleName='product'
         tableColumns={tableColumns}
         allItemList={allProductList}
         handleAddItem={handleAddItem}
@@ -269,18 +270,18 @@ const ProductList = () => {
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <div className="form_container">
               <Row>
-              {inputFieldsList.map((field,i) => {
-                return(
-                  <Col lg={6} key={i}>
-                    <CommonInputText
-                      id={field.fieldId}
-                      title={field.fieldTitle}
-                      name={field.fieldName}
-                      isRequired={field.fieldRequired}
-                    />
-                  </Col>
-                )
-              })}
+                {inputFieldsList.map((field, i) => {
+                  return (
+                    <Col lg={6} key={i}>
+                      <CommonInputText
+                        id={field.fieldId}
+                        title={field.fieldTitle}
+                        name={field.fieldName}
+                        isRequired={field.fieldRequired}
+                      />
+                    </Col>
+                  )
+                })}
               </Row>
               <div class="file-upload">
                 <label for="file-upload" class='custom-file-upload  bg-black text-white  font-bold py-2 px-4 rounded shadow-md hover:bg-cyan-600 cursor-pointer'>

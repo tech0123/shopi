@@ -8,7 +8,8 @@ export const linksOption = [
   { href: "/reports", text: "Reports" },
   { href: "/company", text: "Company" },
   { href: "/employee", text: "Employee" },
-  { href: "/manufacturer", text: "Manufacturer" }
+  { href: "/manufacturer", text: "Manufacturer" },
+  { href: "/attendence", text: "Employee Attendence" }
 ];
 
 export const usersOption = [
@@ -39,6 +40,16 @@ export const generateUniqueId = () => {
   const randomPart = Math.random().toString(16).substr(2, 12);
   return timestamp + randomPart;
 };
+
+export const fileToBase64 = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 
 export const FakeData = [
   {
