@@ -1,4 +1,4 @@
-import { calcInitialValues, roastError } from "@/helper/commonValues";
+import { calcInitialValues } from "@/helper/commonValues";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -6,27 +6,6 @@ const initialState = {
   selectedProducts: [],
   subTotal: 0,
   calcValues: calcInitialValues
-};
-
-export const addProduct = payload => async dispatch => {
-  try {
-    dispatch(setProductLoading(true));
-    const response = await axios.get(`/api/products/getProduct`, payload);
-    const { data, msg, err } = response.data;
-
-    if (err === 0) {
-      successMsg(msg);
-      return data;
-    } else if (err === 1) {
-      errorMsg(msg);
-      return false;
-    } else return false;
-  } catch (e) {
-    roastError(e);
-    return false;
-  } finally {
-    dispatch(setProductLoading(false));
-  }
 };
 
 export const cartSlice = createSlice({
