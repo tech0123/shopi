@@ -159,7 +159,7 @@ const AllProductsTable = () => {
                 const { [data?._id]: currentErrors = {} } = prevErrors;
                 const { qty, ...remainingErrors } = currentErrors;
                 if (Object.keys(remainingErrors).length === 0) {
-                    const { [data?._id]: _, ...otherErrors } = prevErrors; // Remove `data?._id` entry completely
+                    const { [data?._id]: _, ...otherErrors } = prevErrors; 
                     return otherErrors;
                 }
                 return {
@@ -211,7 +211,7 @@ const AllProductsTable = () => {
                 const { [data?._id]: currentErrors = {} } = prevErrors;
                 const { discount, ...remainingErrors } = currentErrors;
                 if (Object.keys(remainingErrors).length === 0) {
-                    const { [data?._id]: _, ...otherErrors } = prevErrors; // Remove `data?._id` entry completely
+                    const { [data?._id]: _, ...otherErrors } = prevErrors; 
                     return otherErrors;
                 }
                 return {
