@@ -2,10 +2,11 @@ import { calcInitialValues } from "@/helper/commonValues";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  allProductList: [],
+  allProductsData: [],
   selectedProducts: [],
   subTotal: 0,
-  calcValues: calcInitialValues
+  calcValues: calcInitialValues,
+  modeOfPayment:"cash"
 };
 
 export const cartSlice = createSlice({
@@ -15,8 +16,8 @@ export const cartSlice = createSlice({
     setProductLoading: (state, action) => {
       state.productLoading = action.payload;
     },
-    setAllProductList: (state, action) => {
-      state.allProductList = action.payload;
+    setAllProductsData: (state, action) => {
+      state.allProductsData = action.payload;
     },
     setSelectedProducts: (state, action) => {
       state.selectedProducts = action.payload;
@@ -26,16 +27,20 @@ export const cartSlice = createSlice({
     },
     setCalcValues: (state, action) => {
       state.calcValues = action.payload;
-    }
+    },
+    setModeOfPayment: (state, action) => {
+      state.modeOfPayment = action.payload;
+    },
   }
 });
 
 export const {
   setProductLoading,
-  setAllProductList,
+  setAllProductsData,
   setSelectedProducts,
   setCalcValues,
-  setSubTotal
+  setSubTotal,
+  setModeOfPayment
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

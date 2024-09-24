@@ -11,21 +11,20 @@ import { InputIcon } from 'primereact/inputicon';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllDataList } from '@/store/slice/commonSlice';
 import React, { useState, useEffect, useCallback } from 'react';
-import { setAllProductList, setCalcValues, setSelectedProducts, setSubTotal } from '@/store/slice/cartSlice';
+import { setAllProductsData, setCalcValues, setSelectedProducts, setSubTotal } from '@/store/slice/cartSlice';
 
 const AllProductsTable = () => {
     const dispatch = useDispatch()
     const [error, setError] = useState([]);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
-    const { selectedProducts, calcValues, subTotal, allProductList } = useSelector(({ cart }) => cart);
+    const { selectedProducts, calcValues, subTotal, allProductsData } = useSelector(({ cart }) => cart);
     const [filters, setFilters] = useState({ global: { value: null, matchMode: FilterMatchMode.CONTAINS } });
 
     const fetchProductList = useCallback(async () => {
         const payload = { modal_to_pass: "Products" }
         const res = await dispatch(getAllDataList(payload))
         if (res) {
-            console.log('%c%s', 'color: lime', '===> res:', res);
-            dispatch(setAllProductList(modifyProducts(res)))
+            dispatch(setAllProductsData(modifyProducts(res)))
         }
     }, [])
 
@@ -46,7 +45,7 @@ const AllProductsTable = () => {
 
     const onGlobalFilterChange = (e) => {
         const value = e.target.value;
-        setGlobalFilterValue(value);
+        dispatch(setGlobalFilterValue(value));
         debounceFilter(value);
     };
 
@@ -64,7 +63,7 @@ const AllProductsTable = () => {
             <div className="flex flex-wrap gap-2 justify-content-between align-items-center m-4">
                 {/* <h4 className="m-0">Customers</h4> */}
                 <IconField iconPosition="right" className='min-w-full min-h-10'>
-                    <InputIcon className="pi pi-search mr-5" />
+                    <InputIcon className="pi pi-search mr-3 " />
                     <InputText className='min-w-full h-10 p-3 text-white' value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" />
                 </IconField>
             </div>
@@ -74,7 +73,7 @@ const AllProductsTable = () => {
     const imageBodyTemplate = (rowData) => {
         return (
             <div className="flex align-items-center gap-2 max-w-1rem lg:max-w-1rem">
-                <Image alt={rowData._id} src={rowData.image} height={100} width={100} style={{ objectFit: 'cover' }} className="max-w-1rem lg:max-w-1rem shadow-2 border-round rounded" />
+                <Image alt={rowData._id} src="https://blogger.googleusercontent.com/img/a/AVvXsEhMzq6e-JVkKk7sKU1jybeyMqN5JuFLLvTLYkoktq8R_D6b5RR2K9aWDZiMK5kCZuzjrCXl2D0dicVFTRbj-zWTOrZUUUyic0LhPEETRjQsyEEwqZCelfTaCjeH0lGkF4IqoJfP-KmNoW1IdXXsY1vqNLC3Uj_x4VpIlDT7GibSNrhDj8eDQnXdniOBS4k" height={100} width={100} style={{ objectFit: 'cover' }} className="max-w-1rem lg:max-w-1rem shadow-2 border-round rounded" />
             </div>
         );
     };
@@ -95,19 +94,19 @@ const AllProductsTable = () => {
             ...calcValues,
             grandTotal: parseFloat(afterDiscount + parseFloat((calcValues.tax * afterDiscount) / 100)).toFixed(2)
         }))
-        setGlobalFilterValue('');
+        dispatch(setGlobalFilterValue(''));
         setFilters({
             ...filters,
             global: { value: '', matchMode: FilterMatchMode.CONTAINS }
         });
-        const i = allProductList.findIndex((item) => { return item.id === data?._id });
+        const i = allProductsData.findIndex((item) => { return item._id === data?._id });
         if (i !== -1) {
             const updatedList = [
-                ...allProductList.slice(0, i),
-                { ...allProductList[i], qty: '', discount: '' },
-                ...allProductList.slice(i + 1),
+                ...allProductsData.slice(0, i),
+                { ...allProductsData[i], qty: '', discount: '' },
+                ...allProductsData.slice(i + 1),
             ];
-            dispatch(setAllProductList([...allProductList]));
+            dispatch(setAllProductsData([...allProductsData]));
         }
     }
 
@@ -129,6 +128,7 @@ const AllProductsTable = () => {
 
                     {/* Left Section */}
                     <div className="flex-1 p-3">
+                        <p className='text-left'>Name: {data.name}</p>
                         <p className='text-left'>QTY: {qtyBody(data)}</p>
                         <p className='text-left'>Stock: {data.stock}</p>
                     </div>
@@ -149,17 +149,17 @@ const AllProductsTable = () => {
     const qtyBody = (data) => {
         const handleChange = (e) => {
             const value = parseInt(e.target.value || 0);
-            const index = allProductList?.findIndex(product => product._id === data?._id);
-            const newProduct = [...allProductList];
+            const index = allProductsData?.findIndex(product => product._id === data?._id);
+            const newProduct = [...allProductsData];
             const amount = value <= data.stock ? value * parseFloat(data.selling_price) : data.amount;
             const discount = value <= data.stock ? data.discount : 0;
             newProduct[index] = { ...newProduct[index], qty: value, amount: amount, discount: discount };
-            dispatch(setAllProductList(newProduct));
+            dispatch(setAllProductsData(newProduct));
             setError(prevErrors => {
                 const { [data?._id]: currentErrors = {} } = prevErrors;
                 const { qty, ...remainingErrors } = currentErrors;
                 if (Object.keys(remainingErrors).length === 0) {
-                    const { [data?._id]: _, ...otherErrors } = prevErrors; 
+                    const { [data?._id]: _, ...otherErrors } = prevErrors;
                     return otherErrors;
                 }
                 return {
@@ -201,17 +201,17 @@ const AllProductsTable = () => {
     const discountBody = (data) => {
         const handleChange = (e) => {
             const value = parseInt(e.target.value || 0);
-            const index = allProductList?.findIndex(product => product._id === data?._id);
-            const newProduct = [...allProductList];
+            const index = allProductsData?.findIndex(product => product._id === data?._id);
+            const newProduct = [...allProductsData];
             const ogAmt = parseInt(data.qty) * parseFloat(data.selling_price);
             const amount = value <= ogAmt ? ((ogAmt) - value).toFixed(2) : (ogAmt);
             newProduct[index] = { ...newProduct[index], discount: value, amount: amount };
-            dispatch(setAllProductList(newProduct));
+            dispatch(setAllProductsData(newProduct));
             setError(prevErrors => {
                 const { [data?._id]: currentErrors = {} } = prevErrors;
                 const { discount, ...remainingErrors } = currentErrors;
                 if (Object.keys(remainingErrors).length === 0) {
-                    const { [data?._id]: _, ...otherErrors } = prevErrors; 
+                    const { [data?._id]: _, ...otherErrors } = prevErrors;
                     return otherErrors;
                 }
                 return {
@@ -246,10 +246,10 @@ const AllProductsTable = () => {
                     onBlur={handleChange}
                     onChange={(e) => {
                         const value = parseInt(e.target.value || 0);
-                        const index = allProductList?.findIndex(product => product._id === data?._id);
-                        const newProduct = [...allProductList];
+                        const index = allProductsData?.findIndex(product => product._id === data?._id);
+                        const newProduct = [...allProductsData];
                         newProduct[index] = { ...newProduct[index], discount: value };
-                        dispatch(setAllProductList(newProduct));
+                        dispatch(setAllProductsData(newProduct));
                     }}
                     className={`w-full h-10 p-3 ${error[data?._id]?.discount ? 'border-red-500 border-2' : ''}`}
                 />
@@ -262,12 +262,13 @@ const AllProductsTable = () => {
         <div className="card !border-none !bg-gray-800">
             <DataTable
                 className='max-xl:hidden'
-                value={globalFilterValue === "" ? [{}] : allProductList?.filter((p) => !selectedProducts?.some(s => s?._id === p._id))} paginator={!!globalFilterValue} header={header} rows={10}
+                value={globalFilterValue === "" ? [{}] : allProductsData?.filter((p) => !selectedProducts?.some(s => s?._id === p._id))} paginator={!!globalFilterValue} header={header} rows={10}
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 rowsPerPageOptions={[10, 25, 50]}
                 filters={filters} filterDisplay="menu" globalFilterFields={['name']}
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
                 {globalFilterValue ? <Column header="" body={imageBodyTemplate} className="pl-5" /> : null}
+                {globalFilterValue ? <Column header="Name" field="name" /> : null}
                 {globalFilterValue ? <Column header="Qty" field="qty" body={qtyBody} style={{ minWidth: '14rem' }} /> : null}
                 {globalFilterValue ? <Column header="Stock" field="stock" /> : null}
                 {globalFilterValue ? <Column header="Discount" field="discount" body={discountBody} style={{ minWidth: '14rem' }} /> : null}
@@ -277,7 +278,7 @@ const AllProductsTable = () => {
             </DataTable>
             <DataTable
                 className='block xl:hidden'
-                value={globalFilterValue === "" ? [{}] : allProductList?.filter((p) => !selectedProducts?.some(s => s.id === p.id))} paginator={!!globalFilterValue} header={header} rows={10}
+                value={globalFilterValue === "" ? [{}] : allProductsData?.filter((p) => !selectedProducts?.some(s => s._id === p._id))} paginator={!!globalFilterValue} header={header} rows={10}
                 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                 rowsPerPageOptions={[10, 25, 50]}
                 filters={filters} filterDisplay="menu" globalFilterFields={['name']}
