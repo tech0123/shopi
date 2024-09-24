@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
@@ -7,13 +7,81 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
 import { calcInitialValues, productsData } from '@/helper/commonValues';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedProducts, setCalcValues, setSubTotal } from '@/store/slice/cartSlice';
+import { setSelectedProducts, setCalcValues, setSubTotal, setModeOfPayment } from '@/store/slice/cartSlice';
 import Image from 'next/image';
+import { Accordion, AccordionTab } from 'primereact/accordion';
+import '@/app/(dashboard)/cart/cart.css'
+import { InputSwitch } from 'primereact/inputswitch';
+import { Dropdown } from 'primereact/dropdown';
 
 const SelectedProductsTable = () => {
     const dispatch = useDispatch()
-    const { selectedProducts, subTotal, calcValues } = useSelector(({ cart }) => cart);
+    const { selectedProducts, subTotal, calcValues, modeOfPayment } = useSelector(({ cart }) => cart);
     const [error, setError] = useState([]);
+
+    useEffect(() => {
+        dispatch(setSelectedProducts([
+            {
+                "_id": "66f24462abcaba82c0e6ae97",
+                "name": "Laptop Backpack",
+                "description": "Water-resistant backpack with padded laptop compartment",
+                "available_quantity": "300",
+                "discount": 1,
+                "tax": "6%",
+                "selling_price": "30.00",
+                "cost_price": "15.00",
+                "stock": "300",
+                "qty": 1,
+                "amount": "29.00"
+            },
+            {
+                "_id": "66f24462abcaba82c0e6ae98",
+                "name": "Running Shoes",
+                "description": "Lightweight running shoes for men",
+                "available_quantity": "100",
+                "discount": 2,
+                "tax": "5%",
+                "selling_price": "70.00",
+                "cost_price": "40.00",
+                "stock": "100",
+                "qty": 2,
+                "amount": "138.00"
+            },
+            {
+                "_id": "66f24462abcaba82c0e6aea5",
+                "name": "Ballpoint Pens",
+                "description": "Pack of 10 smooth-writing ballpoint pens",
+                "available_quantity": "1200",
+                "discount": 0,
+                "tax": "5%",
+                "selling_price": "3.00",
+                "cost_price": "1.50",
+                "stock": "1200",
+                "qty": 10,
+                "amount": "30.00"
+            },
+            {
+                "_id": "66f24462abcaba82c0e6aeae",
+                "name": "Leather Jacket",
+                "description": "Genuine leather jacket for women",
+                "available_quantity": "100",
+                "discount": 0,
+                "tax": "5%",
+                "selling_price": "120.00",
+                "cost_price": "80.00",
+                "stock": "100",
+                "qty": 2,
+                "amount": 240
+            }
+        ]))
+
+
+    }, [])
+
+    const modeOfPaymentOptions = [
+        { name: 'Cash', value: 'cash' },
+        { name: 'Online Payment', value: 'online' }
+    ];
 
     const Footer = () => {
         const handleCalcValueChange = (value, name) => {
@@ -36,16 +104,25 @@ const SelectedProductsTable = () => {
         };
 
         return (
-            <div className="card !bg-gray-800 shadow-sm text-white p-5 ">
-                <h5 className="text-md  font-medium mb-2">Summary</h5>
+            <div className="card !bg-gray-800 shadow-sm text-white p-5 pt-4">
+                <hr className=' mb-20' />
+                {/* <h5 className="text-md  font-medium mb-2">Summary</h5> */}
+
                 <div className="flex flex-col gap-1">
                     <div className="flex justify-between items-center">
                         <span className=" text-sm">SubTotal:</span>
-                        <span className="font-medium text-sm">{subTotal}</span>
+                        {/* <span className="font-medium text-sm">{subTotal}</span> */}
+                        <InputNumber
+                            className="text-sm  bg-gray-800 border-gray-600"
+                            maxFractionDigits={2}
+                            useGrouping={false}
+                            value={subTotal}
+                            disabled={true}
+                        />
                     </div>
 
                     <div className="flex justify-between items-center">
-                    <span className=" text-sm">Discount:</span>
+                        <span className=" text-sm">Discount:</span>
                         <InputNumber
                             placeholder="Discount"
                             name="discount"
@@ -54,11 +131,12 @@ const SelectedProductsTable = () => {
                             useGrouping={false}
                             value={calcValues?.discount}
                             onValueChange={(e) => handleCalcValueChange(e.target.value, e.target.name)}
+                            disabled={!selectedProducts?.length}
                         />
                     </div>
 
                     <div className="flex justify-between items-center">
-                        <span className=" text-sm">Tax:</span>                        
+                        <span className=" text-sm">Tax:</span>
                         <InputNumber
                             placeholder="Tax"
                             name="tax"
@@ -67,20 +145,76 @@ const SelectedProductsTable = () => {
                             useGrouping={false}
                             value={calcValues?.tax}
                             onValueChange={(e) => handleCalcValueChange(e.target.value, e.target.name)}
+                            disabled={!selectedProducts?.length}
                         />
                     </div>
 
-                    <div className="flex justify-between items-center mt-2">
+                    <div className="flex justify-between items-center">
                         <span className=" text-sm">Grand Total:</span>
-                        <span className="font-medium text-sm">{calcValues.grandTotal}</span>
+                        {/* <span className="font-medium text-sm">{calcValues.grandTotal}</span> */}
+                        <InputNumber
+                            className="text-sm  bg-gray-800 border-gray-600"
+                            maxFractionDigits={2}
+                            useGrouping={false}
+                            value={calcValues.grandTotal}
+                            disabled={true}
+                        />
                     </div>
                 </div>
+
+                <hr className='mt-20 mb-10' />
+
+                <div className="flex justify-between items-center">
+                    <span className=" text-sm">Mode of Payment:</span>
+                    <span className="font-medium text-sm"><Dropdown value={modeOfPayment} onChange={(e) => dispatch(setModeOfPayment(e.value))} options={modeOfPaymentOptions} optionLabel="name"
+                        placeholder="Select Mode of Payment" className="m-0 text-sm" /></span>
+                </div>
+
+                <div className="flex justify-center items-center mt-12 w-full">
+                    <Button type="button" className='px-4 py-2 mx-2 bg-gray-900 rounded-lg' disabled={!selectedProducts?.length} onClick={(e) => { console.log('payload', selectedProducts, modeOfPayment,subTotal, calcValues) }}>Save</Button>
+                    <Button type="button" className='px-4 py-2 mx-2 bg-gray-900 rounded-lg' disabled={!selectedProducts?.length} onClick={(e) => { console.log('print') }}>Print</Button>
+                </div>
+
             </div>
         );
     };
 
+    const PreviouslyOrderedTable = () => {
+        return (
+            <Accordion className="gap-2 mx-5 mt-5">
+                <AccordionTab header="Previously Bought Products">
+                    {selectedProducts?.length > 0 ? (
+                        selectedProducts.map((product, index) => (
+                            <div
+                                key={index}
+                                className="p-2 flex flex-col sm:flex-row justify-between items-center sm:items-start"
+                            >
+                                <p className="m-0 max-sm:text-center">
+                                    <strong>{product.name}</strong>
+                                    <br />
+                                    Qty: {product.qty} | Price: {product.selling_price}
+                                </p>
+                                <Button
+                                    type="button"
+                                    icon="pi pi-plus-circle"
+                                    className="action-icon-size sm:mt-0"
+                                    onClick={() => {
+                                        console.log('Add prev product');
+                                    }}
+                                    rounded
+                                />
+                            </div>
+                        ))
+                    ) : (
+                        <p>No previously bought products.</p>
+                    )}
+                </AccordionTab>
+            </Accordion>
+        )
+    }
+
     const handleUnselectProduct = (data) => {
-        const remainingSelectedProducts = selectedProducts?.filter(item => item.id !== data?.id);
+        const remainingSelectedProducts = selectedProducts?.filter(item => item._id !== data?._id);
         const calcSubTotal = parseFloat(remainingSelectedProducts?.reduce((total, product) => parseFloat(total || 0) + parseFloat(product.amount || 0), 0)).toFixed(2)
         const afterDiscount = parseFloat((calcSubTotal - parseFloat((calcValues.discount * calcSubTotal) / 100)))
         dispatch(setSelectedProducts(remainingSelectedProducts));
@@ -96,14 +230,14 @@ const SelectedProductsTable = () => {
         else {
             dispatch(setCalcValues(calcInitialValues))
         }
-    } 
+    }
 
     const amountBody = (rowData) => {
         return parseFloat(rowData?.amount).toFixed(2);
     };
 
     const actionBodyTemplate = (data) => {
-        return <Button type="button" disabled={!data?.qty} icon="pi pi-minus-circle" className='action-icon-size p-5' onClick={(e) => {handleUnselectProduct(data)}}
+        return <Button type="button" disabled={!data?.qty} icon="pi pi-minus-circle" className='action-icon-size p-5' onClick={(e) => { handleUnselectProduct(data) }}
             rounded></Button>;
     };
 
@@ -117,6 +251,7 @@ const SelectedProductsTable = () => {
                 <div className="flex flex-1 bg-gray-900">
                     <div className="flex-1  p-3">
                         {/* <p className='text-left'>Date: {new Date(data?.date).toLocaleDateString()}</p> */}
+                        <p className='text-left'>Name: {data?.name}</p>
                         <p className='text-left'>QTY: {qtyBody(data)}</p>
                         <p className='text-left'>Stock: {data?.stock}</p>
                     </div>
@@ -135,7 +270,7 @@ const SelectedProductsTable = () => {
     const qtyBody = (data) => {
         const handleChange = (e) => {
             const value = parseInt(e.target.value || 0);
-            const index = selectedProducts?.findIndex(customer => customer.id === data?.id);
+            const index = selectedProducts?.findIndex(customer => customer._id === data?._id);
             const newCustomers = [...selectedProducts];
             const amount = value <= data?.stock ? value * parseFloat(data?.selling_price) : data?.amount;
             const discount = value <= data?.stock ? data?.discount : 0;
@@ -143,22 +278,22 @@ const SelectedProductsTable = () => {
             dispatch(setSelectedProducts(newCustomers));
 
             setError(prevErrors => {
-                const { [data?.id]: currentErrors = {} } = prevErrors;
+                const { [data?._id]: currentErrors = {} } = prevErrors;
                 const { qty, ...remainingErrors } = currentErrors;
                 if (Object.keys(remainingErrors).length === 0) {
-                    const { [data?.id]: _, ...otherErrors } = prevErrors; // Remove `data?.id` entry completely
+                    const { [data?._id]: _, ...otherErrors } = prevErrors;
                     return otherErrors;
                 }
                 return {
                     ...prevErrors,
-                    [data?.id]: remainingErrors
+                    [data?._id]: remainingErrors
                 };
             });
             if (value > data?.stock) {
                 setError(prevErrors => ({
                     ...prevErrors,
-                    [data?.id]: {
-                        ...prevErrors[data?.id],
+                    [data?._id]: {
+                        ...prevErrors[data?._id],
                         qty: `Only ${data?.stock} is Left`
                     }
                 }));
@@ -188,9 +323,9 @@ const SelectedProductsTable = () => {
                         }
                     }}
                     onChange={handleChange}
-                    className={`h-10 p-3 ${error[data?.id]?.qty ? 'border-red-500 border-2' : ''}`}
+                    className={`h-10 p-3 ${error[data?._id]?.qty ? 'border-red-500 border-2' : ''}`}
                 />
-                {error[data?.id]?.qty && <p className="text-red-500 mt-1">{error[data?.id]?.qty}</p>}
+                {error[data?._id]?.qty && <p className="text-red-500 mt-1">{error[data?._id]?.qty}</p>}
             </>
         );
     };
@@ -198,30 +333,30 @@ const SelectedProductsTable = () => {
     const discountBody = (data) => {
         const handleChange = (e) => {
             const value = parseInt(e.target.value || 0);
-            const index = selectedProducts?.findIndex(customer => customer.id === data?.id);
+            const index = selectedProducts?.findIndex(customer => customer._id === data?._id);
             const newCustomers = [...selectedProducts];
             const ogAmt = parseInt(data?.qty) * parseFloat(data?.selling_price);
             const amount = value <= ogAmt ? ((ogAmt) - value).toFixed(2) : (ogAmt);
             newCustomers[index] = { ...newCustomers[index], discount: value, amount: amount };
             dispatch(setSelectedProducts(newCustomers));
             setError(prevErrors => {
-                const { [data?.id]: currentErrors = {} } = prevErrors;
+                const { [data?._id]: currentErrors = {} } = prevErrors;
                 const { discount, ...remainingErrors } = currentErrors;
                 if (Object.keys(remainingErrors).length === 0) {
-                    const { [data?.id]: _, ...otherErrors } = prevErrors; // Remove `data?.id` entry completely
+                    const { [data?._id]: _, ...otherErrors } = prevErrors;
                     return otherErrors;
                 }
                 return {
                     ...prevErrors,
-                    [data?.id]: remainingErrors
+                    [data?._id]: remainingErrors
                 };
             });
 
             if (value > ogAmt) {
                 setError(prevErrors => ({
                     ...prevErrors,
-                    [data?.id]: {
-                        ...prevErrors[data?.id],
+                    [data?._id]: {
+                        ...prevErrors[data?._id],
                         discount: `Equal or Less Than ${ogAmt}`
                     }
                 }));
@@ -244,7 +379,7 @@ const SelectedProductsTable = () => {
                     name='discount'
                     keyfilter="int"
                     placeholder="Discount"
-                    disabled={!data?.stock || data?.stock === 0 || !data?.selling_price || !data?.qty || error[data?.id]?.qty}
+                    disabled={!data?.stock || data?.stock === 0 || !data?.selling_price || !data?.qty || error[data?._id]?.qty}
                     value={data?.discount === 0 ? "" : data?.discount}
                     onKeyDown={(e) => {
                         if (e.key === '-' || e.key === 'minus') {
@@ -254,14 +389,14 @@ const SelectedProductsTable = () => {
                     onBlur={handleChange}
                     onChange={(e) => {
                         const value = parseInt(e.target.value || 0);
-                        const index = selectedProducts?.findIndex(customer => customer.id === data?.id);
+                        const index = selectedProducts?.findIndex(customer => customer._id === data?._id);
                         const newCustomers = [...selectedProducts];
                         newCustomers[index] = { ...newCustomers[index], discount: value };
                         dispatch(setSelectedProducts(newCustomers));
                     }}
-                    className={`h-10 p-3 ${error[data?.id]?.discount ? 'border-red-500 border-2' : ''}`}
+                    className={`h-10 p-3 ${error[data?._id]?.discount ? 'border-red-500 border-2' : ''}`}
                 />
-                {error[data?.id]?.discount && <p className="text-red-500 mt-1">{error[data?.id]?.discount}</p>}
+                {error[data?._id]?.discount && <p className="text-red-500 mt-1">{error[data?._id]?.discount}</p>}
             </>
         );
     };
@@ -269,7 +404,7 @@ const SelectedProductsTable = () => {
     const imageBodyTemplate = (rowData) => {
         return (
             <div className="flex align-items-center gap-2 max-w-1rem lg:max-w-1rem">
-                <Image alt={rowData?._id} src={rowData?.image} height={150} width={150} style={{ maxWidth: "4rem" }} className="max-w-1rem lg:max-w-1rem shadow-2 border-round" />
+                <Image alt={rowData?._id} src="https://blogger.googleusercontent.com/img/a/AVvXsEhMzq6e-JVkKk7sKU1jybeyMqN5JuFLLvTLYkoktq8R_D6b5RR2K9aWDZiMK5kCZuzjrCXl2D0dicVFTRbj-zWTOrZUUUyic0LhPEETRjQsyEEwqZCelfTaCjeH0lGkF4IqoJfP-KmNoW1IdXXsY1vqNLC3Uj_x4VpIlDT7GibSNrhDj8eDQnXdniOBS4k" height={150} width={150} style={{ maxWidth: "4rem" }} className="max-w-1rem lg:max-w-1rem shadow-2 border-round" />
             </div>
         );
     };
@@ -283,6 +418,7 @@ const SelectedProductsTable = () => {
                 rowsPerPageOptions={[10, 25, 50]}
                 emptyMessage="No Products Found." currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
                 <Column header="" body={imageBodyTemplate} className="pl-5" />
+                <Column header="Name" field="name" />
                 <Column header="Qty" field="qty" body={qtyBody} style={{ minWidth: '14rem' }} />
                 <Column header="Stock" field="stock" />
                 <Column header="Discount" field="discount" body={discountBody} style={{ minWidth: '14rem' }} />
@@ -298,6 +434,7 @@ const SelectedProductsTable = () => {
                 <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={multiBodyTemplate} />
             </DataTable>
 
+            <PreviouslyOrderedTable />
             <Footer />
         </div>
     )
