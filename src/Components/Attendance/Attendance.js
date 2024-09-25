@@ -20,10 +20,10 @@ import {
     setEmployeeDialog,
     setSelectedEmployeeData
 } from "@/store/slice/employeeSlice";
-import dayjs from "dayjs";
-import utc from 'dayjs/plugin/utc';
+// import dayjs from "dayjs";
+// import utc from 'dayjs/plugin/utc';
 
-dayjs.extend(utc);
+// dayjs.extend(utc);
 
 
 const initialState = {
@@ -195,14 +195,14 @@ const Attendance = () => {
         // const check_in_time = new Date();
         // const dateKey = check_in_time.toISOString().split('T')[0];
         // const in_time = dayjs(res.attendance_by_date["2024-09-20"].check_in).utc();
-        const in_time = dayjs(dayjs().format('YYYY-MM-DD') +
-            res.attendance_by_date["2024-09-20"].check_in,
-            'YYYY-MM-DD HH:mm:ss',
-        );
-        const out_time = dayjs(dayjs().format('YYYY-MM-DD') +
-            res.attendance_by_date["2024-09-20"].check_out,
-            'YYYY-MM-DD HH:mm:ss',
-        );
+        // const in_time = dayjs(dayjs().format('YYYY-MM-DD') +
+        //     res.attendance_by_date["2024-09-20"].check_in,
+        //     'YYYY-MM-DD HH:mm:ss',
+        // );
+        // const out_time = dayjs(dayjs().format('YYYY-MM-DD') +
+        //     res.attendance_by_date["2024-09-20"].check_out,
+        //     'YYYY-MM-DD HH:mm:ss',
+        // );
         // const out_time = dayjs(res.attendance_by_date["2024-09-20"].check_out).utc();
         // const formattedInTime = in_time.format('HH:mm');
         // const formattedOutTime = out_time.format('HH:mm');
