@@ -2,18 +2,25 @@
 import * as yup from "yup";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
+import _ from 'lodash';
 import { Col, Row } from "react-bootstrap";
 import Loader from "@/helper/CommonComponent/Loader";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { FormProvider, useForm } from "react-hook-form";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
-import { addItem, getAllDataList, getSingleItem, updateItem, deleteItem } from "@/store/slice/commonSlice";
-import { setAllProductList, setDeleteProductDialog, setProductData, setProductDialog, setProductImageState } from "@/store/slice/productItemSlice";
+import {
+  addItem, getSingleItem, updateItem, deleteItem,
+} from "@/store/slice/commonSlice";
+import {
+  getAllProductList, setAllProductList, setDeleteProductDialog, setProductData, setProductDialog, setProductImageState, setCurrentPage,
+  setPageLimit,
+  setSearchParam,
+} from "@/store/slice/productItemSlice";
 import { memo, useCallback, useEffect, useState } from "react";
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
 import Image from "next/image";
-import { fileToBase64 } from "@/helper/commonValues";
+
 
 const initialState = {
   image: "",
@@ -36,18 +43,6 @@ const schema = yup.object().shape({
   cost_price: yup.string().required("Please enter Cost Price.")
 });
 
-const getSeverity = product => {
-  switch (product.inventoryStatus) {
-    case "INSTOCK":
-      return "success";
-    case "LOWSTOCK":
-      return "warning";
-    case "OUTOFSTOCK":
-      return "danger";
-    default:
-      return null;
-  }
-};
 
 const imageBodyTemplate = rowData => {
   return (
@@ -82,30 +77,82 @@ const inputFieldsList = [
   { fieldTitle: "Tax", fieldId: "Tax", fieldName: 'tax', fieldRequired: true },
   { fieldTitle: "Selling Price", fieldId: "SellingPrice", fieldName: 'selling_price', fieldRequired: true },
   { fieldTitle: "Cost Price", fieldId: "CostPrice", fieldName: 'cost_price', fieldRequired: true },
+  { fieldTitle: "Image", fieldId: "Image", fieldName: 'image' },
 ]
 
 const ProductList = () => {
   const dispatch = useDispatch();
 
-  // const [file, setFile] = useState()
-  // const [productDialog, setProductDialog] = useState(false);
-  // const [productData, setProductData] = useState(initialState);
-  // const [deleteProductDialog, setDeleteProductDialog] = useState(false);
+  const { allProductList, productDialog, productData, deleteProductDialog, currentPage,
+    pageLimit,
+    searchParam, productLoading } = useSelector(({ productItem }) => productItem)
+  console.log('allProductList', allProductList)
 
-  const { allProductList, productDialog, productData, deleteProductDialog, productImageState } = useSelector(({ productItem }) => productItem)
-  const { commonLoading } = useSelector(({ common }) => common)
-
-  const fetchProductList = useCallback(async () => {
-    const payload = { modal_to_pass: "Products" }
-    const res = await dispatch(getAllDataList(payload))
-    if (res) {
-      dispatch(setAllProductList(res))
+  const fetchProductList = useCallback(async (start = 1,
+    limit = 7,
+    search = '',) => {
+    const payload = {
+      modal_to_pass: "Products",
+      search_key: ["name", "description", "selling_price"],
+      start: start,
+      limit: limit,
+      search: search?.trim(),
     }
-  }, [])
+    const res = await dispatch(getAllProductList(payload))
+
+  }, [dispatch])
 
   useEffect(() => {
-    fetchProductList()
+    fetchProductList(
+      currentPage,
+      pageLimit,
+      searchParam);
   }, []);
+
+  const onPageChange = page => {
+    if (page !== currentPage) {
+      let pageIndex = currentPage;
+      if (page?.page === 'Prev') pageIndex--;
+      else if (page?.page === 'Next') pageIndex++;
+      else pageIndex = page;
+
+      dispatch(setCurrentPage(pageIndex));
+      fetchProductList(
+        pageIndex,
+        pageLimit,
+        searchParam,
+
+      );
+    }
+  };
+
+  const onPageRowsChange = page => {
+    dispatch(setCurrentPage(page === 0 ? 0 : 1));
+    dispatch(setPageLimit(page));
+    const pageValue =
+      page === 0
+        ? allProductList?.totalRows
+          ? allProductList?.totalRows
+          : 0
+        : page;
+    const prevPageValue =
+      pageLimit === 0
+        ? allProductList?.totalRows
+          ? allProductList?.totalRows
+          : 0
+        : pageLimit;
+    if (
+      prevPageValue < allProductList?.totalRows ||
+      pageValue < allProductList?.totalRows
+    ) {
+      fetchProductList(
+        page === 0 ? 0 : 1,
+        page,
+        searchParam,
+
+      );
+    }
+  };
 
   const methods = useForm({
     resolver: yupResolver(schema),
@@ -114,15 +161,18 @@ const ProductList = () => {
 
   const onSubmit = async (data) => {
     let res = '';
-    let payload = {
+    const payload = {
       ...data,
-      modal_to_pass: "product"
+      modal_to_pass: "product",
+      start: currentPage,
+      limit: pageLimit,
+      search: searchParam,
     }
 
-    if (productImageState) {
-      const base64Image = await fileToBase64(productImageState);
-      payload = { ...payload, image: base64Image }
-    }
+    // if (productImageState) {
+    //   const base64Image = await fileToBase64(productImageState);
+    //   payload = { ...payload, image: base64Image }
+    // }
 
 
     if (data?._id) {
@@ -130,13 +180,29 @@ const ProductList = () => {
     } else {
       res = await dispatch(addItem(payload));
     }
-
     if (res) {
-      dispatch(setAllProductList(res));
       dispatch(setProductDialog(false))
     }
   };
+  const handleSearchInput = e => {
+    dispatch(setCurrentPage(1));
 
+    fetchProductList(
+      currentPage,
+      pageLimit,
+      e.target.value?.trim(),
+    );
+  };
+  const handleChangeSearch = e => {
+    debounceHandleSearchInput(e);
+    dispatch(setSearchParam(e.target.value));
+  }
+  const debounceHandleSearchInput = useCallback(
+    _.debounce(e => {
+      handleSearchInput(e);
+    }, 800),
+    [],
+  );
   const handleAddItem = () => {
     dispatch(setProductData(initialState));
     dispatch(setProductImageState(null));
@@ -167,8 +233,13 @@ const ProductList = () => {
   };
 
   const handleDeleteProduct = async () => {
-    const payload = { modal_to_pass: 'product', id: productData?._id };
+    const payload = {
+      modal_to_pass: 'product', id: productData?._id, start: currentPage,
+      limit: pageLimit,
+      search: searchParam
+    };
     const res = await dispatch(deleteItem(payload))
+
     if (res) {
       dispatch(setAllProductList(res))
       dispatch(setDeleteProductDialog(false));
@@ -241,12 +312,14 @@ const ProductList = () => {
 
   return (
     <>
-      {commonLoading && <Loader />}
+      {productLoading && <Loader />}
       <CommonDataTable
         tableName="Products"
         moduleName='product'
         tableColumns={tableColumns}
         allItemList={allProductList}
+        handleChangeSearch={handleChangeSearch}
+        searchParam={searchParam}
         handleAddItem={handleAddItem}
         handleEditItem={handleEditItem}
         handleDeleteItem={handleDeleteItem}
@@ -255,6 +328,10 @@ const ProductList = () => {
         hideDeleteDialog={hideProductDeleteDialog}
         deleteItem={handleDeleteProduct}
         selectedItemData={productData}
+        pageLimit={pageLimit}
+        onPageChange={onPageChange}
+        onPageRowsChange={onPageRowsChange}
+        currentPage={currentPage}
       />
 
       <Dialog
@@ -265,6 +342,7 @@ const ProductList = () => {
         modal
         className="p-fluid"
         onHide={() => dispatch(setProductDialog(false))}
+        draggable={false}
       >
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
@@ -283,7 +361,7 @@ const ProductList = () => {
                   )
                 })}
               </Row>
-              <div class="file-upload">
+              {/* <div class="file-upload">
                 <label for="file-upload" class='custom-file-upload  bg-black text-white  font-bold py-2 px-4 rounded shadow-md hover:bg-cyan-600 cursor-pointer'>
                   {productImageState ? 'Uploaded' : productData?._id ? 'Change Image' : "Choose Image"}
                 </label>
@@ -295,11 +373,11 @@ const ProductList = () => {
                   disabled={productImageState}
                   onChange={(e) => dispatch(setProductImageState(e.target.files?.[0]))}
                 />
-              </div>
+              </div> */}
             </div>
             <div className="mt-3 me-2 flex justify-end items-center gap-4">
               <Button
-                className="btn_transperent"
+                className="btn_transparent"
                 onClick={e => {
                   e.preventDefault();
                   dispatch(setProductDialog(false))
