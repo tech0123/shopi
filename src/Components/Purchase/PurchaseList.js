@@ -1,40 +1,128 @@
 'use client';
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
+import _ from 'lodash';
 import Loader from "@/helper/CommonComponent/Loader";
-import { deleteItem, getAllDataList, getSingleItem } from "@/store/slice/commonSlice";
+import {
+  deleteItem,
+  getAllDataList,
+  getSingleItem,
+  setCurrentPage,
+  setPageLimit,
+  setSearchParam,
+} from "@/store/slice/commonSlice";
 import { setAllPurchaseListData, setDeletePurchaseDialog, setPurchaseTableData } from "@/store/slice/purchaseSlice";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const tableColumns = [
-  {field: 'manufacturer_name', header:"Manufacturer Name"},
-  {field: 'purchase_date', header:"Purchase Date"},
-  {field: 'bill_no', header:"Bill No"},
-  {field: 'gst_no', header:"GST No."},
-  {field: 'mobile_number', header:"Mobile Number"},
-  {field: 'address', header:"Address"},
+  { field: 'manufacturer_name', header: "Manufacturer Name" },
+  { field: 'purchase_date', header: "Purchase Date" },
+  { field: 'bill_no', header: "Bill No" },
+  { field: 'gst_no', header: "GST No." },
+  { field: 'mobile_number', header: "Mobile Number" },
+  { field: 'address', header: "Address" },
 ]
 
 function PurchaseList() {
+  const router = useRouter();
   const dispatch = useDispatch();
-  const router = useRouter()
 
-  const [ selectedPurchaseData, setSelectedPurchaseData ] = useState({});
+  const [selectedPurchaseData, setSelectedPurchaseData] = useState({});
   const { allPurchaseListData, deletePurchaseDialog } = useSelector(({ purchase }) => purchase)
-  const {commonLoading } = useSelector(({common}) => common)
+  const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(({ common }) => common)
 
-  const fetchManufacturerList = useCallback(async () => {
-    const payload = { modal_to_pass: "Purchase" }
+  const fetchPurchaseList = useCallback(async (
+    start = 1,
+    limit = 7,
+    search = '') => {
+    const payload = {
+      modal_to_pass: "Purchase",
+      search_key: ["address"],
+      start: start,
+      limit: limit,
+      search: search?.trim(),
+    }
     const res = await dispatch(getAllDataList(payload))
-    if(res){
+    if (res) {
       dispatch(setAllPurchaseListData(res))
     }
-  },[])
-  
+  }, [])
+
   useEffect(() => {
-      fetchManufacturerList()
+    fetchPurchaseList(
+      currentPage,
+      pageLimit,
+      searchParam
+    )
   }, []);
+
+  const onPageChange = page => {
+    if (page !== currentPage) {
+      let pageIndex = currentPage;
+      if (page?.page === 'Prev') pageIndex--;
+      else if (page?.page === 'Next') pageIndex++;
+      else pageIndex = page;
+
+      dispatch(setCurrentPage(pageIndex));
+      fetchPurchaseList(
+        pageIndex,
+        pageLimit,
+        searchParam,
+
+      );
+    }
+  };
+
+  const onPageRowsChange = page => {
+    dispatch(setCurrentPage(page === 0 ? 0 : 1));
+    dispatch(setPageLimit(page));
+    const pageValue =
+      page === 0
+        ? allPurchaseListData?.totalRows
+          ? allPurchaseListData?.totalRows
+          : 0
+        : page;
+    const prevPageValue =
+      pageLimit === 0
+        ? allPurchaseListData?.totalRows
+          ? allPurchaseListData?.totalRows
+          : 0
+        : pageLimit;
+    if (
+      prevPageValue < allPurchaseListData?.totalRows ||
+      pageValue < allPurchaseListData?.totalRows
+    ) {
+      fetchPurchaseList(
+        page === 0 ? 0 : 1,
+        page,
+        searchParam,
+
+      );
+    }
+  };
+
+  const handleSearchInput = e => {
+    dispatch(setCurrentPage(1));
+
+    fetchPurchaseList(
+      currentPage,
+      pageLimit,
+      e.target.value?.trim(),
+    );
+  };
+
+  const handleChangeSearch = e => {
+    debounceHandleSearchInput(e);
+    dispatch(setSearchParam(e.target.value));
+  }
+
+  const debounceHandleSearchInput = useCallback(
+    _.debounce(e => {
+      handleSearchInput(e);
+    }, 800),
+    [],
+  );
 
   const handleAddItem = () => {
     dispatch(setPurchaseTableData([]))
@@ -57,7 +145,7 @@ function PurchaseList() {
   const handleDeletePurchaseItem = async () => {
     const payload = { modal_to_pass: 'purchase', id: selectedPurchaseData?._id };
     const res = await dispatch(deleteItem(payload))
-    if(res){
+    if (res) {
       dispatch(setAllPurchaseListData(res))
       dispatch(setDeletePurchaseDialog(false));
     }
@@ -77,71 +165,52 @@ function PurchaseList() {
         </p>
       </>
     );
-};
+  };
 
   const responsiveTableTemplete = rowData => {
+    console.log("rowData",rowData);
+    
     return (
       <div className="container flex flex-col border-white border-2 w-full">
-        <div className="flex justify-center border-b-2 border-white p-2">
-            <img
-                src={`${rowData.image}`}
-                alt=""
-                width={150}
-                height={150}
-            />
-        </div>
         <div className="flex flex-1 flex-col md:flex-row">
-            <div className="flex-1 border-r-2 border-white p-2">
-                <p className="text-left text-sm">
-                    Code: {rowData.code}
-                </p>
-                <p className="text-left text-sm">
-                    Full Name: {rowData.name}
-                </p>
-                <p className="text-left text-sm">
-                    Email Address: {rowData.email_address}
-                </p>
-                <p className="text-left text-sm">
-                    Phone Number: {rowData.mobile_number}
-                </p>
+          <div className="flex-1 border-r-2 border-white p-2">
+            <p className="text-left text-sm">
+              Code: {rowData?.code}
+            </p>
+            <p className="text-left text-sm">
+              Full Name: {rowData?.manufacturer_name}
+            </p>
+            <p className="text-left text-sm">
+              Phone Number: {rowData?.mobile_number}
+            </p>
+          </div>
+          <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
+            <p className="text-left text-sm">
+              GST No.: {rowData?.gst_no}
+            </p>
+            <p className="text-left text-sm">
+              Address: {rowData.address}
+            </p>
+          </div>
+          <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
+            <div className="text-left mt-1">
+              {actionBodyResponsiveTemplate(rowData)}
             </div>
-            <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
-                <p className="text-left text-sm">
-                    GST No.: {rowData.GST_no}
-                </p>
-                <p className="text-left text-sm">
-                    Country: {rowData.country}
-                </p>
-                <p className="text-left text-sm">
-                    State: {rowData.state}
-                </p>
-                <p className="text-left text-sm">
-                    City: {rowData.pin_codeity}
-                </p>
-            </div>
-            <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
-                <p className="text-left text-sm">
-                    Pin code: {rowData.pin_code}
-                </p>
-                <p className="text-left text-sm">
-                    Address: {rowData.address}
-                </p>
-                <div className="text-left mt-1">
-                    {actionBodyResponsiveTemplate(rowData)}
-                </div>
-            </div>
+          </div>
         </div>
       </div>
     );
-};
+  };
 
   return (
     <>
-      {commonLoading && <Loader/>}
+      {commonLoading && <Loader />}
       <CommonDataTable
         tableName="Purchase List"
         tableColumns={tableColumns}
         allItemList={allPurchaseListData}
+        handleChangeSearch={handleChangeSearch}
+        searchParam={searchParam}
         handleAddItem={handleAddItem}
         handleEditItem={handleEditItem}
         handleDeleteItem={handleDeleteItem}
@@ -149,6 +218,10 @@ function PurchaseList() {
         deleteItemDialog={deletePurchaseDialog}
         hideDeleteDialog={hidePurchaseDeleteDialog}
         deleteItem={handleDeletePurchaseItem}
+        pageLimit={pageLimit}
+        onPageChange={onPageChange}
+        onPageRowsChange={onPageRowsChange}
+        currentPage={currentPage}
       />
     </>
   )

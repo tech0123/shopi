@@ -5,6 +5,7 @@ import Customer from "@/lib/models/CustomerModel";
 import Employee from "@/lib/models/EmployeeModel";
 import Manufacturer from "@/lib/models/ManufacturerModel";
 import Attendance from "@/lib/models/AttendanceModel";
+import Purchase from "@/lib/models/PurchaseModal";
 
 export async function POST(request) {
   await connectToMongo();

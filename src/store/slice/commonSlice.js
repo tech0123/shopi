@@ -6,9 +6,9 @@ import { setAllProductsData } from "./cartSlice";
 
 let initialState = {
   commonLoading: false,
-  // currentPage: 1,
-  // pageLimit: 10,
-  // searchParam: '',
+  currentPage: 1,
+  pageLimit: 7,
+  searchParam: '',
 };
 
 export const getAllDataList = payload => async dispatch => {
@@ -180,20 +180,23 @@ const commonSlice = createSlice({
     setCommonLoading: (state, action) => {
       state.commonLoading = action.payload;
     },
-    // setCurrentPage: (state, action) => {
-    //   state.currentPage = action.payload;
-    // },
-    // setPageLimit: (state, action) => {
-    //   state.pageLimit = action.payload;
-    // },
-    // setSearchParam: (state, action) => {
-    //   state.searchParam = action.payload;
-    // },
+    setCurrentPage: (state, action) => {
+      state.currentPage = action.payload;
+    },
+    setPageLimit: (state, action) => {
+      state.pageLimit = action.payload;
+    },
+    setSearchParam: (state, action) => {
+      state.searchParam = action.payload;
+    },
   }
 });
 
-export const { setCommonLoading,
-  // setCurrentPage, setPageLimit, setSearchParam 
+export const {
+  setCommonLoading,
+  setCurrentPage,
+  setPageLimit,
+  setSearchParam
 } = commonSlice.actions;
 
 export default commonSlice.reducer;

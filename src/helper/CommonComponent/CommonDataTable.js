@@ -127,14 +127,6 @@ const CommonDataTable = (props) => {
             className="max-lg:hidden"
           />
         </DataTable>
-        <CustomPaginator
-          dataList={allItemList?.list}
-          pageLimit={pageLimit}
-          onPageChange={onPageChange}
-          onPageRowsChange={onPageRowsChange}
-          currentPage={currentPage}
-          totalCount={allItemList?.totalRows}
-        />
         <DataTable
           value={allItemList?.list}
           dataKey="id"

@@ -95,10 +95,10 @@ const CommonAddEditPurchase = (props) => {
   const values = methods.getValues()
 
   const fetchProductList = useCallback(async (key_name) => {
-    const payload = { modal_to_pass: key_name, field_options: ['_id', 'name']}
+    const payload = { modal_to_pass: key_name, field_options: ['_id', 'name'], search_key: ["_id"]}
     const res = await dispatch(getAllDataList(payload))
     if(res){
-      const modifiedData = res.map(item => ({
+      const modifiedData = res?.list?.map(item => ({
         label: item?.name,
         value: item?._id
       }));
