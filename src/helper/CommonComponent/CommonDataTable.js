@@ -6,19 +6,26 @@ import { DataTable } from "primereact/datatable";
 import { IconField } from "primereact/iconfield";
 import { InputText } from "primereact/inputtext";
 import CommonDeleteConfirmation from "./CommonDeleteConfirmation";
+import CustomPaginator from "./CustomPaginator";
 
 const CommonDataTable = (props) => {
   const {
-    tableName, 
-    tableColumns, 
-    allItemList, 
-    handleAddItem, 
-    handleEditItem, 
-    handleDeleteItem, 
-    responsiveTableTemplete, 
+    tableName,
+    tableColumns,
+    allItemList,
+    handleChangeSearch,
+    searchParam,
+    handleAddItem,
+    handleEditItem,
+    handleDeleteItem,
+    responsiveTableTemplete,
     deleteItemDialog,
     hideDeleteDialog,
     deleteItem,
+    pageLimit,
+    onPageChange,
+    onPageRowsChange,
+    currentPage,
   } = props
 
   const [globalFilter, setGlobalFilter] = useState(null);
@@ -48,7 +55,7 @@ const CommonDataTable = (props) => {
           rounded
           outlined
           className="mr-2"
-          onClick={() => handleEditItem(rowData)}
+          onClick={() => handleEditItem(rowData?._id)}
         />
         <Button
           icon="pi pi-trash"
@@ -69,10 +76,12 @@ const CommonDataTable = (props) => {
           <div>
             <IconField iconPosition="left">
               <InputText
+                id="search"
+                placeholder="Search"
                 type="search"
-                placeholder="Search..."
-                className="input_wrap"
-                onInput={e => setGlobalFilter(e.target.value)}
+                className="input_wrap small search_wrap"
+                value={searchParam}
+                onChange={handleChangeSearch}
               />
             </IconField>
           </div>
@@ -87,11 +96,13 @@ const CommonDataTable = (props) => {
 
       <div className="table_wrapper">
         <DataTable
-          value={allItemList}
+          value={allItemList?.list}
           dataKey="id"
-          paginator
-          rows={10}
-          rowsPerPageOptions={[5, 10, 25]}
+          // paginator
+          rows={7}
+          // rowsPerPageOptions={[5, 10, 25]}
+          // totalRecords={totalRecords}
+          // onPage={onPageChange}
           globalFilter={globalFilter}
           className="max-lg:hidden"
         >
@@ -116,24 +127,42 @@ const CommonDataTable = (props) => {
             className="max-lg:hidden"
           />
         </DataTable>
-
+        <CustomPaginator
+          dataList={allItemList?.list}
+          pageLimit={pageLimit}
+          onPageChange={onPageChange}
+          onPageRowsChange={onPageRowsChange}
+          currentPage={currentPage}
+          totalCount={allItemList?.totalRows}
+        />
         <DataTable
-          value={allItemList}
+          value={allItemList?.list}
           dataKey="id"
-          paginator
-          rows={10}
-          rowsPerPageOptions={[5, 10, 25]}
+          // paginator
+          rows={7}
+          // rowsPerPageOptions={[5, 10, 25]}
+          // totalRecords={totalRecords}
+          // onPage={onPageChange}
           globalFilter={globalFilter}
           className="mt-10 block xl:hidden"
+
         >
           <Column body={responsiveTableTemplete} style={{ minWidth: "12rem" }} />
         </DataTable>
+        <CustomPaginator
+          dataList={allItemList?.list}
+          pageLimit={pageLimit}
+          onPageChange={onPageChange}
+          onPageRowsChange={onPageRowsChange}
+          currentPage={currentPage}
+          totalCount={allItemList?.totalRows}
+        />
       </div>
 
       <CommonDeleteConfirmation
-        open={deleteItemDialog} 
-        hideContent={hideDeleteDialog} 
-        footerContent={deleteProductDialogFooter} 
+        open={deleteItemDialog}
+        hideContent={hideDeleteDialog}
+        footerContent={deleteProductDialogFooter}
       />
     </>
   );

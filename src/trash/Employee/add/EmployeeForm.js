@@ -222,7 +222,7 @@ const EmployeeForm = () => {
         </div>
         <div className="me-10 flex justify-end items-center gap-3">
           <Button
-            className="btn_transperent"
+            className="btn_transparent"
             onClick={e => {
               e.preventDefault();
               router.push("/employee");

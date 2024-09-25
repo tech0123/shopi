@@ -72,7 +72,7 @@ const imageBodyTemplate = rowData => {
 };
 
 const tableColumns = [
-  { field: "image", header: "Image", body:imageBodyTemplate },
+  { field: "image", header: "Image", body: imageBodyTemplate },
   { field: "name", header: "Name" },
   { field: "email", header: "Email" },
   { field: "mobile_number", header: "Mobile Number" },
@@ -81,12 +81,12 @@ const tableColumns = [
 ];
 
 const inputFieldsList = [
-  {fieldTitle:"Name", fieldId:"Name", fieldName:'name', fieldRequired:true},
-  {fieldTitle:"Email", fieldId:"Email",fieldName:'email', fieldRequired:true},
-  {fieldTitle:"Mobile Number", fieldId:"MobileNumber",fieldName:'mobile_number', fieldRequired:true},
-  {fieldTitle:"Role", fieldId:"Role",fieldName:'role', type:'single_select', options: employeeRoleOptions, fieldRequired:true},
-  {fieldTitle:"Password", fieldId:"Password",fieldName:'password', fieldRequired:true},
-  {fieldTitle:"Salary", fieldId:"Salary",fieldName:'salary', type:'number', fieldRequired:true, class:"input_number"},
+  { fieldTitle: "Name", fieldId: "Name", fieldName: 'name', fieldRequired: true },
+  { fieldTitle: "Email", fieldId: "Email", fieldName: 'email', fieldRequired: true },
+  { fieldTitle: "Mobile Number", fieldId: "MobileNumber", fieldName: 'mobile_number', fieldRequired: true },
+  { fieldTitle: "Role", fieldId: "Role", fieldName: 'role', type: 'single_select', options: employeeRoleOptions, fieldRequired: true },
+  { fieldTitle: "Password", fieldId: "Password", fieldName: 'password', fieldRequired: true },
+  { fieldTitle: "Salary", fieldId: "Salary", fieldName: 'salary', type: 'number', fieldRequired: true, class: "input_number" },
 ]
 
 const EmployeeList = () => {
@@ -98,25 +98,25 @@ const EmployeeList = () => {
   // const [deleteProductDialog, setDeleteProductDialog] = useState(false);
 
   const { employeeLoading, allEmployeeList, selectedEmployeeData, employeeDialog, deleteEmployeeDialog } = useSelector(({ employee }) => employee);
-  const {commonLoading } = useSelector(({common}) => common)
-  
+  const { commonLoading } = useSelector(({ common }) => common)
+
   const methods = useForm({
     resolver: yupResolver(schema),
     defaultValues: selectedEmployeeData
   });
-  
+
   const fetchEmployeesData = async () => {
     const payload = { modal_to_pass: "Employees" };
     const res = await dispatch(getAllDataList(payload));
 
     if (res) {
       const updatedData = res?.map((item) => {
-      const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
-      return {
-        ...item,
-        role: findRole?.label
-      }
-    })
+        const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
+        return {
+          ...item,
+          role: findRole?.label
+        }
+      })
       dispatch(setAllEmployeeList(updatedData));
     }
   };
@@ -126,19 +126,19 @@ const EmployeeList = () => {
   }, []);
 
   const onSubmit = async (data) => {
-    let res='';
-    const payload = { 
+    let res = '';
+    const payload = {
       ...data,
       role: Number(data.role),
       modal_to_pass: "employee"
     }
 
-    if(data?._id){
+    if (data?._id) {
       res = await dispatch(updateItem(payload))
     } else {
       res = await dispatch(addItem(payload))
     }
-    if(res){
+    if (res) {
       const updatedData = res?.map((item) => {
         const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
         return {
@@ -158,12 +158,12 @@ const EmployeeList = () => {
   };
 
   const handleEditItem = async (employee) => {
-    const payload = { modal_to_pass:"employee", id: employee?._id }
+    const payload = { modal_to_pass: "employee", id: employee?._id }
 
     dispatch(setEmployeeDialog(true));
     const res = await dispatch(getSingleItem(payload))
-    
-    if(res){
+
+    if (res) {
       dispatch(setSelectedEmployeeData(res));
       methods.reset(res);
     }
@@ -182,7 +182,7 @@ const EmployeeList = () => {
   const handleDeleteProduct = async () => {
     const payload = { modal_to_pass: 'employee', id: selectedEmployeeData?._id };
     const res = await dispatch(deleteItem(payload))
-    if(res){
+    if (res) {
       const updatedData = res?.map((item) => {
         const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
         return {
@@ -249,73 +249,73 @@ const EmployeeList = () => {
       </div>
     );
   };
-  
+
   return (
     <>
-    {employeeLoading || commonLoading && <Loader/>}
-    <CommonDataTable
-      tableName="Employees"
-      moduleName='employee' 
-      tableColumns={tableColumns}
-      allItemList={allEmployeeList}
-      handleAddItem={handleAddItem}
-      handleEditItem={handleEditItem}
-      handleDeleteItem={handleDeleteItem}
-      responsiveTableTemplete={responsiveTableTemplete}
-      deleteItemDialog={deleteEmployeeDialog}
-      hideDeleteDialog={hideProductDeleteDialog}
-      deleteItem={handleDeleteProduct}
-      selectedItemData={selectedEmployeeData}
-    />
+      {employeeLoading || commonLoading && <Loader />}
+      <CommonDataTable
+        tableName="Employees"
+        moduleName='employee'
+        tableColumns={tableColumns}
+        allItemList={allEmployeeList}
+        handleAddItem={handleAddItem}
+        handleEditItem={handleEditItem}
+        handleDeleteItem={handleDeleteItem}
+        responsiveTableTemplete={responsiveTableTemplete}
+        deleteItemDialog={deleteEmployeeDialog}
+        hideDeleteDialog={hideProductDeleteDialog}
+        deleteItem={handleDeleteProduct}
+        selectedItemData={selectedEmployeeData}
+      />
 
-    <Dialog
-      visible={employeeDialog}
-      style={{ width: "55rem" }}
-      breakpoints={{ "960px": "75vw", "641px": "90vw" }}
-      header={`${methods.watch('_id') ? 'Edit' : "Add"} Employee`}
-      modal
-      className="p-fluid"
-      onHide={() => dispatch(setEmployeeDialog(false))}
-    >
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <div className="form_container">
-          <Row>
-          {inputFieldsList.map((field,i) => {
-            return(
-              <Col lg={6} key={i}>
-                <CommonInputText
-                  id={field.fieldId}
-                  title={field.fieldTitle}
-                  type={field.type}
-                  options={field.options}
-                  name={field.fieldName}
-                  isRequired={field.fieldRequired}
-                  className={field.class}
-                />
-              </Col>
-            )
-          })}
-          </Row>
-        </div>
-        <div className="mt-3 me-2 flex justify-end items-center gap-4">
-          <Button
-            className="btn_transperent"
-            onClick={e => {
-              e.preventDefault();
-              dispatch(setEmployeeDialog(false))
-            }}
-          >
-            Cancel
-          </Button>
-          <Button type="submit" className="btn_primary">
-            Submit
-          </Button>
-        </div>
-      </form>
-    </FormProvider>
-    </Dialog>
-  </>
+      <Dialog
+        visible={employeeDialog}
+        style={{ width: "55rem" }}
+        breakpoints={{ "960px": "75vw", "641px": "90vw" }}
+        header={`${methods.watch('_id') ? 'Edit' : "Add"} Employee`}
+        modal
+        className="p-fluid"
+        onHide={() => dispatch(setEmployeeDialog(false))}
+      >
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <div className="form_container">
+              <Row>
+                {inputFieldsList.map((field, i) => {
+                  return (
+                    <Col lg={6} key={i}>
+                      <CommonInputText
+                        id={field.fieldId}
+                        title={field.fieldTitle}
+                        type={field.type}
+                        options={field.options}
+                        name={field.fieldName}
+                        isRequired={field.fieldRequired}
+                        className={field.class}
+                      />
+                    </Col>
+                  )
+                })}
+              </Row>
+            </div>
+            <div className="mt-3 me-2 flex justify-end items-center gap-4">
+              <Button
+                className="btn_transparent"
+                onClick={e => {
+                  e.preventDefault();
+                  dispatch(setEmployeeDialog(false))
+                }}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" className="btn_primary">
+                Submit
+              </Button>
+            </div>
+          </form>
+        </FormProvider>
+      </Dialog>
+    </>
   );
 }
 export default EmployeeList;

@@ -30,7 +30,7 @@ const SelectedProductsTable = () => {
                 "tax": "6%",
                 "selling_price": "30.00",
                 "cost_price": "15.00",
-                "stock": "300",
+                "available_quantity": "300",
                 "qty": 1,
                 "amount": "29.00"
             },
@@ -43,7 +43,7 @@ const SelectedProductsTable = () => {
                 "tax": "5%",
                 "selling_price": "70.00",
                 "cost_price": "40.00",
-                "stock": "100",
+                "available_quantity": "100",
                 "qty": 2,
                 "amount": "138.00"
             },
@@ -56,7 +56,7 @@ const SelectedProductsTable = () => {
                 "tax": "5%",
                 "selling_price": "3.00",
                 "cost_price": "1.50",
-                "stock": "1200",
+                "available_quantity": "1200",
                 "qty": 10,
                 "amount": "30.00"
             },
@@ -69,7 +69,7 @@ const SelectedProductsTable = () => {
                 "tax": "5%",
                 "selling_price": "120.00",
                 "cost_price": "80.00",
-                "stock": "100",
+                "available_quantity": "100",
                 "qty": 2,
                 "amount": 240
             }
@@ -171,7 +171,7 @@ const SelectedProductsTable = () => {
                 </div>
 
                 <div className="flex justify-center items-center mt-12 w-full">
-                    <Button type="button" className='px-4 py-2 mx-2 bg-gray-900 rounded-lg' disabled={!selectedProducts?.length} onClick={(e) => { console.log('payload', selectedProducts, modeOfPayment,subTotal, calcValues) }}>Save</Button>
+                    <Button type="button" className='px-4 py-2 mx-2 bg-gray-900 rounded-lg' disabled={!selectedProducts?.length} onClick={(e) => { console.log('payload', selectedProducts, modeOfPayment, subTotal, calcValues) }}>Save</Button>
                     <Button type="button" className='px-4 py-2 mx-2 bg-gray-900 rounded-lg' disabled={!selectedProducts?.length} onClick={(e) => { console.log('print') }}>Print</Button>
                 </div>
 
@@ -253,7 +253,7 @@ const SelectedProductsTable = () => {
                         {/* <p className='text-left'>Date: {new Date(data?.date).toLocaleDateString()}</p> */}
                         <p className='text-left'>Name: {data?.name}</p>
                         <p className='text-left'>QTY: {qtyBody(data)}</p>
-                        <p className='text-left'>Stock: {data?.stock}</p>
+                        <p className='text-left'>Stock: {data?.available_quantity}</p>
                     </div>
 
                     <div className="flex-1 p-3 flex flex-col ">
@@ -272,8 +272,8 @@ const SelectedProductsTable = () => {
             const value = parseInt(e.target.value || 0);
             const index = selectedProducts?.findIndex(customer => customer._id === data?._id);
             const newCustomers = [...selectedProducts];
-            const amount = value <= data?.stock ? value * parseFloat(data?.selling_price) : data?.amount;
-            const discount = value <= data?.stock ? data?.discount : 0;
+            const amount = value <= data?.available_quantity ? value * parseFloat(data?.selling_price) : data?.amount;
+            const discount = value <= data?.available_quantity ? data?.discount : 0;
             newCustomers[index] = { ...newCustomers[index], qty: value, amount: amount, discount: discount };
             dispatch(setSelectedProducts(newCustomers));
 
@@ -289,12 +289,12 @@ const SelectedProductsTable = () => {
                     [data?._id]: remainingErrors
                 };
             });
-            if (value > data?.stock) {
+            if (value > data?.available_quantity) {
                 setError(prevErrors => ({
                     ...prevErrors,
                     [data?._id]: {
                         ...prevErrors[data?._id],
-                        qty: `Only ${data?.stock} is Left`
+                        qty: `Only ${data?.available_quantity} is Left`
                     }
                 }));
             }
@@ -315,7 +315,7 @@ const SelectedProductsTable = () => {
                     name='qty'
                     keyfilter="int"
                     placeholder="Quantity"
-                    disabled={!data?.stock || data?.stock === 0}
+                    disabled={!data?.available_quantity || data?.available_quantity === 0}
                     value={data?.qty === 0 ? "" : data?.qty}
                     onKeyDown={(e) => {
                         if (e.key === '-' || e.key === 'minus') {
@@ -379,7 +379,7 @@ const SelectedProductsTable = () => {
                     name='discount'
                     keyfilter="int"
                     placeholder="Discount"
-                    disabled={!data?.stock || data?.stock === 0 || !data?.selling_price || !data?.qty || error[data?._id]?.qty}
+                    disabled={!data?.available_quantity || data?.available_quantity === 0 || !data?.selling_price || !data?.qty || error[data?._id]?.qty}
                     value={data?.discount === 0 ? "" : data?.discount}
                     onKeyDown={(e) => {
                         if (e.key === '-' || e.key === 'minus') {
@@ -404,7 +404,7 @@ const SelectedProductsTable = () => {
     const imageBodyTemplate = (rowData) => {
         return (
             <div className="flex align-items-center gap-2 max-w-1rem lg:max-w-1rem">
-                <Image alt={rowData?._id} src="https://blogger.googleusercontent.com/img/a/AVvXsEhMzq6e-JVkKk7sKU1jybeyMqN5JuFLLvTLYkoktq8R_D6b5RR2K9aWDZiMK5kCZuzjrCXl2D0dicVFTRbj-zWTOrZUUUyic0LhPEETRjQsyEEwqZCelfTaCjeH0lGkF4IqoJfP-KmNoW1IdXXsY1vqNLC3Uj_x4VpIlDT7GibSNrhDj8eDQnXdniOBS4k" height={150} width={150} style={{ maxWidth: "4rem" }} className="max-w-1rem lg:max-w-1rem shadow-2 border-round" />
+                <Image alt={rowData?._id} src={rowData?.image} height={150} width={150} style={{ maxWidth: "4rem" }} className="max-w-1rem lg:max-w-1rem shadow-2 border-round" />
             </div>
         );
     };
@@ -420,7 +420,7 @@ const SelectedProductsTable = () => {
                 <Column header="" body={imageBodyTemplate} className="pl-5" />
                 <Column header="Name" field="name" />
                 <Column header="Qty" field="qty" body={qtyBody} style={{ minWidth: '14rem' }} />
-                <Column header="Stock" field="stock" />
+                <Column header="Stock" field="available_quantity" />
                 <Column header="Discount" field="discount" body={discountBody} style={{ minWidth: '14rem' }} />
                 <Column header="MRP" field="selling_price" sortable />
                 <Column header="Amount" field="amount" body={amountBody} />
