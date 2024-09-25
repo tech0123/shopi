@@ -6,22 +6,26 @@ import { NextResponse } from "next/server";
 import { writeFile } from "fs/promises";
 import { generateUniqueId } from "@/helper/commonValues";
 import Manufacturer from "@/lib/models/ManufacturerModel";
+import Purchase from "@/lib/models/PurchaseModal";
 
 export async function POST(request) {
   await connectToMongo();
   try {
     const data = await request.json();
     // const file = data.get("file");
-    const modalToPass = data?.modal_to_pass;
+    const { modal_to_pass, start = 1, limit = 7, search = '' } = data;
+
     let modalToUse;
-    if (modalToPass === "product") {
+    if (modal_to_pass === "product") {
       modalToUse = Product;
-    } else if (modalToPass === "customer") {
+    } else if (modal_to_pass === "customer") {
       modalToUse = Customer;
-    } else if (modalToPass === "employee") {
+    } else if (modal_to_pass === "employee") {
       modalToUse = Employee;
-    } else if (modalToPass === "manufacturer") {
+    } else if (modal_to_pass === "manufacturer") {
       modalToUse = Manufacturer;
+    } else if (modal_to_pass === "purchase") {
+      modalToUse = Purchase;
     } else {
       return NextResponse.json(
         { err: 1, success: false, msg: "Invalid Model provided" },
@@ -44,14 +48,28 @@ export async function POST(request) {
     const newUser = await new modalToUse(addData);
     const result = await newUser.save();
 
-    const allData = await modalToUse.find();
+    const query = search
+      ? {
+        $or: [
+          { name: { $regex: search, $options: "i" } }, // Case insensitive search in name
+          { description: { $regex: search, $options: "i" } } // Case insensitive search in description
+        ]
+      }
+      : {};
 
+    const totalRecords = await modalToUse.countDocuments(query);
+    const skip = (start - 1) * limit;
+    const paginatedData = await modalToUse.find(query).skip(skip).limit(limit);
     return NextResponse.json(
       {
-        data: allData || [],
+        data: {
+          list: paginatedData || [],
+          totalRows: totalRecords,
+          pageNo: start
+        },
         err: 0,
         success: true,
-        msg: `Added ${modalToPass} successfully!`
+        msg: `Added ${modalToPass === 'purchase' ? 'bill' : modalToPass} successfully!`
       },
       { status: 201 }
     );

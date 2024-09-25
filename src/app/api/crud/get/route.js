@@ -4,13 +4,25 @@ import Product from "@/lib/models/ProductModel";
 import Customer from "@/lib/models/CustomerModel";
 import Employee from "@/lib/models/EmployeeModel";
 import Manufacturer from "@/lib/models/ManufacturerModel";
+import Attendance from "@/lib/models/AttendanceModel";
 
 export async function POST(request) {
   await connectToMongo();
   try {
     let modalToUse;
     let data = [];
-    const { modal_to_pass, field_options=[] } = await request.json();
+    const modifyProducts = (data) => {
+      return [...(data || [])]?.map((d) => {
+        // d.date = new Date(d.date);
+        d.qty = 0;
+        d.discount = 0;
+        d.amount = 0;
+        return d;
+      });
+    };
+    const { modal_to_pass, start = 1,
+      limit = 7, search = '', search_key = []
+    } = await request.json();
 
     if (modal_to_pass === "Customers") {
       modalToUse = Customer;
@@ -20,6 +32,10 @@ export async function POST(request) {
       modalToUse = Employee;
     } else if (modal_to_pass === "Manufacturers") {
       modalToUse = Manufacturer;
+    } else if (modal_to_pass === "Purchase") {
+      modalToUse = Purchase;
+    } else if (modal_to_pass === "Attendance") {
+      modalToUse = Attendance;
     } else {
       return NextResponse.json(
         { data: [], err: 1, success: false, msg: "Invalid Modal" + error.message, },
@@ -27,15 +43,42 @@ export async function POST(request) {
       );
     }
 
-    const modifiedOptionKeys = field_options?.join(" ");
-    data = await modalToUse.find().select(modifiedOptionKeys);
+
+
+    if (search_key.length === 0) {
+      return NextResponse.json(
+        { data: [], err: 1, success: false, msg: "Please send search key" },
+        { status: 400 }
+      );
+    }
+    const query = search && search_key.length > 0
+      ? {
+        $or: search_key.map(item => ({
+          [item]: { $regex: search, $options: "i" }
+        }))
+      }
+      : {};
+
+
+    const totalRecords = await modalToUse.countDocuments(query);
+
+    const skip = (start - 1) * limit;
+
+    data = await modalToUse.find(query).skip(skip).limit(limit).lean();
+
+
+    const modifyProduct = await modifyProducts(data)
 
     return NextResponse.json(
       {
-        data: data || [],
+        status: 200,
         err: 0,
-        success: true,
-        msg: `Get ${modal_to_pass} Succesfuly`
+        data: {
+          list: modal_to_pass === "Products" ? modifyProduct : data || [],
+          totalRows: totalRecords,
+          pageNo: start
+        },
+        msg: `Get ${modal_to_pass} Successfully`
       },
       { status: 200 }
     );
