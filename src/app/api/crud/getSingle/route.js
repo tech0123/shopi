@@ -4,6 +4,7 @@ import Customer from "@/lib/models/CustomerModel";
 import { NextResponse } from "next/server";
 import Employee from "@/lib/models/EmployeeModel";
 import Manufacturer from "@/lib/models/ManufacturerModel";
+import Attendance from "@/lib/models/AttendanceModel";
 
 export async function POST(request) {
   await connectToMongo();
@@ -28,6 +29,10 @@ export async function POST(request) {
       modalToUse = Employee;
     } else if (modal_to_pass === "manufacturer") {
       modalToUse = Manufacturer;
+    } else if (modal_to_pass === "attendance") {
+      modalToUse = Attendance;
+    } else if (modal_to_pass === "purchase") {
+      modalToUse = Purchase;
     } else {
       return NextResponse.json(
         { err: 1, success: false, msg: "Invalid Modal provided" },
@@ -35,7 +40,13 @@ export async function POST(request) {
       );
     }
 
-    const data = await modalToUse.findById(id);
+    let data;
+    if (modal_to_pass === "attendance") {
+      data = await modalToUse.findOne({ employee_id: id });
+    } else {
+      data = await modalToUse.findById(id);
+
+    }
 
     if (!data) {
       return NextResponse.json(
@@ -45,7 +56,7 @@ export async function POST(request) {
           msg: `${modal_to_pass.charAt(0).toUpperCase() +
             modal_to_pass.slice(1)} not found`
         },
-        { status: 404 }
+        { status: 400 }
       );
     }
 

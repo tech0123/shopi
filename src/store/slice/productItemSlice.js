@@ -3,7 +3,7 @@ import {
   roastError,
   successMsg
 } from "@/helper/commonValues";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const initialState = {
@@ -12,30 +12,38 @@ const initialState = {
   productDialog: false,
   productData: [],
   deleteProductDialog: false,
-  productImageState: null
+  productImageState: null,
+  currentPage: 1,
+  pageLimit: 7,
+  searchParam: '',
+  productsOptions: []
 };
 
-export const getAllProductList = () => async dispatch => {
-  try {
-    dispatch(setProductLoading(true));
-    const response = await axios.get(`/api/products/getProduct`);
-    const { data, msg, err } = response.data;
+export const getAllProductList = createAsyncThunk(
+  '/api/crud/get',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`/api/crud/get`, payload);
+      const { data, msg, err } = response.data;
 
-    if (err === 0) {
-      dispatch(setAllProductList(data));
-      return data;
-    } else if (err === 1) {
-      errorMsg(msg);
-      return false;
-    } else return false;
-  } catch (e) {
-    roastError(e);
-    return false;
-  } finally {
-    dispatch(setProductLoading(false));
+      const newObj = {
+        list: data?.list ? data?.list : [],
+        pageNo: data?.pageNo ? data?.pageNo : '',
+        totalRows: data?.totalRows ? data?.totalRows : 0,
+      };
+
+      if (err === 0) {
+        return (newObj);
+      } else if (err === 1) {
+        errorMsg(msg);
+        return rejectWithValue(msg);
+      }
+    } catch (error) {
+      roastError(error);
+      return rejectWithValue(error.message);
+    }
   }
-};
-
+);
 export const productItemSlice = createSlice({
   name: "productItem",
   initialState,
@@ -57,8 +65,34 @@ export const productItemSlice = createSlice({
     },
     setProductImageState: (state, action) => {
       state.productImageState = action.payload;
+    },
+    setCurrentPage: (state, action) => {
+      state.currentPage = action.payload;
+    },
+    setPageLimit: (state, action) => {
+      state.pageLimit = action.payload;
+    },
+    setSearchParam: (state, action) => {
+      state.searchParam = action.payload;
+    },
+    setProductsOptions: (state, action) => {
+      state.productsOptions = action.payload;
     }
-  }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getAllProductList.pending, (state) => {
+        state.productLoading = true;
+      })
+      .addCase(getAllProductList.fulfilled, (state, action) => {
+        state.productLoading = false;
+        state.allProductList = action.payload;
+      })
+      .addCase(getAllProductList.rejected, (state, action) => {
+        state.productLoading = false;
+        console.error("Error: ", action.payload || action.error.message);
+      });
+  },
 });
 
 export const {
@@ -67,7 +101,11 @@ export const {
   setProductDialog,
   setProductData,
   setDeleteProductDialog,
-  setProductImageState
+  setProductImageState,
+  setCurrentPage,
+  setPageLimit,
+  setSearchParam,
+  setProductsOptions
 } = productItemSlice.actions;
 
 export default productItemSlice.reducer;
