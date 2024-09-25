@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import Employee from "@/lib/models/EmployeeModel";
 import Manufacturer from "@/lib/models/ManufacturerModel";
 import Attendance from "@/lib/models/AttendanceModel";
+import Purchase from "@/lib/models/PurchaseModal";
 
 export async function POST(request) {
   await connectToMongo();
@@ -45,7 +46,6 @@ export async function POST(request) {
       data = await modalToUse.findOne({ employee_id: id });
     } else {
       data = await modalToUse.findById(id);
-
     }
 
     if (!data) {

@@ -13,7 +13,7 @@ export async function POST(request) {
   try {
     const data = await request.json();
     // const file = data.get("file");
-    const { modal_to_pass, start = 1, limit = 7, search = '' } = data;
+    const { modal_to_pass, start = 1, limit = 7, search = "" } = data;
 
     let modalToUse;
     if (modal_to_pass === "product") {
@@ -50,11 +50,11 @@ export async function POST(request) {
 
     const query = search
       ? {
-        $or: [
-          { name: { $regex: search, $options: "i" } }, // Case insensitive search in name
-          { description: { $regex: search, $options: "i" } } // Case insensitive search in description
-        ]
-      }
+          $or: [
+            { name: { $regex: search, $options: "i" } }, // Case insensitive search in name
+            { description: { $regex: search, $options: "i" } } // Case insensitive search in description
+          ]
+        }
       : {};
 
     const totalRecords = await modalToUse.countDocuments(query);
@@ -69,7 +69,9 @@ export async function POST(request) {
         },
         err: 0,
         success: true,
-        msg: `Added ${modalToPass === 'purchase' ? 'bill' : modalToPass} successfully!`
+        msg: `Added ${modal_to_pass === "purchase"
+          ? "bill"
+          : modal_to_pass} successfully!`
       },
       { status: 201 }
     );

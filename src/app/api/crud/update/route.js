@@ -2,17 +2,16 @@ import connectToMongo from "@/lib/db";
 import Product from "@/lib/models/ProductModel";
 import Customer from "@/lib/models/CustomerModel";
 import Employee from "@/lib/models/EmployeeModel";
-import { writeFile } from "fs/promises";
 import { NextResponse } from "next/server";
-import { generateUniqueId } from "@/helper/commonValues";
 import Manufacturer from "@/lib/models/ManufacturerModel";
+import Purchase from "@/lib/models/PurchaseModal";
 
 export async function POST(request) {
   await connectToMongo();
   try {
     const data = await request.json();
     // const file = data.get("file");.
-    const { modal_to_pass, _id, start = 1, limit = 7, search = '' } = data;
+    const { modal_to_pass, _id, start = 1, limit = 7, search = "" } = data;
 
     if (!modal_to_pass || !_id) {
       return NextResponse.json(
@@ -55,7 +54,7 @@ export async function POST(request) {
     //   const buffer = Buffer.from(byteData);
     //   const uniqueFileName = generateUniqueId();
     //   const path = `./public/uploads/${uniqueFileName}.${file?.name?.split('.')?.pop()}`;
-    //   // const path = `./public${updateData?.image}`;  
+    //   // const path = `./public${updateData?.image}`;
     //   await writeFile(path, buffer);
     //   updateData.image = `/uploads/${uniqueFileName}.${file?.name?.split('.')?.pop()}`;
     //   // updateData.image = `${updateData?.image}`;
@@ -74,17 +73,16 @@ export async function POST(request) {
 
     const query = search
       ? {
-        $or: [
-          { name: { $regex: search, $options: "i" } }, // Case insensitive search in name
-          { description: { $regex: search, $options: "i" } } // Case insensitive search in description
-        ]
-      }
+          $or: [
+            { name: { $regex: search, $options: "i" } }, // Case insensitive search in name
+            { description: { $regex: search, $options: "i" } } // Case insensitive search in description
+          ]
+        }
       : {};
 
     const totalRecords = await modalToUse.countDocuments(query);
     const skip = (start - 1) * limit;
     const paginatedData = await modalToUse.find(query).skip(skip).limit(limit);
-
 
     return NextResponse.json(
       {

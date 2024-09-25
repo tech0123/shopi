@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import Employee from "@/lib/models/EmployeeModel";
 import Manufacturer from "@/lib/models/ManufacturerModel";
 import Deleted from "@/lib/models/DeletedModel";
+import Purchase from "@/lib/models/PurchaseModal";
 
 export async function POST(request) {
   await connectToMongo();
@@ -14,8 +15,7 @@ export async function POST(request) {
 
     const data = await request.json();
 
-    const { modal_to_pass, id, start = 1, limit = 7, search = '' } = data;
-
+    const { modal_to_pass, id, start = 1, limit = 7, search = "" } = data;
 
     if (!modal_to_pass || !id) {
       return NextResponse.json(
@@ -58,11 +58,11 @@ export async function POST(request) {
 
     const query = search
       ? {
-        $or: [
-          { name: { $regex: search, $options: "i" } }, // Case insensitive search in name
-          { description: { $regex: search, $options: "i" } } // Case insensitive search in description
-        ]
-      }
+          $or: [
+            { name: { $regex: search, $options: "i" } }, // Case insensitive search in name
+            { description: { $regex: search, $options: "i" } } // Case insensitive search in description
+          ]
+        }
       : {};
 
     const totalRecords = await modalToUse.countDocuments(query);
