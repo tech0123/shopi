@@ -20,7 +20,7 @@ import { addItem, deleteItem, getAllDataList, getSingleItem, updateItem } from "
 
 const initialState = {
     code: "",
-    full_name: "",
+    name: "",
     email_address: "",
     mobile_number: "",
     GST_no: "",
@@ -33,7 +33,7 @@ const initialState = {
 
 const schema = yup.object().shape({
     code: yup.string().required("Please enter Code."),
-    full_name: yup.string().required("Please enter Full Name."),
+    name: yup.string().required("Please enter Full Name."),
     email_address: yup.string().required("Please enter Email Address."),
     mobile_number: yup.string().required("Please enter Mobile Number."),
     GST_no: yup.string().required("Please enter Cost GST No."),
@@ -52,7 +52,7 @@ const imageBodyTemplate = rowData => {
 
 const tableColumns = [
     {field: 'code', header:"Code"},
-    {field: 'full_name', header:"Name"},
+    {field: 'name', header:"Name"},
     {field: 'email_address', header:"Email"},
     {field: 'mobile_number', header:"Mobile Number"},
     {field: 'GST_no', header:"GST No."},
@@ -64,7 +64,7 @@ const tableColumns = [
 
 const inputFieldsList = [
     {fieldTitle:"Code", fieldId:"Code",fieldName:'code', fieldRequired:true},
-    {fieldTitle:"Full Name", fieldId:"FullName",fieldName:'full_name', fieldRequired:true},
+    {fieldTitle:"Full Name", fieldId:"FullName",fieldName:'name', fieldRequired:true},
     {fieldTitle:"Email Address", fieldId:"EmailAddress",fieldName:'email_address', fieldRequired:true},
     {fieldTitle:"Mobile Number", fieldId:"MobileNumber",fieldName:'mobile_number', fieldRequired:true},
     {fieldTitle:"GST No.", fieldId:"GSTNo",fieldName:'GST_no', fieldRequired:true},
@@ -87,11 +87,11 @@ const ManufacturerList = () => {
     const {commonLoading } = useSelector(({common}) => common)
 
     const fetchManufacturerList = useCallback(async () => {
-        const payload = { modal_to_pass: "Manufacturers" }
-        const res = await dispatch(getAllDataList(payload))
-        if(res){
-          dispatch(setAllManufacturerList(res))
-        }
+      const payload = { modal_to_pass: "Manufacturers" }
+      const res = await dispatch(getAllDataList(payload))
+      if(res){
+        dispatch(setAllManufacturerList(res))
+      }
     },[])
     
     useEffect(() => {
@@ -115,13 +115,14 @@ const ManufacturerList = () => {
         } else {
           res = await dispatch(addItem(payload))
         }
+        
         if(res){
           dispatch(setAllManufacturerList(res))
           dispatch(setManufacturerDialog(false))
         }
     };
 
-    const handleAddItem = () => {
+      const handleAddItem = () => {
         dispatch(setSelectedManufacturerData(initialState));
         methods.reset(initialState);
         dispatch(setManufacturerDialog(true))
@@ -190,7 +191,7 @@ const ManufacturerList = () => {
                         Code: {rowData.code}
                     </p>
                     <p className="text-left text-sm">
-                        Full Name: {rowData.full_name}
+                        Full Name: {rowData.name}
                     </p>
                     <p className="text-left text-sm">
                         Email Address: {rowData.email_address}
@@ -274,7 +275,7 @@ const ManufacturerList = () => {
             </div>
             <div className="mt-3 me-2 flex justify-end items-center gap-4">
               <Button
-                className="btn_transperent"
+                className="btn_transparent"
                 onClick={e => {
                   e.preventDefault();
                   dispatch(setManufacturerDialog(false))

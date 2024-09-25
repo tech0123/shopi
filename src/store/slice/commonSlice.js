@@ -146,7 +146,7 @@ export const deleteItem = payload => async dispatch => {
       pageNo: data?.pageNo ? data?.pageNo : '',
       totalRows: data?.totalRows ? data?.totalRows : 0,
     };
-    console.log('data', data)
+
     if (err === 0) {
       successMsg(msg);
 

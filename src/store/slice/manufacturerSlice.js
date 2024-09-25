@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const manufacturerInitialData = {
   code: "",
-  full_name: "",
+  name: "",
   email_address: "",
   mobile_number: "",
   GST_no: "",
@@ -18,7 +18,8 @@ let initialState = {
   allManufacturerList: [],
   selectedManufacturerData: manufacturerInitialData,
   manufacturerDialog: false,
-  deleteManufacturerDialog: false
+  deleteManufacturerDialog: false,
+  manufacturerOptions: []
 };
 
 const manufacturerSlice = createSlice({
@@ -39,6 +40,9 @@ const manufacturerSlice = createSlice({
     },
     setDeleteManufacturerDialog: (state, action) => {
       state.deleteManufacturerDialog = action.payload;
+    },
+    setManufacturerOptions: (state, action) => {
+      state.manufacturerOptions = action.payload;
     }
   }
 });
@@ -48,7 +52,8 @@ export const {
   setAllManufacturerList,
   setSelectedManufacturerData,
   setManufacturerDialog,
-  setDeleteManufacturerDialog
+  setDeleteManufacturerDialog,
+  setManufacturerOptions
 } = manufacturerSlice.actions;
 
 export default manufacturerSlice.reducer;

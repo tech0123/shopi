@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
 import * as yup from "yup";
-import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { Dialog } from "primereact/dialog";
 import { Col, Row } from "react-bootstrap";
-import { yupResolver } from "@hookform/resolvers/yup";
-import CommonInputText from "@/helper/CommonComponent/CommonInputText";
 import { Button } from "primereact/button";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
+import { calculateTotal, generateUniqueId } from "@/helper/commonValues";
 import { setPurchaseTableData } from "@/store/slice/purchaseSlice";
-import { generateUniqueId } from "@/helper/commonValues";
+import CommonInputText from "@/helper/CommonComponent/CommonInputText";
 
 const schema = yup.object().shape({
-    product_name: yup.string().required("Please enter Product Name."),
+    product: yup.string().required("Please enter Product Name."),
     description: yup.string().required("Please enter Description."),
     quantity: yup.string().required("Please enter Quantity."),
     tax: yup.string().required("Please enter Tax."),
@@ -19,50 +19,52 @@ const schema = yup.object().shape({
     cost_price: yup.string().required("Please enter Cost Price.")
 });
 
-const inputFieldsList = [
-  {
-    fieldTitle: "Product Name",
-    fieldId: "ProductName",
-    fieldName: "product_name",
-    type:'single_select', 
-    options:[], 
-    isequired: true
-  },
-  {
-    fieldTitle: "Quantity",
-    fieldId: "Quantity",
-    fieldName: "quantity",
-    isequired: true
-  },
-  {
-    fieldTitle: "Selling Price",
-    fieldId: "SellingPrice",
-    fieldName: "selling_price",
-    isequired: true
-  },
-  {
-    fieldTitle: "Cost Price",
-    fieldId: "CostPrice",
-    fieldName: "cost_price",
-    isequired: true
-  },
-  { fieldTitle: "Tax", fieldId: "Tax", fieldName: "tax", isequired: true },
-  {
-    fieldTitle: "Description",
-    fieldId: "Description",
-    fieldName: "description",
-    isequired: true
-  }
-];
 
 const PurchaseTableDialog = props => {
   const dispatch = useDispatch();
-  const { purchaseTableDialog, selectedPurchaseData, setPurchaseTableDialog } = props;
-
+  const { purchaseTableDialog, selectedPurchaseData, setPurchaseTableDialog, setTableValue } = props;
+  
   const { purchaseTableData } = useSelector(
     ({ purchase }) => purchase
   );
+  const { productsOptions } = useSelector(({ productItem }) => productItem)
   
+  const inputFieldsList = [
+    {
+      fieldTitle: "Product",
+      fieldId: "Product",
+      fieldName: "product",
+      type:'single_select', 
+      options: productsOptions, 
+      isequired: true
+    },
+    {
+      fieldTitle: "Quantity",
+      fieldId: "Quantity",
+      fieldName: "quantity",
+      isequired: true
+    },
+    {
+      fieldTitle: "Selling Price",
+      fieldId: "SellingPrice",
+      fieldName: "selling_price",
+      isequired: true
+    },
+    {
+      fieldTitle: "Cost Price",
+      fieldId: "CostPrice",
+      fieldName: "cost_price",
+      isequired: true
+    },
+    { fieldTitle: "Tax", fieldId: "Tax", fieldName: "tax", isequired: true },
+    {
+      fieldTitle: "Description",
+      fieldId: "Description",
+      fieldName: "description",
+      isequired: true
+    }
+  ];
+
   const methods = useForm({
     resolver: yupResolver(schema),
     defaultValues: selectedPurchaseData
@@ -75,6 +77,9 @@ const PurchaseTableDialog = props => {
   },[selectedPurchaseData])
 
   const onSubmit = data => {
+    let storePurchaseTableData = [...purchaseTableData]
+    const productOptionData = productsOptions?.find((item) => item?.value === data?.product)
+    
     if(data?.unique_id) {
         let purchaseData = [...purchaseTableData]
         const index = purchaseData?.findIndex((index) => index?.unique_id === data?.unique_id)
@@ -83,22 +88,25 @@ const PurchaseTableDialog = props => {
             const oldObj = purchaseData[index]
             const newObj = {
                 ...oldObj,
-                ...data
+                ...data,
+                product_name: productOptionData?.label
             }
             purchaseData[index] = newObj
         }
-        
-        dispatch(setPurchaseTableData(purchaseData))
+      
+        storePurchaseTableData = purchaseData
     } else {   
         const updatedObj = {
             ...data,
-            unique_id: generateUniqueId()
+            unique_id: generateUniqueId(),
+            product_name: productOptionData?.label,
         }
         
-        const updatedPurchaseTableData = [...purchaseTableData, updatedObj]
-        dispatch(setPurchaseTableData(updatedPurchaseTableData))
-    }
-    setPurchaseTableDialog(false)
+        storePurchaseTableData = [...purchaseTableData, updatedObj]
+      }
+
+      dispatch(setPurchaseTableData(storePurchaseTableData))
+      setPurchaseTableDialog(false)
   };
 
   return (
@@ -106,10 +114,11 @@ const PurchaseTableDialog = props => {
       visible={purchaseTableDialog}
       style={{ width: "55rem" }}
       breakpoints={{ "960px": "75vw", "641px": "90vw" }}
-      header={`${methods.watch("unique_id") ? "Edit" : "Add"} Product`}
+      header={`${methods.watch("unique_id") ? "Edit" : "Add"} Purchase Item`}
       modal
       className="p-fluid"
       onHide={() => setPurchaseTableDialog(false)}
+      draggable={false}
     >
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
@@ -134,7 +143,7 @@ const PurchaseTableDialog = props => {
           </div>
           <div className="mt-3 me-2 flex justify-end items-center gap-4">
             <Button
-              className="btn_transperent"
+              className="btn_transparent"
               onClick={e => {
                 e.preventDefault();
                 setPurchaseTableDialog(false);
