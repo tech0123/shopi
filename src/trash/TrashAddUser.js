@@ -20,7 +20,6 @@ export default function TrashAddUser() {
       }
 
       const result = await response.json();
-      console.log("result", result); // Log the full response
       return result; // Return the result for further processing
     } catch (error) {
       console.error("Error:", error);

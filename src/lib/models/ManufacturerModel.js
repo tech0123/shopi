@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const ManufacturerSchema = new mongoose.Schema({
   code: { type: String, required: true },
-  full_name: { type: String, required: true },
+  name: { type: String, required: true },
   email_address: { type: String, required: true },
   mobile_number: { type: String, required: true },
   GST_no: { type: String, required: true },
@@ -14,7 +14,7 @@ const ManufacturerSchema = new mongoose.Schema({
 });
 
 const Manufacturer =
-  mongoose.models.addmanufacturer ||
-  mongoose.model("addmanufacturer", ManufacturerSchema);
+  mongoose.models.manufacturer ||
+  mongoose.model("manufacturer", ManufacturerSchema);
 
 export default Manufacturer;

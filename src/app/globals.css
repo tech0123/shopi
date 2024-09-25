@@ -13,7 +13,7 @@ body {
   margin-bottom: 33px
 }
 
-.form_input label {
+.form_input div {
   color:#ffffff;
   margin-bottom: 6px
 }
@@ -71,9 +71,31 @@ body {
   box-shadow: 0px 0px 7px 0px gray;
   color: #ffffff;
 }
+
+.date_wrapper {
+  width: 100%;
+}
+
+.date_wrapper input {
+  padding: 10px;
+  background: #000;
+  font-size: 14px;
+}
+
+.date_wrapper .p-datepicker-trigger {
+  background: #000;
+  border-radius: 0px 8px 8px 0px;
+}
+
+.date_wrapper .p-inputtext:hover,
+.date_wrapper .p-inputtext:focus {
+  border: none;
+  box-shadow: 0px 0px 7px 0px gray;
+  color: #ffffff;
+}
  
 .form_container {
-  margin: 10px;
+  margin: 0px 50px 0px 50px;
   padding: 40px;
   border-radius: 12px;
   box-shadow: 0px 0px 5px 0px #ffffff;
@@ -96,7 +118,7 @@ body {
   box-shadow: 0px 0px 7px 0px gray;
 }
 
-.btn_transperent{
+.btn_transparent{
   display: flex;
   padding: 8px;
   width: 100px;
@@ -108,7 +130,7 @@ body {
   box-shadow: 0px 0px 3px 0px #000;
 }
 
-.btn_transperent:hover {
+.btn_transparent:hover {
   color: #ffffff;
   background-color: #000;
   box-shadow: 0px 0px 6px 0px gray;
@@ -116,7 +138,7 @@ body {
 
 .table_wrapper {
   border-radius: 20px;
-  margin: 50px;
+  margin: 0px 50px 0px 50px;
   box-shadow: 0px 0px 10px 0px gray;
 }
 
@@ -165,6 +187,22 @@ body {
   height: 80px;
   width: 80px;
   color: #ffffff;
+}
+
+.amount_content {
+  border-radius: 20px;
+  margin: 50px;
+  box-shadow: 0px 0px 10px 0px gray;
+  background-color: #1f2937;
+  color: #ffffff;
+  padding: 20px;
+}
+
+.amount_content .sub-total-wrapper {
+  display: flex;
+  margin: 20px;
+  font-size: 15.5px;
+  justify-content: space-between;
 }
 
 .action-icon-size .pi {

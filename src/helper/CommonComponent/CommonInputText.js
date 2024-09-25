@@ -3,20 +3,68 @@ import { InputText } from "primereact/inputtext";
 import { Controller, useFormContext } from "react-hook-form";
 import { InputNumber } from "primereact/inputnumber";
 import { Dropdown } from "primereact/dropdown";
+import { Calendar } from 'primereact/calendar';
 
 const CommonInputText = props => {
-  const { title='', id='', type="text", name='', placeholder='', isRequired=false, className='input_wrap', options=[] } = props;
+  const { title='', id='', type="text", name='', placeholder='', isRequired=false, className='', options=[], disabled, fieldOnChange } = props;
 
   const methods = useFormContext();
   const { control, register, setValue, watch } = methods;
 
   return (
-    <div className="form_input">
-      <label className="w-6rem">
-        {title} {isRequired && <span className="fs-6" style={{ color: "red"}}>*</span>}
-      </label>
-      <div className="mt-2 mb-3">
-        {type === 'number' ? (
+    <div className={`form_input ${className}`}>
+     {title && (
+        <div className="w-6rem">
+          {title} {isRequired && <span className="fs-6" style={{ color: "red"}}>*</span>}
+        </div>
+      )}
+      <div className="mt-3 mb-3">
+        {type === 'date' ? (
+          <Controller
+            name={name}
+            control={control}
+            render={
+              (
+                { field: { onChange, value, ref }, fieldState: { error } },
+              ) => (
+                <Calendar
+                  id={id}
+                  name={name}
+                  value={value ? new Date(value) : ''}
+                  placeholder={`Enter ${title}`}
+                  showIcon
+                  dateFormat="dd-mm-yy"
+                  // maxDate={new Date()}
+                  readOnlyInput
+                  onChange={(e) => setValue(name, e.target.value, { shouldValidate: true })}
+                  showButtonBar
+                  className="date_wrapper"
+                />
+              )
+            }
+          />
+        ) : type === 'time' ? (
+          <Controller
+            name={name}
+            control={control}
+            render={
+              (
+                { field: { onChange, value, ref }, fieldState: { error } },
+              ) => (
+                <Calendar
+                  id={id}
+                  name={name}
+                  value={value}
+                  placeholder={`Enter ${title}`}
+                  className="input_select"
+                  timeOnly
+                // {...register(time, { required: true })}
+                />
+              )
+            }
+          />
+
+        ) : type === 'number' ? (
           <Controller
             name={name}
             control={control}
@@ -28,12 +76,13 @@ const CommonInputText = props => {
                   id={id}
                   name={name}
                   value={value}
-                  placeholder={`Enter ${title}`}
+                  placeholder={`Enter ${title || placeholder}`}
                   useGrouping={false}
                   minFractionDigits={0}
                   maxFractionDigits={2}
-                  className={className}
-                  onChange={(e) => setValue(name, e.value, { shouldValidate: true })}
+                  disabled={disabled}
+                  className='input_number'
+                  onChange={fieldOnChange ? fieldOnChange : (e) => setValue(name, e.value, { shouldValidate: true })}
                 />
               )
             }
@@ -54,7 +103,7 @@ const CommonInputText = props => {
                   value={watch(name)}
                   placeholder={`Enter ${title}`}
                   className="input_select"
-                  onChange={(e) => setValue(name, e.value)}
+                  onChange={(e) => setValue(name, e.value, { shouldValidate: true })}
                 />
               )
             }
@@ -73,7 +122,7 @@ const CommonInputText = props => {
                   name={name}
                   value={value}
                   placeholder={`Enter ${title}`}
-                  className={className}
+                  className='input_wrap'
                   {...register(name, { required: true })}
                 />
               )
