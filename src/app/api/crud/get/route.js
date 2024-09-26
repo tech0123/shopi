@@ -21,7 +21,7 @@ export async function POST(request) {
         return d;
       });
     };
-    const { modal_to_pass, start = 1,
+    const { modal_to_pass, field_options = [], start = 1,
       limit = 7, search = '', search_key = []
     } = await request.json();
 
@@ -39,12 +39,12 @@ export async function POST(request) {
       modalToUse = Attendance;
     } else {
       return NextResponse.json(
-        { data: [], err: 1, success: false, msg: "Invalid Modal" + error.message, },
+        { data: [], err: 1, success: false, msg: "Invalid Modal" },
         { status: 400 }
       );
     }
 
-
+    const modifiedOptionKeys = field_options?.join(" ");
 
     if (search_key.length === 0) {
       return NextResponse.json(
@@ -65,7 +65,7 @@ export async function POST(request) {
 
     const skip = (start - 1) * limit;
 
-    data = await modalToUse.find(query).skip(skip).limit(limit).lean();
+    data = await modalToUse.find(query).select(modifiedOptionKeys).skip(skip).limit(limit).lean();
 
 
     const modifyProduct = await modifyProducts(data)

@@ -4,7 +4,6 @@ import Customer from "@/lib/models/CustomerModel";
 import { NextResponse } from "next/server";
 import Employee from "@/lib/models/EmployeeModel";
 import Manufacturer from "@/lib/models/ManufacturerModel";
-import Deleted from "@/lib/models/DeletedModel";
 import Purchase from "@/lib/models/PurchaseModal";
 
 export async function POST(request) {
@@ -15,7 +14,8 @@ export async function POST(request) {
 
     const data = await request.json();
 
-    const { modal_to_pass, id, start = 1, limit = 7, search = "" } = data;
+    const { modal_to_pass, id, start = 1, limit = 7, search = '', search_key = [] } = data;
+
 
     if (!modal_to_pass || !id) {
       return NextResponse.json(
@@ -56,13 +56,18 @@ export async function POST(request) {
     }
     await modalToUse.findByIdAndDelete(id);
 
-    const query = search
+    if (search_key?.length === 0) {
+      return NextResponse.json(
+        { data: [], err: 1, success: false, msg: "Please send search key" },
+        { status: 400 }
+      );
+    }
+    const query = search && search_key?.length > 0
       ? {
-          $or: [
-            { name: { $regex: search, $options: "i" } }, // Case insensitive search in name
-            { description: { $regex: search, $options: "i" } } // Case insensitive search in description
-          ]
-        }
+        $or: search_key?.map(item => ({
+          [item]: { $regex: search, $options: "i" }
+        }))
+      }
       : {};
 
     const totalRecords = await modalToUse.countDocuments(query);
