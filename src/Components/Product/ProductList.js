@@ -11,16 +11,16 @@ import { FormProvider, useForm } from "react-hook-form";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
 import {
   addItem, getSingleItem, updateItem, deleteItem,
-} from "@/store/slice/commonSlice";
-import {
-  getAllProductList, setAllProductList, setDeleteProductDialog, setProductData, setProductDialog, setProductImageState, setCurrentPage,
+  getAllDataList, setCurrentPage,
   setPageLimit,
   setSearchParam,
+} from "@/store/slice/commonSlice";
+import {
+  setDeleteProductDialog, setSelectedProductData, setProductDialog,
 } from "@/store/slice/productItemSlice";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect } from "react";
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
 import Image from "next/image";
-
 
 const initialState = {
   image: "",
@@ -43,11 +43,10 @@ const schema = yup.object().shape({
   cost_price: yup.string().required("Please enter Cost Price.")
 });
 
-
 const imageBodyTemplate = rowData => {
   return (
     <Image
-      src={rowData?.image}
+      src={rowData?.image || ''}
       alt={rowData?._id || "Image not found"}
       className="shadow-2 border-round"
       width={150}
@@ -83,10 +82,8 @@ const inputFieldsList = [
 const ProductList = () => {
   const dispatch = useDispatch();
 
-  const { allProductList, productDialog, productData, deleteProductDialog, currentPage,
-    pageLimit,
-    searchParam, productLoading } = useSelector(({ productItem }) => productItem)
-  console.log('allProductList', allProductList)
+  const { allProductList, productDialog, selectedProductData, deleteProductDialog } = useSelector(({ productItem }) => productItem)
+  const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(({ common }) => common)
 
   const fetchProductList = useCallback(async (start = 1,
     limit = 7,
@@ -98,7 +95,7 @@ const ProductList = () => {
       limit: limit,
       search: search?.trim(),
     }
-    const res = await dispatch(getAllProductList(payload))
+    const res = await dispatch(getAllDataList(payload))
 
   }, [dispatch])
 
@@ -106,7 +103,8 @@ const ProductList = () => {
     fetchProductList(
       currentPage,
       pageLimit,
-      searchParam);
+      searchParam
+    );
   }, []);
 
   const onPageChange = page => {
@@ -156,7 +154,7 @@ const ProductList = () => {
 
   const methods = useForm({
     resolver: yupResolver(schema),
-    defaultValues: productData
+    defaultValues: selectedProductData
   });
 
   const onSubmit = async (data) => {
@@ -164,6 +162,7 @@ const ProductList = () => {
     const payload = {
       ...data,
       modal_to_pass: "product",
+      search_key: ["name", "description", "selling_price"],
       start: currentPage,
       limit: pageLimit,
       search: searchParam,
@@ -204,26 +203,24 @@ const ProductList = () => {
     [],
   );
   const handleAddItem = () => {
-    dispatch(setProductData(initialState));
-    dispatch(setProductImageState(null));
+    dispatch(setSelectedProductData(initialState));
+    // dispatch(setProductImageState(null));
     methods.reset(initialState);
     dispatch(setProductDialog(true))
   };
 
   const handleEditItem = async (product) => {
     dispatch(setProductDialog(true))
-    dispatch(setProductImageState(null));
-    const payload = { modal_to_pass: "product", id: product?._id }
+    // dispatch(setProductImageState(null));
+    const payload = { modal_to_pass: "product", id: product }
     const res = await dispatch(getSingleItem(payload))
-
     if (res) {
-      dispatch(setProductData(res));
-      methods.reset(res);
+      methods.reset(res?.payload);
     }
   };
 
   const handleDeleteItem = product => {
-    dispatch(setProductData(product));
+    dispatch(setSelectedProductData(product));
     methods.reset(product);
     dispatch(setDeleteProductDialog(true));
   };
@@ -234,14 +231,15 @@ const ProductList = () => {
 
   const handleDeleteProduct = async () => {
     const payload = {
-      modal_to_pass: 'product', id: productData?._id, start: currentPage,
+      modal_to_pass: 'product',
+      search_key: ["name", "description", "selling_price"],
+      id: selectedProductData?._id, start: currentPage,
       limit: pageLimit,
       search: searchParam
     };
     const res = await dispatch(deleteItem(payload))
 
     if (res) {
-      dispatch(setAllProductList(res))
       dispatch(setDeleteProductDialog(false));
     }
   };
@@ -267,8 +265,8 @@ const ProductList = () => {
       <div className="container flex flex-col border-white border-2 w-full">
         <div className="flex justify-center border-b-2 border-white p-2">
           <Image
-            src={rowData?.image}
-            alt={rowData?.image || "Image not found"}
+            src={rowData?.image || ''}
+            alt={rowData?._id || "Image not found"}
             width={150}
             height={150}
           />
@@ -309,10 +307,9 @@ const ProductList = () => {
       </div>
     );
   };
-
   return (
     <>
-      {productLoading && <Loader />}
+      {commonLoading && <Loader />}
       <CommonDataTable
         tableName="Products"
         moduleName='product'
@@ -327,7 +324,7 @@ const ProductList = () => {
         deleteItemDialog={deleteProductDialog}
         hideDeleteDialog={hideProductDeleteDialog}
         deleteItem={handleDeleteProduct}
-        selectedItemData={productData}
+        // selectedItemData={selectedProductData}
         pageLimit={pageLimit}
         onPageChange={onPageChange}
         onPageRowsChange={onPageRowsChange}
@@ -363,7 +360,7 @@ const ProductList = () => {
               </Row>
               {/* <div class="file-upload">
                 <label for="file-upload" class='custom-file-upload  bg-black text-white  font-bold py-2 px-4 rounded shadow-md hover:bg-cyan-600 cursor-pointer'>
-                  {productImageState ? 'Uploaded' : productData?._id ? 'Change Image' : "Choose Image"}
+                  {productImageState ? 'Uploaded' : selectedProductData?._id ? 'Change Image' : "Choose Image"}
                 </label>
                 <input
                   id="file-upload"
