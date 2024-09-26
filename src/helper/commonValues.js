@@ -25,7 +25,7 @@ export const calcInitialValues = {
 };
 
 export const roastError = e => {
-  toast.error("Something goes wrong, please try again later");
+  toast.error("Something goes wrong, please try again later" + e);
 };
 
 export const successMsg = e => {
@@ -61,8 +61,8 @@ export const getFormattedDate = value => {
 
 export const calculateTotal = (array, field) => {
   let calculatedValue = 0;
-  
-  if(array?.length && field){
+
+  if (array?.length && field) {
     calculatedValue = array.reduce((acc, crr) => {
       return acc + Number(crr[field])
     }, 0)
