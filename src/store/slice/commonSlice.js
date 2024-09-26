@@ -24,7 +24,6 @@ export const getAllDataList = createAsyncThunk(
         pageNo: data?.pageNo ? data?.pageNo : '',
         totalRows: data?.totalRows ? data?.totalRows : 0,
       };
-      console.log('payload?.modal_to_pass', payload?.modal_to_pass)
       if (err === 0) {
 
         if (payload?.modal_to_pass === "Products") {
@@ -35,7 +34,10 @@ export const getAllDataList = createAsyncThunk(
           dispatch(setAllManufacturerList(newObj));
         } else if (payload?.modal_to_pass === "Purchase") {
           dispatch(setAllPurchaseListData(newObj));
+        } else {
+          console.error("Modal issue");
         }
+
         return newObj;
       } else if (err === 1) {
         errorMsg(msg);

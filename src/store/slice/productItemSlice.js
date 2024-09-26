@@ -1,10 +1,4 @@
-import {
-  calcInitialValues,
-  roastError,
-  successMsg
-} from "@/helper/commonValues";
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice } from "@reduxjs/toolkit";
 
 const productInitialData = {
   image: "",
