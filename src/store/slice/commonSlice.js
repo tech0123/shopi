@@ -1,10 +1,11 @@
 import axios from "axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { errorMsg, roastError, successMsg } from "@/helper/commonValues";
+import { customerTypeOptions, employeeRoleOptions, errorMsg, roastError, successMsg } from "@/helper/commonValues";
 import { setAllProductList, setSelectedProductData } from "./productItemSlice";
 import { setAllPurchaseListData } from "./purchaseSlice";
 import { setAllManufacturerList, setSelectedManufacturerData } from "./manufacturerSlice";
 import { setAllEmployeeList, setSelectedEmployeeData } from "./employeeSlice";
+import { setAllCustomerList, setSelectedCustomerData } from "./customerSlice";
 
 let initialState = {
   commonLoading: false,
@@ -29,11 +30,31 @@ export const getAllDataList = createAsyncThunk(
         if (payload?.modal_to_pass === "Products") {
           dispatch(setAllProductList(newObj))
         } else if (payload?.modal_to_pass === "Employees") {
-          dispatch(setAllEmployeeList(newObj));
+
+          const updatedData = newObj?.list?.map((item) => {
+            const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
+            return {
+              ...item,
+              role: findRole?.label
+            }
+          })
+          const updatedObject = { ...newObj, list: updatedData }
+          dispatch(setAllEmployeeList(updatedObject));
         } else if (payload?.modal_to_pass === "Manufacturers") {
           dispatch(setAllManufacturerList(newObj));
         } else if (payload?.modal_to_pass === "Purchase") {
           dispatch(setAllPurchaseListData(newObj));
+        } else if (payload?.modal_to_pass === "Customers") {
+          const updatedData = newObj?.list?.map((item) => {
+            const findType = customerTypeOptions?.find((type) => type.value === item.type)
+            return {
+              ...item,
+              type: findType?.label
+            }
+          })
+          const updatedObject = { ...newObj, list: updatedData }
+          dispatch(setAllCustomerList(updatedObject));
+
         } else {
           console.error("Modal issue");
         }
@@ -65,7 +86,10 @@ export const getSingleItem = createAsyncThunk(
           dispatch(setSelectedEmployeeData(data));
         } else if (payload?.modal_to_pass === "manufacturer") {
           dispatch(setSelectedManufacturerData(data));
-        } else {
+        } else if (payload?.modal_to_pass === "customer") {
+          dispatch(setSelectedCustomerData(data));
+        }
+        else {
           console.error("Modal issue");
         }
         return data;
@@ -91,12 +115,31 @@ export const addItem = createAsyncThunk(
         if (payload?.modal_to_pass === "product") {
           dispatch(setAllProductList(data))
         } else if (payload?.modal_to_pass === "employee") {
-          dispatch(setAllEmployeeList(data));
+          const updatedData = data?.list?.map((item) => {
+            const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
+            return {
+              ...item,
+              role: findRole?.label
+            }
+          })
+          const updatedObject = { ...data, list: updatedData }
+          dispatch(setAllEmployeeList(updatedObject));
         } else if (payload?.modal_to_pass === "manufacturer") {
           dispatch(setAllManufacturerList(data));
         } else if (payload?.modal_to_pass === "purchase") {
           dispatch(setAllPurchaseListData(data));
-        } else {
+        } else if (payload?.modal_to_pass === "customer") {
+          const updatedData = data?.list?.map((item) => {
+            const findType = customerTypeOptions?.find((type) => type.value === item.type)
+            return {
+              ...item,
+              type: findType?.label
+            }
+          })
+          const updatedObject = { ...data, list: updatedData }
+          dispatch(setAllCustomerList(updatedObject));
+        }
+        else {
           console.error("Modal issue");
         }
         successMsg(msg);
@@ -122,11 +165,29 @@ export const updateItem = createAsyncThunk(
         if (payload?.modal_to_pass === "product") {
           dispatch(setAllProductList(data))
         } else if (payload?.modal_to_pass === "employee") {
-          dispatch(setAllEmployeeList(data));
+          const updatedData = data?.list?.map((item) => {
+            const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
+            return {
+              ...item,
+              role: findRole?.label
+            }
+          })
+          const updatedObject = { ...data, list: updatedData }
+          dispatch(setAllEmployeeList(updatedObject));
         } else if (payload?.modal_to_pass === "manufacturer") {
           dispatch(setAllManufacturerList(data));
         } else if (payload?.modal_to_pass === "purchase") {
           dispatch(setAllPurchaseListData(data));
+        } else if (payload?.modal_to_pass === "customer") {
+          const updatedData = data?.list?.map((item) => {
+            const findType = customerTypeOptions?.find((type) => type.value === item.type)
+            return {
+              ...item,
+              type: findType?.label
+            }
+          })
+          const updatedObject = { ...data, list: updatedData }
+          dispatch(setAllCustomerList(updatedObject));
         } else {
           console.error("Modal issue");
         }
@@ -156,11 +217,29 @@ export const deleteItem = createAsyncThunk(
         if (payload?.modal_to_pass === "product") {
           dispatch(setAllProductList(data))
         } else if (payload?.modal_to_pass === "employee") {
-          dispatch(setAllEmployeeList(data));
+          const updatedData = data?.list?.map((item) => {
+            const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
+            return {
+              ...item,
+              role: findRole?.label
+            }
+          })
+          const updatedObject = { ...data, list: updatedData }
+          dispatch(setAllEmployeeList(updatedObject));
         } else if (payload?.modal_to_pass === "manufacturer") {
           dispatch(setAllManufacturerList(data));
         } else if (payload?.modal_to_pass === "purchase") {
           dispatch(setAllPurchaseListData(data));
+        } else if (payload?.modal_to_pass === "customer") {
+          const updatedData = data?.list?.map((item) => {
+            const findType = customerTypeOptions?.find((type) => type.value === item.type)
+            return {
+              ...item,
+              type: findType?.label
+            }
+          })
+          const updatedObject = { ...data, list: updatedData }
+          dispatch(setAllCustomerList(updatedObject));
         } else {
           console.error("Modal issue");
         }

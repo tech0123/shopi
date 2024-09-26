@@ -3,71 +3,26 @@ import { createSlice } from "@reduxjs/toolkit";
 import { errorMsg, roastError, successMsg } from "@/helper/commonValues";
 
 const employeeInitialData = {
+  image: '',
   name: "",
   email: "",
   mobile_number: "",
   role: "",
+  password: "",
   salary: 0
 };
 
 let initialState = {
-  employeeLoading: false,
   allEmployeeList: [],
-  selectedEmployeeData: employeeInitialData,
   employeeDialog: false,
+  selectedEmployeeData: employeeInitialData,
   deleteEmployeeDialog: false
-};
-
-export const getEmployeeList = payload => async dispatch => {
-  try {
-    dispatch(setEmployeeLoading(true));
-    const response = await axios.get(`/api/Employee/getEmployees`);
-    const { data, msg, err } = response.data;
-
-    dispatch(setAllEmployeeList(data));
-    if (err === 0) {
-      successMsg(msg);
-      return data;
-    } else if (err === 1) {
-      errorMsg(msg);
-      return false;
-    } else return false;
-  } catch (e) {
-    roastError(e);
-    return false;
-  } finally {
-    dispatch(setEmployeeLoading(false));
-  }
-};
-
-export const addEmployeeList = payload => async dispatch => {
-  try {
-    dispatch(setEmployeeLoading(true));
-    const response = await axios.get(`/api/Employee/addEmployee`, payload);
-    const { data, msg, err } = response.data;
-
-    if (err === 0) {
-      successMsg(msg);
-      return data;
-    } else if (err === 1) {
-      errorMsg(msg);
-      return false;
-    } else return false;
-  } catch (e) {
-    roastError(e);
-    return false;
-  } finally {
-    dispatch(setEmployeeLoading(false));
-  }
 };
 
 const employeeSlice = createSlice({
   name: "employee",
   initialState,
   reducers: {
-    setEmployeeLoading: (state, action) => {
-      state.employeeLoading = action.payload;
-    },
     setAllEmployeeList: (state, action) => {
       state.allEmployeeList = action.payload;
     },
@@ -84,7 +39,6 @@ const employeeSlice = createSlice({
 });
 
 export const {
-  setEmployeeLoading,
   setAllEmployeeList,
   setSelectedEmployeeData,
   setEmployeeDialog,

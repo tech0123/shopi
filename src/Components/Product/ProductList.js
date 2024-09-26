@@ -9,11 +9,12 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { FormProvider, useForm } from "react-hook-form";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
-import { addItem, getSingleItem, updateItem, deleteItem, getAllDataList, setCurrentPage, setPageLimit, setSearchParam, } from "@/store/slice/commonSlice";
+import { addItem, getSingleItem, updateItem, deleteItem, getAllDataList, setCurrentPage, setPageLimit, setSearchParam } from "@/store/slice/commonSlice";
 import { setDeleteProductDialog, setSelectedProductData, setProductDialog, } from "@/store/slice/productItemSlice";
 import { memo, useCallback, useEffect } from "react";
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
 import Image from "next/image";
+import { product_search_key } from "@/helper/commonValues";
 
 const initialState = {
   image: "",
@@ -85,7 +86,7 @@ const ProductList = () => {
   ) => {
     const payload = {
       modal_to_pass: "Products",
-      search_key: ["name", "description", "selling_price"],
+      search_key: product_search_key,
       start: start,
       limit: limit,
       search: search?.trim(),
@@ -157,7 +158,7 @@ const ProductList = () => {
     const payload = {
       ...data,
       modal_to_pass: "product",
-      search_key: ["name", "description", "selling_price"],
+      search_key: product_search_key,
       start: currentPage,
       limit: pageLimit,
       search: searchParam,
@@ -213,7 +214,7 @@ const ProductList = () => {
     // dispatch(setProductImageState(null));
     const payload = { modal_to_pass: "product", id: product }
     const res = await dispatch(getSingleItem(payload))
-    if (res) {
+    if (res?.payload) {
       methods.reset(res?.payload);
     }
   };
@@ -231,7 +232,7 @@ const ProductList = () => {
   const handleDeleteProduct = async () => {
     const payload = {
       modal_to_pass: 'product',
-      search_key: ["name", "description", "selling_price"],
+      search_key: product_search_key,
       id: selectedProductData?._id,
       start: currentPage,
       limit: pageLimit,

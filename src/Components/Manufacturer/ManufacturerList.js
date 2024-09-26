@@ -17,6 +17,7 @@ import {
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
 import { addItem, deleteItem, getAllDataList, getSingleItem, updateItem, setCurrentPage, setPageLimit, setSearchParam, } from "@/store/slice/commonSlice";
+import { manufacturer_search_key } from "@/helper/commonValues";
 
 const initialState = {
   code: "",
@@ -88,7 +89,7 @@ const ManufacturerList = () => {
   ) => {
     const payload = {
       modal_to_pass: "Manufacturers",
-      search_key: [""],
+      search_key: manufacturer_search_key,
       start: start,
       limit: limit,
       search: search?.trim(),
@@ -155,11 +156,10 @@ const ManufacturerList = () => {
 
   const onSubmit = async (data) => {
     let res = '';
-    console.log('data', data)
     const payload = {
       ...data,
       modal_to_pass: "manufacturer",
-      search_key: ["address"],
+      search_key: manufacturer_search_key,
       start: currentPage,
       limit: pageLimit,
       search: searchParam,
@@ -209,7 +209,7 @@ const ManufacturerList = () => {
     const payload = { modal_to_pass: "manufacturer", id: item }
     const res = await dispatch(getSingleItem(payload))
 
-    if (res) {
+    if (res?.payload) {
       methods.reset(res?.payload);
     }
   };
@@ -223,7 +223,7 @@ const ManufacturerList = () => {
   const handleDeleteManufacturer = async () => {
     const payload = {
       modal_to_pass: 'manufacturer',
-      search_key: ["address"],
+      search_key: manufacturer_search_key,
       id: selectedManufacturerData?._id,
       start: currentPage,
       limit: pageLimit,
