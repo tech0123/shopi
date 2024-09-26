@@ -19,52 +19,61 @@ const schema = yup.object().shape({
     cost_price: yup.string().required("Please enter Cost Price.")
 });
 
+const inputFieldsList = [
+  // {
+  //   fieldTitle: "Product",
+  //   fieldId: "Product",
+  //   fieldName: "product",
+  //   type:'single_select', 
+  //   options: productsOptions, 
+  //   isequired: true
+  // },
+  {
+    fieldTitle: "Quantity",
+    fieldId: "Quantity",
+    fieldName: "quantity",
+    isequired: true
+  },
+  {
+    fieldTitle: "Selling Price",
+    fieldId: "SellingPrice",
+    fieldName: "selling_price",
+    isequired: true
+  },
+  {
+    fieldTitle: "Cost Price",
+    fieldId: "CostPrice",
+    fieldName: "cost_price",
+    isequired: true
+  },
+  { fieldTitle: "Tax", fieldId: "Tax", fieldName: "tax", isequired: true },
+  {
+    fieldTitle: "Description",
+    fieldId: "Description",
+    fieldName: "description",
+    isequired: true
+  }
+];
 
 const PurchaseTableDialog = props => {
   const dispatch = useDispatch();
-  const { purchaseTableDialog, selectedPurchaseData, setPurchaseTableDialog, setTableValue } = props;
+  const { productOptions, purchaseTableDialog, selectedPurchaseData, setPurchaseTableDialog } = props;
   
   const { purchaseTableData } = useSelector(
     ({ purchase }) => purchase
   );
-  const { productsOptions } = useSelector(({ productItem }) => productItem)
-  
-  const inputFieldsList = [
-    {
-      fieldTitle: "Product",
-      fieldId: "Product",
-      fieldName: "product",
-      type:'single_select', 
-      options: productsOptions, 
-      isequired: true
-    },
-    {
-      fieldTitle: "Quantity",
-      fieldId: "Quantity",
-      fieldName: "quantity",
-      isequired: true
-    },
-    {
-      fieldTitle: "Selling Price",
-      fieldId: "SellingPrice",
-      fieldName: "selling_price",
-      isequired: true
-    },
-    {
-      fieldTitle: "Cost Price",
-      fieldId: "CostPrice",
-      fieldName: "cost_price",
-      isequired: true
-    },
-    { fieldTitle: "Tax", fieldId: "Tax", fieldName: "tax", isequired: true },
-    {
-      fieldTitle: "Description",
-      fieldId: "Description",
-      fieldName: "description",
-      isequired: true
-    }
-  ];
+  const { allProductList } = useSelector(({ productItem }) => productItem)
 
+  // const productsOptions = useMemo(() => {
+  //   if(allProductList?.list?.length){
+  //     const data = allProductList?.list?.map(item => ({
+  //       label: item?.name,
+  //       value: item?._id
+  //     }));
+  //     return data;
+  //   }
+  // },[allProductList]) 
+  
   const methods = useForm({
     resolver: yupResolver(schema),
     defaultValues: selectedPurchaseData
@@ -76,9 +85,25 @@ const PurchaseTableDialog = props => {
     }
   },[selectedPurchaseData])
 
+  const handleProuctChange = (e) => {
+    const name = e?.target?.name;
+    const value = e?.target?.value
+
+    const findProductData = allProductList?.list?.find((item) => {
+      return item?._id === value
+    })  
+    const fieldsObj = {
+      ...findProductData,
+      [name]: value,
+      selling_price: ""
+    }
+    
+    methods.reset(fieldsObj);
+  }
+
   const onSubmit = data => {
     let storePurchaseTableData = [...purchaseTableData]
-    const productOptionData = productsOptions?.find((item) => item?.value === data?.product)
+    const productOptionData = productOptions?.find((item) => item?.value === data?.product)
     
     if(data?.unique_id) {
         let purchaseData = [...purchaseTableData]
@@ -124,6 +149,20 @@ const PurchaseTableDialog = props => {
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="form_container">
             <Row>
+              <Col lg={6}>
+                <CommonInputText
+                  type='single_select'
+                  title="Product" 
+                  id="Product"
+                  name='product' 
+                  options={productOptions} 
+                  isRequired={true}
+                  fieldOnChange={(e) => {
+                    handleProuctChange(e)
+                  }}
+                />
+              </Col>
+
               {inputFieldsList.map((field, i) => {
                 return (
                   <Col lg={6} key={i}>

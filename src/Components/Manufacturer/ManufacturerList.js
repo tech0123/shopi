@@ -23,7 +23,7 @@ const initialState = {
     name: "",
     email_address: "",
     mobile_number: "",
-    GST_no: "",
+    gst_no: "",
     country: "",
     state: "",
     city: "",
@@ -36,7 +36,7 @@ const schema = yup.object().shape({
     name: yup.string().required("Please enter Full Name."),
     email_address: yup.string().required("Please enter Email Address."),
     mobile_number: yup.string().required("Please enter Mobile Number."),
-    GST_no: yup.string().required("Please enter Cost GST No."),
+    gst_no: yup.string().required("Please enter Cost GST No."),
     country: yup.string().required("Please enter Country."),
     state: yup.string().required("Please enter State."),
     city: yup.string().required("Please enter City."),
@@ -55,7 +55,7 @@ const tableColumns = [
     {field: 'name', header:"Name"},
     {field: 'email_address', header:"Email"},
     {field: 'mobile_number', header:"Mobile Number"},
-    {field: 'GST_no', header:"GST No."},
+    {field: 'gst_no', header:"GST No."},
     {field: 'country', header:"Country"},
     {field: 'state', header:"State"},
     {field: 'city', header:"City"},
@@ -67,7 +67,7 @@ const inputFieldsList = [
     {fieldTitle:"Full Name", fieldId:"FullName",fieldName:'name', fieldRequired:true},
     {fieldTitle:"Email Address", fieldId:"EmailAddress",fieldName:'email_address', fieldRequired:true},
     {fieldTitle:"Mobile Number", fieldId:"MobileNumber",fieldName:'mobile_number', fieldRequired:true},
-    {fieldTitle:"GST No.", fieldId:"GSTNo",fieldName:'GST_no', fieldRequired:true},
+    {fieldTitle:"GST No.", fieldId:"GSTNo",fieldName:'gst_no', fieldRequired:true},
     {fieldTitle:"Country", fieldId:"Country",fieldName:'country', fieldRequired:true},
     {fieldTitle:"State", fieldId:"State",fieldName:'state', fieldRequired:true},
     {fieldTitle:"City", fieldId:"City",fieldName:'city', fieldRequired:true},
@@ -202,7 +202,7 @@ const ManufacturerList = () => {
                 </div>
                 <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
                     <p className="text-left text-sm">
-                        GST No.: {rowData.GST_no}
+                        GST No.: {rowData.gst_no}
                     </p>
                     <p className="text-left text-sm">
                         Country: {rowData.country}

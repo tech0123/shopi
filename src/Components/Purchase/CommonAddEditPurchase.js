@@ -1,5 +1,5 @@
 "use client";
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import * as yup from "yup";
 import { Button } from "primereact/button";
 import { Col, Row } from "react-bootstrap";
@@ -10,9 +10,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams, useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import PurchaseTableDialog from "./PurchaseTableDialog";
-import { setProductsOptions } from "@/store/slice/productItemSlice";
+import { setAllProductList, setProductsOptions } from "@/store/slice/productItemSlice";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
-import { setManufacturerOptions } from "@/store/slice/manufacturerSlice";
+import { setAllManufacturerList, setManufacturerOptions } from "@/store/slice/manufacturerSlice";
 import { addItem, getAllDataList, updateItem } from "@/store/slice/commonSlice";
 import CommonDeleteConfirmation from "@/helper/CommonComponent/CommonDeleteConfirmation";
 import { setAllPurchaseListData, setPurchaseTableData } from "@/store/slice/purchaseSlice";
@@ -56,6 +56,23 @@ const tableColumns = [
     {field: 'description', header:"Description"},
 ] 
 
+const inputFieldsList = [
+  // {
+  //   fieldTitle:"Manufacturer", 
+  //   fieldId:"Manufacturer",
+  //   fieldName:'manufacturer', 
+  //   type:'single_select', 
+  //   options: manufacturerOptions, 
+  //   isRequired:true,
+  //   fieldOnChange:{handleManufacturerChange}
+  // },
+  {fieldTitle:"Purchase Date", fieldId:"PurchaseDate",fieldName:'purchase_date', type:'date', isRequired:true},
+  {fieldTitle:"Bill No", fieldId:"BillNo",fieldName:'bill_no', isRequired:true},
+  {fieldTitle:"GST No", fieldId:"GSTNo",fieldName:'gst_no', isRequired:true},
+  {fieldTitle:"Mobile Number", fieldId:"Mobile Number",fieldName:'mobile_number', isRequired:true},
+  {fieldTitle:"Address", fieldId:"Address",fieldName:'address', isRequired:true},
+]
+
 const CommonAddEditPurchase = (props) => {
     const { initialValue } = props
     const router = useRouter();
@@ -65,28 +82,14 @@ const CommonAddEditPurchase = (props) => {
   const [purchaseTableDialog, setPurchaseTableDialog] = useState(false);
   const [selectedPurchaseData, setSelectedPurchaseData] = useState(intialDialogState)
   const [deleteItemDialog, setDeleteItemDialog] = useState(false);
+  const [productOptions, setProductOptions] = useState([]);
 
   const { purchaseLoading, purchaseTableData } = useSelector(
     ({ purchase }) => purchase
   );
-  const { manufacturerOptions } = useSelector(({ manufacturer }) => manufacturer)
-
-  const inputFieldsList = [
-    {
-      fieldTitle:"Manufacturer", 
-      fieldId:"Manufacturer",
-      fieldName:'manufacturer', 
-      type:'single_select', 
-      options: manufacturerOptions, 
-      isRequired:true
-    },
-    {fieldTitle:"Purchase Date", fieldId:"PurchaseDate",fieldName:'purchase_date', type:'date', isRequired:true},
-    {fieldTitle:"Bill No", fieldId:"BillNo",fieldName:'bill_no', isRequired:true},
-    {fieldTitle:"GST No", fieldId:"GSTNo",fieldName:'gst_no', isRequired:true},
-    {fieldTitle:"Mobile Number", fieldId:"Mobile Number",fieldName:'mobile_number', isRequired:true},
-    {fieldTitle:"Address", fieldId:"Address",fieldName:'address', isRequired:true},
-  ]
-
+  const { allManufacturerList } = useSelector(({ manufacturer }) => manufacturer)
+  const { allProductList } = useSelector(({ productItem }) => productItem)
+  
   const methods = useForm({
     resolver: yupResolver(schema),
     defaultValues: initialValue,
@@ -94,25 +97,45 @@ const CommonAddEditPurchase = (props) => {
 
   const values = methods.getValues()
 
-  const fetchProductList = useCallback(async (key_name) => {
-    const payload = { modal_to_pass: key_name, field_options: ['_id', 'name'], search_key: ["_id"]}
-    const res = await dispatch(getAllDataList(payload))
-    if(res){
-      const modifiedData = res?.list?.map(item => ({
+  const handleManufacturerChange = (e) => {
+    const name = e?.target?.name;
+    const value = e?.target?.value
+
+    const findManufacturerData = allManufacturerList?.list?.find((item) => {
+      return item?._id === value
+    })  
+    const fieldsObj = {
+      ...findManufacturerData,
+      [name]: value
+    }
+    methods.reset(fieldsObj);
+  }
+
+  const manufacturerOptions = useMemo(() => {
+    if(allManufacturerList?.list?.length){
+      const data = allManufacturerList?.list?.map(item => ({
         label: item?.name,
         value: item?._id
       }));
-      
+      return data;
+    }
+  },[allManufacturerList]) 
+
+  const fetchProductList = useCallback(async (key_name) => {
+    const payload = { modal_to_pass: key_name, search_key: ["_id"], search: "XYZ"}
+    const res = await dispatch(getAllDataList(payload))
+    if(res){      
       if(key_name === "Manufacturers") {
-        dispatch(setManufacturerOptions(modifiedData))
+        dispatch(setAllManufacturerList(res))
       } else if(key_name === "Products") {
-        dispatch(setProductsOptions(modifiedData))
+        dispatch(setAllProductList(res))
       }
     }
   },[])
 
   useEffect(() => {
     fetchProductList("Manufacturers")
+    fetchProductList("Products")
   }, []);
 
   useEffect(() => {
@@ -170,9 +193,21 @@ const CommonAddEditPurchase = (props) => {
   }
 
   const handleAddPurchaseItem = () => {
-    fetchProductList("Products")
     setPurchaseTableDialog(true);
     setSelectedPurchaseData(intialDialogState);
+
+    const filteredProductOptions = allProductList?.list?.map((item) => {
+      const filteredProductData = purchaseTableData.every((data) => { return data?.product !== item?._id && item })
+      
+      if(!purchaseTableData?.length || filteredProductData){
+        return {
+          label: item?.name,
+          value: item?._id
+        }
+      }
+    }).filter((item) => item)
+
+    setProductOptions(filteredProductOptions) 
   }
 
   const handleEditItem = async (product) => {
@@ -243,6 +278,19 @@ const CommonAddEditPurchase = (props) => {
       <form onSubmit={methods.handleSubmit(onSubmit)}>
         <div className="form_container">
           <Row>
+            <Col lg={3}>
+              <CommonInputText
+                type='single_select'
+                title="Manufacturer" 
+                id="Manufacturer"
+                name='manufacturer' 
+                options={manufacturerOptions} 
+                isRequired={true}
+                fieldOnChange={(e) => {
+                  handleManufacturerChange(e)
+                }}
+              />
+            </Col>
             {inputFieldsList.map((field,i) => {
                 return(
                   <Col lg={3} key={i}>
@@ -254,6 +302,7 @@ const CommonAddEditPurchase = (props) => {
                       options={field?.options}
                       title={field?.fieldTitle}
                       isRequired={field?.isRequired}
+                      fieldOnChange={field?.fieldOnChange}
                     />
                   </Col>
                 )
@@ -407,6 +456,7 @@ const CommonAddEditPurchase = (props) => {
       </form>
     </FormProvider>
     <PurchaseTableDialog
+      productOptions={productOptions}
       purchaseTableDialog={purchaseTableDialog}
       selectedPurchaseData={selectedPurchaseData}
       setPurchaseTableDialog={setPurchaseTableDialog}

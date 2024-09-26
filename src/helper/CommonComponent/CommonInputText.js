@@ -103,7 +103,8 @@ const CommonInputText = props => {
                   value={watch(name)}
                   placeholder={`Enter ${title}`}
                   className="input_select"
-                  onChange={(e) => setValue(name, e.value, { shouldValidate: true })}
+                  // onChange={(e) => setValue(name, e.value, { shouldValidate: true })}
+                  onChange={fieldOnChange ? fieldOnChange : (e) => setValue(name, e.value, { shouldValidate: true })}
                 />
               )
             }
@@ -123,7 +124,8 @@ const CommonInputText = props => {
                   value={value}
                   placeholder={`Enter ${title}`}
                   className='input_wrap'
-                  {...register(name, { required: true })}
+                  onChange={fieldOnChange ? fieldOnChange : (e) => setValue(name, e?.target?.value, { shouldValidate: true })}
+                  // {...register(name, { required: true })}
                 />
               )
             }
