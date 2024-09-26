@@ -5,7 +5,7 @@ const manufacturerInitialData = {
   name: "",
   email_address: "",
   mobile_number: "",
-  GST_no: "",
+  gst_no: "",
   country: "",
   state: "",
   city: "",
