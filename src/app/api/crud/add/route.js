@@ -13,7 +13,7 @@ export async function POST(request) {
   try {
     const data = await request.json();
     // const file = data.get("file");
-    const { modal_to_pass, start = 1, limit = 7, search = "" } = data;
+    const { modal_to_pass, start = 1, limit = 7, search = '', search_key = [] } = data;
 
     let modalToUse;
     if (modal_to_pass === "product") {
@@ -48,15 +48,19 @@ export async function POST(request) {
     const newUser = await new modalToUse(addData);
     const result = await newUser.save();
 
-    const query = search
+    if (search_key?.length === 0) {
+      return NextResponse.json(
+        { data: [], err: 1, success: false, msg: "Please send search key" },
+        { status: 400 }
+      );
+    }
+    const query = search && search_key?.length > 0
       ? {
-          $or: [
-            { name: { $regex: search, $options: "i" } }, // Case insensitive search in name
-            { description: { $regex: search, $options: "i" } } // Case insensitive search in description
-          ]
-        }
+        $or: search_key?.map(item => ({
+          [item]: { $regex: search, $options: "i" }
+        }))
+      }
       : {};
-
     const totalRecords = await modalToUse.countDocuments(query);
     const skip = (start - 1) * limit;
     const paginatedData = await modalToUse.find(query).skip(skip).limit(limit);
