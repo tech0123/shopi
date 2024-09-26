@@ -14,10 +14,9 @@ const manufacturerInitialData = {
 };
 
 let initialState = {
-  manufacturerLoading: false,
   allManufacturerList: [],
-  selectedManufacturerData: manufacturerInitialData,
   manufacturerDialog: false,
+  selectedManufacturerData: manufacturerInitialData,
   deleteManufacturerDialog: false,
   manufacturerOptions: []
 };
@@ -26,9 +25,6 @@ const manufacturerSlice = createSlice({
   name: "manufacturer",
   initialState,
   reducers: {
-    setManufacturerLoading: (state, action) => {
-      state.manufacturerLoading = action.payload;
-    },
     setAllManufacturerList: (state, action) => {
       state.allManufacturerList = action.payload;
     },
@@ -48,7 +44,6 @@ const manufacturerSlice = createSlice({
 });
 
 export const {
-  setManufacturerLoading,
   setAllManufacturerList,
   setSelectedManufacturerData,
   setManufacturerDialog,

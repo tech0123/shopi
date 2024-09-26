@@ -9,15 +9,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { FormProvider, useForm } from "react-hook-form";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
-import {
-  addItem, getSingleItem, updateItem, deleteItem,
-  getAllDataList, setCurrentPage,
-  setPageLimit,
-  setSearchParam,
-} from "@/store/slice/commonSlice";
-import {
-  setDeleteProductDialog, setSelectedProductData, setProductDialog,
-} from "@/store/slice/productItemSlice";
+import { addItem, getSingleItem, updateItem, deleteItem, getAllDataList, setCurrentPage, setPageLimit, setSearchParam, } from "@/store/slice/commonSlice";
+import { setDeleteProductDialog, setSelectedProductData, setProductDialog, } from "@/store/slice/productItemSlice";
 import { memo, useCallback, useEffect } from "react";
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
 import Image from "next/image";
@@ -85,9 +78,11 @@ const ProductList = () => {
   const { allProductList, productDialog, selectedProductData, deleteProductDialog } = useSelector(({ productItem }) => productItem)
   const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(({ common }) => common)
 
-  const fetchProductList = useCallback(async (start = 1,
+  const fetchProductList = useCallback(async (
+    start = 1,
     limit = 7,
-    search = '',) => {
+    search = ''
+  ) => {
     const payload = {
       modal_to_pass: "Products",
       search_key: ["name", "description", "selling_price"],
@@ -179,10 +174,11 @@ const ProductList = () => {
     } else {
       res = await dispatch(addItem(payload));
     }
-    if (res) {
+    if (res?.payload) {
       dispatch(setProductDialog(false))
     }
   };
+
   const handleSearchInput = e => {
     dispatch(setCurrentPage(1));
 
@@ -192,16 +188,19 @@ const ProductList = () => {
       e.target.value?.trim(),
     );
   };
+
   const handleChangeSearch = e => {
     debounceHandleSearchInput(e);
     dispatch(setSearchParam(e.target.value));
   }
+
   const debounceHandleSearchInput = useCallback(
     _.debounce(e => {
       handleSearchInput(e);
     }, 800),
     [],
   );
+
   const handleAddItem = () => {
     dispatch(setSelectedProductData(initialState));
     // dispatch(setProductImageState(null));
@@ -233,13 +232,14 @@ const ProductList = () => {
     const payload = {
       modal_to_pass: 'product',
       search_key: ["name", "description", "selling_price"],
-      id: selectedProductData?._id, start: currentPage,
+      id: selectedProductData?._id,
+      start: currentPage,
       limit: pageLimit,
       search: searchParam
     };
     const res = await dispatch(deleteItem(payload))
 
-    if (res) {
+    if (res?.payload) {
       dispatch(setDeleteProductDialog(false));
     }
   };
@@ -324,7 +324,6 @@ const ProductList = () => {
         deleteItemDialog={deleteProductDialog}
         hideDeleteDialog={hideProductDeleteDialog}
         deleteItem={handleDeleteProduct}
-        // selectedItemData={selectedProductData}
         pageLimit={pageLimit}
         onPageChange={onPageChange}
         onPageRowsChange={onPageRowsChange}

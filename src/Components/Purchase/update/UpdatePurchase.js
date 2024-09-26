@@ -30,16 +30,16 @@ const UpdatePurchase = () => {
   const fetchPurchaseData = useCallback(
     async () => {
       const payload = { modal_to_pass: "purchase", id: purchaseId };
-      const res = await dispatch(getSingleItem(payload));
-
-      if(res){
+      const response = await dispatch(getSingleItem(payload));
+      const res = response?.payload;
+      if (res) {
         let updatedPurchaseTableData = [];
 
-        if(res?.purchase_record_table?.length){
+        if (res?.purchase_record_table?.length) {
           updatedPurchaseTableData = res?.purchase_record_table?.map((item) => {
             return {
               ...item,
-              unique_id : generateUniqueId()
+              unique_id: generateUniqueId()
             }
           })
         }
@@ -69,10 +69,10 @@ const UpdatePurchase = () => {
 
   useEffect(
     () => {
-        fetchPurchaseData();
+      fetchPurchaseData();
     },
     [purchaseId]
-  );  
+  );
 
   return (
     <div>

@@ -5,12 +5,11 @@ import Loader from "@/helper/CommonComponent/Loader";
 import {
   deleteItem,
   getAllDataList,
-  getSingleItem,
   setCurrentPage,
   setPageLimit,
   setSearchParam,
 } from "@/store/slice/commonSlice";
-import { setAllPurchaseListData, setDeletePurchaseDialog, setPurchaseTableData } from "@/store/slice/purchaseSlice";
+import { setDeletePurchaseDialog, setPurchaseTableData } from "@/store/slice/purchaseSlice";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,7 +34,8 @@ function PurchaseList() {
   const fetchPurchaseList = useCallback(async (
     start = 1,
     limit = 7,
-    search = '') => {
+    search = ''
+  ) => {
     const payload = {
       modal_to_pass: "Purchase",
       search_key: ["address"],
@@ -44,10 +44,8 @@ function PurchaseList() {
       search: search?.trim(),
     }
     const res = await dispatch(getAllDataList(payload))
-    if (res) {
-      dispatch(setAllPurchaseListData(res))
-    }
-  }, [])
+
+  }, [dispatch])
 
   useEffect(() => {
     fetchPurchaseList(
@@ -143,10 +141,16 @@ function PurchaseList() {
   };
 
   const handleDeletePurchaseItem = async () => {
-    const payload = { modal_to_pass: 'purchase', id: selectedPurchaseData?._id };
+    const payload = {
+      modal_to_pass: 'purchase',
+      id: selectedPurchaseData?._id,
+      search_key: ["_id"],
+      start: currentPage,
+      limit: pageLimit,
+      search: searchParam
+    };
     const res = await dispatch(deleteItem(payload))
-    if (res) {
-      dispatch(setAllPurchaseListData(res))
+    if (res?.payload) {
       dispatch(setDeletePurchaseDialog(false));
     }
   };
@@ -168,8 +172,8 @@ function PurchaseList() {
   };
 
   const responsiveTableTemplete = rowData => {
-    console.log("rowData",rowData);
-    
+    console.log("rowData", rowData);
+
     return (
       <div className="container flex flex-col border-white border-2 w-full">
         <div className="flex flex-1 flex-col md:flex-row">
