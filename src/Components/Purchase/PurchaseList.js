@@ -13,6 +13,7 @@ import { setDeletePurchaseDialog, setPurchaseTableData } from "@/store/slice/pur
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { purchase_search_key } from "@/helper/commonValues";
 
 const tableColumns = [
   { field: 'manufacturer_name', header: "Manufacturer Name" },
@@ -38,7 +39,7 @@ function PurchaseList() {
   ) => {
     const payload = {
       modal_to_pass: "Purchase",
-      search_key: ["address"],
+      search_key: purchase_search_key,
       start: start,
       limit: limit,
       search: search?.trim(),
@@ -144,7 +145,7 @@ function PurchaseList() {
     const payload = {
       modal_to_pass: 'purchase',
       id: selectedPurchaseData?._id,
-      search_key: ["_id"],
+      search_key: purchase_search_key,
       start: currentPage,
       limit: pageLimit,
       search: searchParam
@@ -172,7 +173,6 @@ function PurchaseList() {
   };
 
   const responsiveTableTemplete = rowData => {
-    console.log("rowData", rowData);
 
     return (
       <div className="container flex flex-col border-white border-2 w-full">

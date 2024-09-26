@@ -1,13 +1,12 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import * as yup from "yup";
 import {
-  setAllEmployeeList,
   setDeleteEmployeeDialog,
   setEmployeeDialog,
   setSelectedEmployeeData
 } from "@/store/slice/employeeSlice";
-import { Image } from "primereact/image";
+import _ from 'lodash';
 import { Dialog } from "primereact/dialog";
 import { Col, Row } from "react-bootstrap";
 import { Button } from "primereact/button";
@@ -16,36 +15,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { FormProvider, useForm } from "react-hook-form";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
-import { addItem, deleteItem, getAllDataList, getSingleItem, updateItem } from "@/store/slice/commonSlice";
+import { addItem, deleteItem, getAllDataList, getSingleItem, updateItem, setCurrentPage, setPageLimit, setSearchParam } from "@/store/slice/commonSlice";
 import Loader from "@/helper/CommonComponent/Loader";
-import { setDeleteProductDialog } from "@/store/slice/productItemSlice";
-
-const getSeverity = employee => {
-  switch (employee.status) {
-    case "INSTOCK":
-      return "success";
-    case "LOWSTOCK":
-      return "warning";
-    case "OUTOFSTOCK":
-      return "danger";
-    default:
-      return null;
-  }
-};
-
-const employeeRoleOptions = [
-  { label: "Owner", value: 1 },
-  { label: "Manager", value: 2 },
-  { label: "Sales-Men", value: 3 },
-  { label: "C.A.", value: 4 },
-  { label: "Godown", value: 5 }
-]
+import { employee_search_key, employeeRoleOptions } from "@/helper/commonValues";
+import Image from "next/image";
 
 const initialState = {
+  image: '',
   name: "",
   email: '',
   mobile_number: "",
   role: '',
+  password: "",
   salary: 0,
 }
 
@@ -61,13 +42,14 @@ const schema = yup.object().shape({
 
 const imageBodyTemplate = rowData => {
   return (
-    // <img
-    //   src={`https://primefaces.org/cdn/primereact/images/product/${rowData?.image}`}
-    //   alt={rowData.image}
-    //   className="shadow-2 border-round"
-    //   style={{ width: "64px" }}
-    // />
-    <p>Image...</p>
+    <Image
+      src={rowData?.image || ''}
+      alt={rowData?._id || "Image not found"}
+      className="shadow-2 border-round"
+      width={150}
+      height={150}
+      style={{ objectFit: "cover" }}
+    />
   );
 };
 
@@ -87,50 +69,109 @@ const inputFieldsList = [
   { fieldTitle: "Role", fieldId: "Role", fieldName: 'role', type: 'single_select', options: employeeRoleOptions, fieldRequired: true },
   { fieldTitle: "Password", fieldId: "Password", fieldName: 'password', fieldRequired: true },
   { fieldTitle: "Salary", fieldId: "Salary", fieldName: 'salary', type: 'number', fieldRequired: true, class: "input_number" },
+  { fieldTitle: "Image", fieldId: "Image", fieldName: 'image' },
 ]
 
 const EmployeeList = () => {
   const dispatch = useDispatch();
 
-  // const [selectedEmployeeData, setSelectedEmployeeData] = useState(initialState);
-  // const [globalFilter, setGlobalFilter] = useState(null);
-  // const [employeeDialog, setEmployeeDialog] = useState(false);
-  // const [deleteProductDialog, setDeleteProductDialog] = useState(false);
-
-  const { employeeLoading, allEmployeeList, selectedEmployeeData, employeeDialog, deleteEmployeeDialog } = useSelector(({ employee }) => employee);
-  const { commonLoading } = useSelector(({ common }) => common)
+  const { allEmployeeList, selectedEmployeeData, employeeDialog, deleteEmployeeDialog } = useSelector(({ employee }) => employee);
+  const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(({ common }) => common)
 
   const methods = useForm({
     resolver: yupResolver(schema),
     defaultValues: selectedEmployeeData
   });
 
-  const fetchEmployeesData = async () => {
-    const payload = { modal_to_pass: "Employees" };
+  const fetchEmployeesData = useCallback(async (
+    start = 1,
+    limit = 7,
+    search = ''
+  ) => {
+    const payload = {
+      modal_to_pass: "Employees",
+      search_key: employee_search_key,
+      start: start,
+      limit: limit,
+      search: search?.trim(),
+    };
     const res = await dispatch(getAllDataList(payload));
 
-    if (res) {
-      const updatedData = res?.map((item) => {
-        const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
-        return {
-          ...item,
-          role: findRole?.label
-        }
-      })
-      dispatch(setAllEmployeeList(updatedData));
+    // if (res) {
+    // const updatedData = res?.map((item) => {
+    //   const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
+    //   return {
+    //     ...item,
+    //     role: findRole?.label
+    //   }
+    // })
+    // dispatch(setAllEmployeeList(updatedData));
+    // }
+  }, [dispatch]);
+
+  useEffect(() => {
+    fetchEmployeesData(
+      currentPage,
+      pageLimit,
+      searchParam
+    );
+  }, []);
+
+  const onPageChange = page => {
+    if (page !== currentPage) {
+      let pageIndex = currentPage;
+      if (page?.page === 'Prev') pageIndex--;
+      else if (page?.page === 'Next') pageIndex++;
+      else pageIndex = page;
+
+      dispatch(setCurrentPage(pageIndex));
+      fetchEmployeesData(
+        pageIndex,
+        pageLimit,
+        searchParam,
+
+      );
     }
   };
 
-  useEffect(() => {
-    fetchEmployeesData();
-  }, []);
+  const onPageRowsChange = page => {
+    dispatch(setCurrentPage(page === 0 ? 0 : 1));
+    dispatch(setPageLimit(page));
+    const pageValue =
+      page === 0
+        ? allEmployeeList?.totalRows
+          ? allEmployeeList?.totalRows
+          : 0
+        : page;
+    const prevPageValue =
+      pageLimit === 0
+        ? allEmployeeList?.totalRows
+          ? allEmployeeList?.totalRows
+          : 0
+        : pageLimit;
+    if (
+      prevPageValue < allEmployeeList?.totalRows ||
+      pageValue < allEmployeeList?.totalRows
+    ) {
+      fetchEmployeesData(
+        page === 0 ? 0 : 1,
+        page,
+        searchParam,
+
+      );
+    }
+  };
 
   const onSubmit = async (data) => {
     let res = '';
     const payload = {
       ...data,
       role: Number(data.role),
-      modal_to_pass: "employee"
+      modal_to_pass: "employee",
+      search_key: employee_search_key,
+      start: currentPage,
+      limit: pageLimit,
+      search: searchParam,
     }
 
     if (data?._id) {
@@ -138,18 +179,40 @@ const EmployeeList = () => {
     } else {
       res = await dispatch(addItem(payload))
     }
-    if (res) {
-      const updatedData = res?.map((item) => {
-        const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
-        return {
-          ...item,
-          role: findRole?.label
-        }
-      })
-      dispatch(setAllEmployeeList(updatedData))
+    if (res?.payload) {
+      // const updatedData = res?.map((item) => {
+      //   const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
+      //   return {
+      //     ...item,
+      //     role: findRole?.label
+      //   }
+      // })
+      // dispatch(setAllEmployeeList(updatedData))
       dispatch(setEmployeeDialog(false))
     }
   };
+
+  const handleSearchInput = e => {
+    dispatch(setCurrentPage(1));
+
+    fetchEmployeesData(
+      currentPage,
+      pageLimit,
+      e.target.value?.trim(),
+    );
+  };
+
+  const handleChangeSearch = e => {
+    debounceHandleSearchInput(e);
+    dispatch(setSearchParam(e.target.value));
+  }
+
+  const debounceHandleSearchInput = useCallback(
+    _.debounce(e => {
+      handleSearchInput(e);
+    }, 800),
+    [],
+  );
 
   const handleAddItem = () => {
     dispatch(setSelectedEmployeeData(initialState));
@@ -158,14 +221,14 @@ const EmployeeList = () => {
   };
 
   const handleEditItem = async (employee) => {
-    const payload = { modal_to_pass: "employee", id: employee?._id }
+    const payload = { modal_to_pass: "employee", id: employee }
 
     dispatch(setEmployeeDialog(true));
     const res = await dispatch(getSingleItem(payload))
 
-    if (res) {
-      dispatch(setSelectedEmployeeData(res));
-      methods.reset(res);
+    if (res?.payload) {
+      // dispatch(setSelectedEmployeeData(res));
+      methods.reset(res?.payload);
     }
   };
 
@@ -180,17 +243,24 @@ const EmployeeList = () => {
   };
 
   const handleDeleteProduct = async () => {
-    const payload = { modal_to_pass: 'employee', id: selectedEmployeeData?._id };
+    const payload = {
+      modal_to_pass: 'employee',
+      search_key: employee_search_key,
+      id: selectedEmployeeData?._id,
+      start: currentPage,
+      limit: pageLimit,
+      search: searchParam
+    };
     const res = await dispatch(deleteItem(payload))
-    if (res) {
-      const updatedData = res?.map((item) => {
-        const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
-        return {
-          ...item,
-          role: findRole?.label
-        }
-      })
-      dispatch(setAllEmployeeList(updatedData))
+    if (res?.payload) {
+      // const updatedData = res?.map((item) => {
+      //   const findRole = employeeRoleOptions?.find((role) => role.value === item.role)
+      //   return {
+      //     ...item,
+      //     role: findRole?.label
+      //   }
+      // })
+      // dispatch(setAllEmployeeList(updatedData))
       dispatch(setDeleteEmployeeDialog(false));
     }
   };
@@ -216,8 +286,8 @@ const EmployeeList = () => {
       <div className="container flex flex-col border-white border-2 w-full">
         <div className="flex justify-center border-b-2 border-white p-2">
           <Image
-            src={`/${rowData?.image}`}
-            alt="image"
+            src={rowData?.image || ''}
+            alt={rowData?._id || "Image not found"}
             width={150}
             height={150}
           />
@@ -249,15 +319,16 @@ const EmployeeList = () => {
       </div>
     );
   };
-
   return (
     <>
-      {employeeLoading || commonLoading && <Loader />}
+      {commonLoading && <Loader />}
       <CommonDataTable
         tableName="Employees"
         moduleName='employee'
         tableColumns={tableColumns}
         allItemList={allEmployeeList}
+        handleChangeSearch={handleChangeSearch}
+        searchParam={searchParam}
         handleAddItem={handleAddItem}
         handleEditItem={handleEditItem}
         handleDeleteItem={handleDeleteItem}
@@ -265,7 +336,11 @@ const EmployeeList = () => {
         deleteItemDialog={deleteEmployeeDialog}
         hideDeleteDialog={hideProductDeleteDialog}
         deleteItem={handleDeleteProduct}
-        selectedItemData={selectedEmployeeData}
+        // selectedItemData={selectedEmployeeData}
+        pageLimit={pageLimit}
+        onPageChange={onPageChange}
+        onPageRowsChange={onPageRowsChange}
+        currentPage={currentPage}
       />
 
       <Dialog

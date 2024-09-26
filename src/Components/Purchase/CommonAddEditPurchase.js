@@ -14,7 +14,7 @@ import CommonInputText from "@/helper/CommonComponent/CommonInputText";
 import { addItem, getAllDataList, updateItem } from "@/store/slice/commonSlice";
 import CommonDeleteConfirmation from "@/helper/CommonComponent/CommonDeleteConfirmation";
 import { setAllPurchaseListData, setPurchaseTableData } from "@/store/slice/purchaseSlice";
-import { calculateTotal, convertIntoNumber, getFormattedDate } from "@/helper/commonValues";
+import { calculateTotal, default_search_key, convertIntoNumber, getFormattedDate } from "@/helper/commonValues";
 
 const intialDialogState = {
   product: "",
@@ -120,7 +120,7 @@ const CommonAddEditPurchase = (props) => {
   }, [allManufacturerList])
 
   const fetchProductList = useCallback(async (key_name) => {
-    const payload = { modal_to_pass: key_name, search_key: ["_id"] }
+    const payload = { modal_to_pass: key_name, search_key: default_search_key }
     const res = await dispatch(getAllDataList(payload))
   }, [])
 
@@ -162,7 +162,7 @@ const CommonAddEditPurchase = (props) => {
     let payload = {
       ...data,
       modal_to_pass: "purchase",
-      search_key: ["_id"],
+      search_key: default_search_key,
       manufacturer_name: findManufacturerObj?.label,
       purchase_record_table: updatedPurchaseItemsTableData,
       purchase_date: getFormattedDate(data?.purchase_date),
