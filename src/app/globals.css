@@ -8,13 +8,13 @@ body {
   background-color: #2d3647 !important;
 }
 
-.form_input{
+.form_input {
   width: 100%;
   margin-bottom: 33px
 }
 
 .form_input div {
-  color:#ffffff;
+  color: #ffffff;
   margin-bottom: 6px
 }
 
@@ -48,6 +48,11 @@ body {
   background-color: #000;
 }
 
+.number_right .p-inputnumber-input {
+  text-align: right;
+}
+
+
 .input_number .p-inputnumber-input:hover,
 .input_number .p-inputnumber-input:focus {
   box-shadow: 0px 0px 7px 0px gray;
@@ -63,9 +68,11 @@ body {
   color: #ffffff;
   background-color: #000;
 }
+
 .input_select .p-dropdown-label {
   font-size: 14px;
 }
+
 .input_select:hover,
 .input_select:focus {
   box-shadow: 0px 0px 7px 0px gray;
@@ -93,7 +100,7 @@ body {
   box-shadow: 0px 0px 7px 0px gray;
   color: #ffffff;
 }
- 
+
 .form_container {
   margin: 0px 50px 0px 50px;
   padding: 40px;
@@ -118,7 +125,7 @@ body {
   box-shadow: 0px 0px 7px 0px gray;
 }
 
-.btn_transparent{
+.btn_transparent {
   display: flex;
   padding: 8px;
   width: 100px;
@@ -146,7 +153,7 @@ body {
   border-radius: 0px 0px 20px 20px;
 }
 
-.table_wrapper .p-datatable-wrapper{
+.table_wrapper .p-datatable-wrapper {
   border-radius: 20px 20px 0px 0px;
 }
 
@@ -156,17 +163,17 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1; 
+  background: #f1f1f1;
   border-radius: 10px;
 }
- 
+
 ::-webkit-scrollbar-thumb {
-  background: #5b626d; 
+  background: #5b626d;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+  background: #555;
 }
 
 .loader_Wrapper {

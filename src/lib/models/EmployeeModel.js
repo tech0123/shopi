@@ -11,6 +11,6 @@ const EmployeeSchema = new mongoose.Schema({
 });
 
 const Employee =
-  mongoose.models.addemployee || mongoose.model("addemployee", EmployeeSchema);
+  mongoose.models.employees || mongoose.model("employees", EmployeeSchema);
 
 export default Employee;

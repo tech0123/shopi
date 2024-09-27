@@ -13,8 +13,6 @@ const ManufacturerSchema = new mongoose.Schema({
   address: { type: String, required: true }
 });
 
-const Manufacturer =
-  mongoose.models.manufacturer ||
-  mongoose.model("manufacturer", ManufacturerSchema);
+const Manufacturer = mongoose.models.manufacturer ||  mongoose.model("manufacturer", ManufacturerSchema);
 
 export default Manufacturer;

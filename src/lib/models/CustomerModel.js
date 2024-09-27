@@ -9,6 +9,6 @@ const CustomerSchema = new mongoose.Schema({
 });
 
 const Customer =
-    mongoose.models.addcustomer || mongoose.model("addcustomer", CustomerSchema);
+    mongoose.models.customers || mongoose.model("customers", CustomerSchema);
 
 export default Customer;

@@ -3,3 +3,9 @@
     text-decoration: none;
     color: white;
 }
+
+.summary-section{
+    padding: 0.5rem;
+    text-align: end;
+    margin: 0.5rem;
+}
