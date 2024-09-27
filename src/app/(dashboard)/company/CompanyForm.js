@@ -201,12 +201,12 @@ const CompanyForm = () => {
               </label>
               <div className="mt-2 mb-3">
                 <InputText
-                  name="GST_no"
+                  name="gst_no"
                   placeholder="GST No"
                   className="input_wrap"
-                  {...register("GST_no", { required: true })}
+                  {...register("gst_no", { required: true })}
                 />
-                {errors.GST_no &&
+                {errors.gst_no &&
                   <p className="text-red-500 text-xs mt-1">
                     Please enter your GST No.
                   </p>}
