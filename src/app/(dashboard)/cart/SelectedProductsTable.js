@@ -5,14 +5,14 @@ import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
-import { calcInitialValues, productsData } from '@/helper/commonValues';
+import { calcInitialValues, default_search_key } from '@/helper/commonValues';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSelectedProducts, setSelectedCustomer, setCalcValues, setSubTotal, setModeOfPayment } from '@/store/slice/cartSlice';
 import Image from 'next/image';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import '@/app/(dashboard)/cart/cart.css'
 import { Dropdown } from 'primereact/dropdown';
-import { setCurrentPage, setSearchParam, setPageLimit, getAllDataList } from '@/store/slice/commonSlice';
+import { setCurrentPage, setSearchParam, setPageLimit, getAllDataList, addItem } from '@/store/slice/commonSlice';
 import _ from 'lodash';
 import jwt from "jsonwebtoken";
 
@@ -80,28 +80,78 @@ const SelectedProductsTable = () => {
 
         const handleBilling = async (e) => {
             console.log('payload', selectedProducts, modeOfPayment, subTotal, calcValues);
-
+            const productBillingData = selectedProducts?.length > 0 ? selectedProducts?.map((item) => {
+                return {
+                    cost_price: item?.cost_price || 0,
+                    description: item?.description || "",
+                    product: 'fd',
+                    product_id: item?._id,
+                    name: item?.name || '',
+                    quantity: item?.qty || 0,
+                    selling_price: item?.selling_price || 0,
+                    tax: item?.tax || 0,
+                }
+            }) : [];
+            const payload = {
+                // totalAmount: calcValues?.totalAmount,
+                // mode_of_payment: modeOfPayment,
+                // customer_id: selectedCustomer?._id,
+                modal_to_pass: "purchase",
+                search_key: default_search_key,
+                address: 're',
+                amount: 0,
+                bill_no: '5',
+                discount: calcValues?.discount,
+                gst_no: "dwef",
+                manufacturer: 'd',
+                manufacturer_name: 'c',
+                mobile_number: '9632587412',
+                purchase_date: new Date(),
+                purchase_record_table: productBillingData,
+                qty: 0,
+                sub_total: '0',
+                tax: calcValues?.tax,
+                total_amount: calcValues.grandTotal,
+            }
+            const res = await dispatch(addItem(payload));
             try {
-                const response = await fetch("/api/auth/getAuthId", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                const res = await fetch('/api/auth/getAuthId', {
+                    method: 'POST',
+                    credentials: 'include'
                 });
 
-                // Check if the request was successful
-                if (!response) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await res.json();
+
+                if (!res.ok) {
+                    console.error('Error:', data.error);
                 }
 
-                // Parse the response as JSON
-                const data = await response.json();
-                console.log('response data', data); // Log the parsed response data
             } catch (error) {
-                console.error("Error:", error);
-                throw error;
+                console.error('Error in Fetching Employee ID:', error);
             }
         };
+
+        //         // try {
+        //         //     const response = await fetch("/api/auth/getAuthId", {
+        //         //         method: "GET",
+        //         //         headers: {
+        //         //             "Content-Type": "application/json"
+        //         //         },
+        //         //     });
+
+        //         //     // Check if the request was successful
+        //         //     if (!response) {
+        //         //         throw new Error(`HTTP error! status: ${response.status}`);
+        //         //     }
+
+        //         //     // Parse the response as JSON
+        //         //     const data = await response.json();
+        //         // } catch (error) {
+        //         //     console.error("Error:", error);
+        //         //     throw error;
+        //         // }
+
+        // };
 
 
         return (
@@ -114,7 +164,7 @@ const SelectedProductsTable = () => {
                     <div className="flex justify-between items-center">
                         <span className=" text-sm">SubTotal:</span>
                         <InputNumber
-                            className="input_number number_right bg-gray-800 border-gray-600"
+                            className="input_number  bg-gray-800 border-gray-600"
                             maxFractionDigits={2}
                             useGrouping={false}
                             value={subTotal}
@@ -127,12 +177,12 @@ const SelectedProductsTable = () => {
                         <InputNumber
                             placeholder="Discount"
                             name="discount"
-                            className="input_number number_right bg-gray-800 border-gray-600"
+                            className="input_number  bg-gray-800 border-gray-600"
                             maxFractionDigits={2}
                             useGrouping={false}
                             value={calcValues?.discount}
                             onValueChange={(e) => handleCalcValueChange(e.target.value, e.target.name)}
-                            disabled={!selectedProducts?.length || searchParam || !selectedCustomer}
+                            disabled={!selectedProducts?.length || searchParam || Object.keys(selectedCustomer)?.length === 0}
                         />
                     </div>
 
@@ -141,12 +191,12 @@ const SelectedProductsTable = () => {
                         <InputNumber
                             placeholder="Tax"
                             name="tax"
-                            className="input_number number_right bg-gray-800 border-gray-600"
+                            className="input_number  bg-gray-800 border-gray-600"
                             maxFractionDigits={2}
                             useGrouping={false}
                             value={calcValues?.tax}
                             onValueChange={(e) => handleCalcValueChange(e.target.value, e.target.name)}
-                            disabled={!selectedProducts?.length || searchParam || !selectedCustomer}
+                            disabled={!selectedProducts?.length || searchParam || Object.keys(selectedCustomer)?.length === 0}
                         />
                     </div>
 
@@ -154,7 +204,7 @@ const SelectedProductsTable = () => {
                         <span className=" text-sm">Grand Total:</span>
                         {/* <span className="font-medium text-sm">{calcValues.grandTotal}</span> */}
                         <InputNumber
-                            className="input_number number_right bg-gray-800 border-gray-600"
+                            className="input_number  bg-gray-800 border-gray-600"
                             maxFractionDigits={2}
                             useGrouping={false}
                             value={calcValues.grandTotal}
@@ -167,7 +217,7 @@ const SelectedProductsTable = () => {
 
                 <div className="flex justify-between items-center">
                     <span className="text-sm">Mode of Payment:</span>
-                    <span className="text-sm font-light"><Dropdown value={modeOfPayment} onChange={(e) => dispatch(setModeOfPayment(e.value))} options={modeOfPaymentOptions} optionLabel="name" disabled={!selectedCustomer || searchParam} placeholder="Select Mode of Payment" className="m-0 text-sm" /></span>
+                    <span className="text-sm font-light"><Dropdown value={modeOfPayment} onChange={(e) => dispatch(setModeOfPayment(e.value))} options={modeOfPaymentOptions} optionLabel="name" disabled={Object.keys(selectedCustomer)?.length === 0 || searchParam} placeholder="Select Mode of Payment" className="m-0 text-sm" /></span>
                 </div>
 
                 <div className="flex justify-center items-center mt-12 w-full">
@@ -411,11 +461,10 @@ const SelectedProductsTable = () => {
         );
     };
 
-    console.log('%c%s', 'color: lime', '===> searchParam:', searchParam || !selectedCustomer ? 'hidden' : '');
     return (
         <div className='card !border-none !bg-gray-800'>
             <h6>Products Added:</h6>
-            <div className={` ${searchParam || !selectedCustomer ? '!hidden' : ''}`}>
+            <div className={` ${searchParam || Object.keys(selectedCustomer)?.length === 0 ? '!hidden' : ''}`}>
                 <DataTable
                     className='max-xl:hidden mx-5'
                     value={selectedProducts} paginator rows={10}
