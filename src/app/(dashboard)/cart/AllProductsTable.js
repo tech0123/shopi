@@ -24,7 +24,6 @@ const AllProductsTable = () => {
     const { allCustomerList } = useSelector(({ customer }) => customer)
     const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(({ common }) => common)
     const allProductsData = allProductList?.list || [];
-    console.log('%c%s', 'color: lime', '===> selectedCustomer:', selectedCustomer);
 
     const fetchList = useCallback(async (
         modal,
@@ -108,7 +107,7 @@ const AllProductsTable = () => {
                     <InputIcon className="pi pi-search mr-6" />
                     <InputText
                         id="search"
-                        placeholder={`${selectedCustomer ? "Search Products" : "Select Customer To Enable Search"}`}
+                        placeholder={`${Object.keys(selectedCustomer)?.length ? "Search Products" : "Select Customer To Enable Search"}`}
                         type="search"
                         className="input_wrap small search_wrap"
                         value={searchParam}
@@ -331,7 +330,6 @@ const AllProductsTable = () => {
                             dispatch(setSelectedCustomer(data))
                             dispatch(setSearchCustomer(data?.name))
                             setHideMe(false)
-                            console.log('%c%s', 'color: lime', '===> data:', data);
                         }}>Select</Button>
                     </div>
 
@@ -367,7 +365,6 @@ const AllProductsTable = () => {
         );
     };
 
-    console.log('%c%s', 'color: lime', '===> hideMe:', hideMe);
     return (<>
         {/* {commonLoading && <Loader />} */}
 
