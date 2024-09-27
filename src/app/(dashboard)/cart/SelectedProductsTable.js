@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
@@ -11,19 +11,21 @@ import { setSelectedProducts, setCalcValues, setSubTotal, setModeOfPayment } fro
 import Image from 'next/image';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import '@/app/(dashboard)/cart/cart.css'
-import { InputSwitch } from 'primereact/inputswitch';
 import { Dropdown } from 'primereact/dropdown';
+import { setCurrentPage, setSearchParam, setPageLimit, getAllDataList } from '@/store/slice/commonSlice';
+import _ from 'lodash';
 
 const SelectedProductsTable = () => {
     const dispatch = useDispatch()
-    const { selectedProducts, subTotal, calcValues, modeOfPayment } = useSelector(({ cart }) => cart);
+    const { selectedProducts, subTotal, calcValues, modeOfPayment, selectedCustomer } = useSelector(({ cart }) => cart);
+    const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(({ common }) => common)
     const [error, setError] = useState([]);
 
     useEffect(() => {
         dispatch(setSelectedProducts([
             {
                 "_id": "66f24462abcaba82c0e6ae97",
-                "name": "Laptop Backpack",
+                "name": "Smartwatch",
                 "description": "Water-resistant backpack with padded laptop compartment",
                 "available_quantity": "300",
                 "discount": 1,
@@ -83,6 +85,37 @@ const SelectedProductsTable = () => {
         { name: 'Online Payment', value: 'online' }
     ];
 
+    const fetchProductList = useCallback(async (start = 1,
+        limit = 7,
+        search = '') => {
+        const payload = {
+            modal_to_pass: "Products",
+            search_key: ["name", "description", "selling_price"],
+            start: start,
+            limit: limit,
+            search: search?.trim(),
+        }
+        const res = await dispatch(getAllDataList(payload))
+
+    }, [])
+
+    const handleSearchInput = e => {
+        dispatch(setCurrentPage(1));
+
+        fetchProductList(
+            currentPage,
+            pageLimit,
+            e.trim(),
+        );
+    };
+
+    const debounceHandleSearchInput = useCallback(
+        _.debounce(e => {
+            handleSearchInput(e);
+        }, 800),
+        [],
+    );
+
     const Footer = () => {
         const handleCalcValueChange = (value, name) => {
             const parsedValue = parseFloat(value || 0);
@@ -103,6 +136,7 @@ const SelectedProductsTable = () => {
             }));
         };
 
+
         return (
             <div className="card !bg-gray-800 shadow-sm text-white p-5 pt-4">
                 <hr className=' mb-20' />
@@ -111,13 +145,12 @@ const SelectedProductsTable = () => {
                 <div className="flex flex-col gap-1">
                     <div className="flex justify-between items-center">
                         <span className=" text-sm">SubTotal:</span>
-                        {/* <span className="font-medium text-sm">{subTotal}</span> */}
                         <InputNumber
-                            className="text-sm  bg-gray-800 border-gray-600"
+                            className="input_number number_right bg-gray-800 border-gray-600"
                             maxFractionDigits={2}
                             useGrouping={false}
                             value={subTotal}
-                            disabled={true}
+                            onKeyDown={(e) => e.preventDefault()}
                         />
                     </div>
 
@@ -126,12 +159,12 @@ const SelectedProductsTable = () => {
                         <InputNumber
                             placeholder="Discount"
                             name="discount"
-                            className="text-sm  bg-gray-800 border-gray-600"
+                            className="input_number number_right bg-gray-800 border-gray-600"
                             maxFractionDigits={2}
                             useGrouping={false}
                             value={calcValues?.discount}
                             onValueChange={(e) => handleCalcValueChange(e.target.value, e.target.name)}
-                            disabled={!selectedProducts?.length}
+                            disabled={!selectedProducts?.length || searchParam || !selectedCustomer}
                         />
                     </div>
 
@@ -140,12 +173,12 @@ const SelectedProductsTable = () => {
                         <InputNumber
                             placeholder="Tax"
                             name="tax"
-                            className="text-sm bg-gray-800 border-gray-600"
+                            className="input_number number_right bg-gray-800 border-gray-600"
                             maxFractionDigits={2}
                             useGrouping={false}
                             value={calcValues?.tax}
                             onValueChange={(e) => handleCalcValueChange(e.target.value, e.target.name)}
-                            disabled={!selectedProducts?.length}
+                            disabled={!selectedProducts?.length || searchParam || !selectedCustomer}
                         />
                     </div>
 
@@ -153,11 +186,11 @@ const SelectedProductsTable = () => {
                         <span className=" text-sm">Grand Total:</span>
                         {/* <span className="font-medium text-sm">{calcValues.grandTotal}</span> */}
                         <InputNumber
-                            className="text-sm  bg-gray-800 border-gray-600"
+                            className="input_number number_right bg-gray-800 border-gray-600"
                             maxFractionDigits={2}
                             useGrouping={false}
                             value={calcValues.grandTotal}
-                            disabled={true}
+                            onKeyDown={(e) => e.preventDefault()}
                         />
                     </div>
                 </div>
@@ -165,9 +198,8 @@ const SelectedProductsTable = () => {
                 <hr className='mt-20 mb-10' />
 
                 <div className="flex justify-between items-center">
-                    <span className=" text-sm">Mode of Payment:</span>
-                    <span className="font-medium text-sm"><Dropdown value={modeOfPayment} onChange={(e) => dispatch(setModeOfPayment(e.value))} options={modeOfPaymentOptions} optionLabel="name"
-                        placeholder="Select Mode of Payment" className="m-0 text-sm" /></span>
+                    <span className="text-sm">Mode of Payment:</span>
+                    <span className="text-sm font-light"><Dropdown value={modeOfPayment} onChange={(e) => dispatch(setModeOfPayment(e.value))} options={modeOfPaymentOptions} optionLabel="name" disabled={!selectedCustomer || searchParam} placeholder="Select Mode of Payment" className="m-0 text-sm" /></span>
                 </div>
 
                 <div className="flex justify-center items-center mt-12 w-full">
@@ -199,7 +231,9 @@ const SelectedProductsTable = () => {
                                     icon="pi pi-plus-circle"
                                     className="action-icon-size sm:mt-0"
                                     onClick={() => {
-                                        console.log('Add prev product');
+                                        dispatch(setSearchParam(product.name.trim()))
+                                        handleSearchInput(product.name.trim())
+                                        // debounceHandleSearchInput("kevDia")
                                     }}
                                     rounded
                                 />
@@ -409,32 +443,35 @@ const SelectedProductsTable = () => {
         );
     };
 
+    console.log('%c%s', 'color: lime', '===> searchParam:', searchParam || !selectedCustomer ? 'hidden' : '');
     return (
-        <div className="card !border-none !bg-gray-800">
-            <DataTable
-                className='max-xl:hidden'
-                value={selectedProducts} paginator rows={10}
-                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                rowsPerPageOptions={[10, 25, 50]}
-                emptyMessage="No Products Found." currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
-                <Column header="" body={imageBodyTemplate} className="pl-5" />
-                <Column header="Name" field="name" />
-                <Column header="Qty" field="qty" body={qtyBody} style={{ minWidth: '14rem' }} />
-                <Column header="Stock" field="available_quantity" />
-                <Column header="Discount" field="discount" body={discountBody} style={{ minWidth: '14rem' }} />
-                <Column header="MRP" field="selling_price" sortable />
-                <Column header="Amount" field="amount" body={amountBody} />
-                <Column headerStyle={{ textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={actionBodyTemplate} />
-            </DataTable>
+        <div className='card !border-none !bg-gray-800'>
+            <h6>Products Added:</h6>
+            <div className={` ${searchParam || !selectedCustomer ? '!hidden' : ''}`}>
+                <DataTable
+                    className='max-xl:hidden mx-5'
+                    value={selectedProducts} paginator rows={10}
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    rowsPerPageOptions={[10, 25, 50]}
+                    emptyMessage="No Products Found." currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                    <Column header="" body={imageBodyTemplate} className="pl-5" />
+                    <Column header="Name" field="name" />
+                    <Column header="Qty" field="qty" body={qtyBody} style={{ minWidth: '14rem' }} />
+                    <Column header="Stock" field="available_quantity" />
+                    <Column header="Discount" field="discount" body={discountBody} style={{ minWidth: '14rem' }} />
+                    <Column header="MRP" field="selling_price" sortable />
+                    <Column header="Amount" field="amount" body={amountBody} />
+                    <Column headerStyle={{ textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={actionBodyTemplate} />
+                </DataTable>
 
-            <DataTable className="block xl:hidden" value={selectedProducts} paginator rows={10}
-                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                rowsPerPageOptions={[10, 25, 50]}
-                emptyMessage="No Products found." currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
-                <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={multiBodyTemplate} />
-            </DataTable>
-
-            <PreviouslyOrderedTable />
+                <DataTable className="block xl:hidden" value={selectedProducts} paginator rows={10}
+                    paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    rowsPerPageOptions={[10, 25, 50]}
+                    emptyMessage="No Products found." currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+                    <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={multiBodyTemplate} />
+                </DataTable>
+                <PreviouslyOrderedTable />
+            </div>
             <Footer />
         </div>
     )

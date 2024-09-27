@@ -3,77 +3,44 @@ import _ from 'lodash';
 import Image from 'next/image';
 import { Button } from 'primereact/button';
 import { Column } from 'primereact/column';
-import { FilterMatchMode } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllDataList } from '@/store/slice/commonSlice';
-import { setCalcValues, setSelectedProducts, setSubTotal } from '@/store/slice/cartSlice';
+import { getAllDataList, setCurrentPage, setPageLimit, setSearchParam } from '@/store/slice/commonSlice';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-    setAllProductList,
-    setCurrentPage,
-    setPageLimit,
-    setSearchParam,
-} from "@/store/slice/productItemSlice";
 import CustomPaginator from '@/helper/CommonComponent/CustomPaginator';
+import { setCalcValues, setSelectedProducts, setSubTotal, setSearchCustomer, setSelectedCustomer } from '@/store/slice/cartSlice';
+import { setAllProductList } from "@/store/slice/productItemSlice";
+
 const AllProductsTable = () => {
     const dispatch = useDispatch()
     const [error, setError] = useState([]);
-    const { selectedProducts, calcValues, subTotal } = useSelector(({ cart }) => cart);
-    const { allProductList, currentPage,
-        pageLimit,
-        searchParam, } = useSelector(({ productItem }) => productItem)
+    const [hideMe, setHideMe] = useState(false);
+    const { selectedProducts, calcValues, subTotal, searchCustomer, selectedCustomer } = useSelector(({ cart }) => cart);
+    const { allProductList } = useSelector(({ productItem }) => productItem)
+    const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(({ common }) => common)
+    const allProductsData = allProductList?.list || [];
+    console.log('%c%s', 'color: lime', '===> selectedCustomer:', selectedCustomer);
+
     const fetchProductList = useCallback(async (start = 1,
         limit = 7,
         search = '') => {
         const payload = {
-            modal_to_pass: "Products", start: start,
+            modal_to_pass: "Products",
+            search_key: ["name", "description", "selling_price"],
+            start: start,
             limit: limit,
             search: search?.trim(),
         }
         const res = await dispatch(getAllDataList(payload))
-        // if (res) {
-        //     dispatch(setAllProductsData(modifyProducts(res)))
-        // }
+
     }, [])
-    // const allProductsData = allProductList?.list?.map((d) => ({
-    //     ...d,
-    //     qty: 0,
-    //     discount: 0,
-    //     amount: 0
-    // }));
-
-    const modifyProducts = (data) => {
-        return [...(data || [])].map((d) => ({
-            ...d,
-            qty: 0,
-            discount: 0,
-            amount: 0
-        }));
-    };
-
-    // const modifyProducts = (data) => {
-    //     return [...(data || [])]?.map((d) => {
-    //         // d.date = new Date(d.date);
-    //         d.qty = 0;
-    //         d.discount = 0;
-    //         d.amount = 0;
-    //         return d;
-    //     });
-    // };
-    const allProductsData = allProductList?.list
 
     useEffect(() => {
-        fetchProductList(currentPage,
-            pageLimit,
-            searchParam)
+        fetchProductList(currentPage, pageLimit, searchParam)
     }, []);
-    console.log('allProductsData', allProductsData)
-
-
 
     const handleSearchInput = e => {
         dispatch(setCurrentPage(1));
@@ -84,26 +51,22 @@ const AllProductsTable = () => {
             e.target.value?.trim(),
         );
     };
+
     const debounceHandleSearchInput = useCallback(
         _.debounce(e => {
             handleSearchInput(e);
         }, 800),
         [],
     );
+
     const onPageChange = page => {
         if (page !== currentPage) {
             let pageIndex = currentPage;
             if (page?.page === 'Prev') pageIndex--;
             else if (page?.page === 'Next') pageIndex++;
             else pageIndex = page;
-
             dispatch(setCurrentPage(pageIndex));
-            fetchProductList(
-                pageIndex,
-                pageLimit,
-                searchParam,
-
-            );
+            fetchProductList(pageIndex, pageLimit, searchParam);
         }
     };
 
@@ -126,24 +89,19 @@ const AllProductsTable = () => {
             prevPageValue < allProductList?.totalRows ||
             pageValue < allProductList?.totalRows
         ) {
-            fetchProductList(
-                page === 0 ? 0 : 1,
-                page,
-                searchParam,
-
-            );
+            fetchProductList(page === 0 ? 0 : 1, page, searchParam);
         }
     };
 
     const header = () => {
         return (
-            <div className="flex flex-wrap gap-2 justify-content-between align-items-center m-4">
-                {/* <h4 className="m-0">Customers</h4> */}
+            <div className="flex flex-wrap gap-2 justify-content-between align-items-center m-4 mt-0">
+                <h6 className="m-2 inline">Products:</h6>
                 <IconField iconPosition="right" className='min-w-full min-h-10'>
-                    <InputIcon className="pi pi-search mr-3 " />
+                    <InputIcon className="pi pi-search mr-6" />
                     <InputText
                         id="search"
-                        placeholder="Search"
+                        placeholder={`${selectedCustomer ? "Search Products" : "Select Customer To Enable Search"}`}
                         type="search"
                         className="input_wrap small search_wrap"
                         value={searchParam}
@@ -151,6 +109,7 @@ const AllProductsTable = () => {
                             debounceHandleSearchInput(e);
                             dispatch(setSearchParam(e.target.value));
                         }}
+                        disabled={!selectedCustomer}
                     />
                 </IconField>
             </div>
@@ -166,7 +125,6 @@ const AllProductsTable = () => {
     };
 
     const amountBody = (rowData) => {
-        console.log('rowData', rowData)
         return parseFloat(rowData.amount || 0).toFixed(2);
     };
 
@@ -182,9 +140,10 @@ const AllProductsTable = () => {
             ...calcValues,
             grandTotal: parseFloat(afterDiscount + parseFloat((calcValues.tax * afterDiscount) / 100)).toFixed(2)
         }))
-        setSearchParam('');
+        dispatch(setSearchParam(''));
 
         const i = allProductsData.findIndex((item) => { return item._id === data?._id });
+
         if (i !== -1) {
             const updatedList = [
                 ...allProductsData.slice(0, i),
@@ -285,7 +244,7 @@ const AllProductsTable = () => {
             </>
         );
     };
-    console.log('allProductList', allProductList)
+
     const discountBody = (data) => {
         const handleChange = (e) => {
             const value = parseInt(e.target.value || 0);
@@ -345,9 +304,80 @@ const AllProductsTable = () => {
             </>
         );
     };
-    console.log('allProductsData', allProductsData)
+
+    const customerBodyTemplate = (data) => {
+        return (
+            <div className="container flex flex-col w-full">
+                {/* Bottom Sections */}
+                <div className="flex flex-1 bg-gray-900 mx-3 ">
+
+                    {/* Left Section */}
+                    <div className="flex-1 p-3">
+                        <p className='text-left'>Name: {data.name}</p>
+                        <p className='text-left'>Available Quantity: {data.available_quantity}</p>
+                    </div>
+
+                    {/* Right Section */}
+                    <div className="flex-1 p-3 flex flex-col">
+                        <p className='text-left'>MRP: {data.selling_price}</p>
+                        <Button type="button" disabled={error[data?._id]} onClick={(e) => {
+                            dispatch(setSelectedCustomer(data))
+                            setHideMe(false)
+                            console.log('%c%s', 'color: lime', '===> data:', data);
+                        }}>Select</Button>
+                    </div>
+
+                </div>
+            </div>
+        );
+    };
+
+    const header2 = () => {
+        return (
+            <div className="flex flex-wrap gap-2 justify-content-between align-items-center m-4 mb-0 pb-0">
+                <h6 className="m-2 inline">Customer:</h6>
+                <IconField iconPosition="right" className='min-w-full min-h-10 inline'>
+                    <InputIcon className="pi pi-search mr-6" />
+                    <InputText
+                        id="search"
+                        placeholder="Search Customer"
+                        type="search"
+                        className="input_wrap small search_wrap"
+                        value={searchCustomer}
+                        onChange={(e) => {
+                            debounceHandleSearchInput(e);
+                            dispatch(setSearchCustomer(e.target.value || ""));
+                            dispatch(setSelectedCustomer(null))
+                            setHideMe(true)
+                            if(!e.target.value){
+                                setHideMe(false)
+                            }
+                        }}
+                        />
+                </IconField>
+            </div>
+        );
+    };
+    
+    console.log('%c%s', 'color: lime', '===> hideMe:', hideMe);
+    
     return (
         <div className="card !border-none !bg-gray-800">
+
+            <DataTable value={hideMe === "" ? [{}] : allProductsData?.filter((p) => !selectedProducts?.some(s => s?._id === p._id))} header={header2} rows={10}>
+                {hideMe ? <Column headerStyle={{ width: '8rem', textAlign: 'center', margin: "0", padding: "0" }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={customerBodyTemplate} /> : null}
+            </DataTable>
+
+            {hideMe &&
+                <CustomPaginator
+                    dataList={allProductsData}
+                    pageLimit={pageLimit}
+                    onPageChange={onPageChange}
+                    onPageRowsChange={onPageRowsChange}
+                    currentPage={currentPage}
+                    totalCount={allProductList?.totalRows}
+                />}
+
             <DataTable
                 className='max-xl:hidden'
                 value={searchParam === "" ? [{}] : allProductsData?.filter((p) => !selectedProducts?.some(s => s?._id === p._id))} header={header} rows={10}

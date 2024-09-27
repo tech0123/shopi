@@ -7,6 +7,6 @@ const AttendanceSchema = new mongoose.Schema({
     attendance_by_date: { type: mongoose.Schema.Types.Mixed }
 });
 
-const Attendance = mongoose.models.attendance || mongoose.model("attendance", AttendanceSchema);
+const Attendance = mongoose.models.attendances || mongoose.model("attendances", AttendanceSchema);
 
 export default Attendance;

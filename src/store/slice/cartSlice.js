@@ -6,7 +6,9 @@ const initialState = {
   selectedProducts: [],
   subTotal: 0,
   calcValues: calcInitialValues,
-  modeOfPayment:"cash"
+  modeOfPayment:"cash",
+  searchCustomer: '',
+  selectedCustomer: null,
 };
 
 export const cartSlice = createSlice({
@@ -31,6 +33,12 @@ export const cartSlice = createSlice({
     setModeOfPayment: (state, action) => {
       state.modeOfPayment = action.payload;
     },
+    setSearchCustomer: (state, action) => {
+      state.searchCustomer = action.payload;
+    },
+    setSelectedCustomer: (state, action) => {
+      state.selectedCustomer = action.payload;
+    },
   }
 });
 
@@ -40,7 +48,9 @@ export const {
   setSelectedProducts,
   setCalcValues,
   setSubTotal,
-  setModeOfPayment
+  setModeOfPayment,
+  setSearchCustomer,
+  setSelectedCustomer
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
