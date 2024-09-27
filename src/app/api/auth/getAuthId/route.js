@@ -1,22 +1,29 @@
-import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
-export async function GET(request) {
+export async function POST(request) {
     try {
-        const token = request.cookies.get("token"); // Assuming the token is stored in cookies
+        
+        const token = request.cookies.get('token')?.value;
+
         if (!token) {
-            return NextResponse.json({ error: "Token not found" }, { status: 401 });
+            console.log('Token not found');
+            return NextResponse.json({ error: "Token not found" }, { status: 400 });
         }
 
-        // Verify and decode the token
-        const decodedToken = await jwt.verify(token, process.env.TOKEN_SECRET);
+        const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
 
-        // Extract the _id from the decoded token
-        const userId = decodedToken.id;
+        if (!decoded) {
+            console.log('Invalid token');
+            return NextResponse.json({ error: "Invalid Token" }, { status: 400 });
+        }
 
-        return NextResponse.json({ userId }, { status: 200 });
+        const userId = decoded.id;
 
+        return NextResponse.json({ message: "User ID extracted", userId }, { status: 200 });
+        
     } catch (error) {
-        return NextResponse.json({ error: "Invalid Token" }, { status: 401 });
+        console.error('Server error:', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }
