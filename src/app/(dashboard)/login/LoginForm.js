@@ -3,6 +3,7 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import React from "react";
 import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 export default function LoginForm() {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -16,6 +17,7 @@ export default function LoginForm() {
         },
         body: JSON.stringify({ email: data.email, password: data.password })
       });
+      toast.success("Login successful")
     } catch (error) {
       console.error("Error:", error);
       throw error;

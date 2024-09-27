@@ -13,6 +13,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import CustomPaginator from '@/helper/CommonComponent/CustomPaginator';
 import { setCalcValues, setSelectedProducts, setSubTotal, setSearchCustomer, setSelectedCustomer } from '@/store/slice/cartSlice';
 import { setAllProductList } from "@/store/slice/productItemSlice";
+import { customer_search_key, product_search_key } from '@/helper/commonValues';
 
 const AllProductsTable = () => {
     const dispatch = useDispatch()
@@ -20,32 +21,37 @@ const AllProductsTable = () => {
     const [hideMe, setHideMe] = useState(false);
     const { selectedProducts, calcValues, subTotal, searchCustomer, selectedCustomer } = useSelector(({ cart }) => cart);
     const { allProductList } = useSelector(({ productItem }) => productItem)
+    const { allCustomerList } = useSelector(({ customer }) => customer)
     const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(({ common }) => common)
     const allProductsData = allProductList?.list || [];
     console.log('%c%s', 'color: lime', '===> selectedCustomer:', selectedCustomer);
 
-    const fetchProductList = useCallback(async (start = 1,
+    const fetchList = useCallback(async (
+        modal,
+        start = 1,
         limit = 7,
         search = '') => {
         const payload = {
-            modal_to_pass: "Products",
-            search_key: ["name", "description", "selling_price"],
+            modal_to_pass: modal,
+            search_key: modal === "Products" ? product_search_key : customer_search_key,
             start: start,
             limit: limit,
             search: search?.trim(),
         }
         const res = await dispatch(getAllDataList(payload))
 
-    }, [])
+    }, [dispatch])
 
     useEffect(() => {
-        fetchProductList(currentPage, pageLimit, searchParam)
+        fetchList("Products", currentPage, pageLimit, searchParam)
+        fetchList("Customers", currentPage, pageLimit, searchParam)
     }, []);
 
-    const handleSearchInput = e => {
+    const handleSearchInput = (e, modal) => {
         dispatch(setCurrentPage(1));
 
-        fetchProductList(
+        fetchList(
+            modal,
             currentPage,
             pageLimit,
             e.target.value?.trim(),
@@ -53,43 +59,44 @@ const AllProductsTable = () => {
     };
 
     const debounceHandleSearchInput = useCallback(
-        _.debounce(e => {
-            handleSearchInput(e);
+        _.debounce((e, modal) => {
+            handleSearchInput(e, modal);
         }, 800),
         [],
     );
 
-    const onPageChange = page => {
+    const onPageChange = (page, modal) => {
         if (page !== currentPage) {
             let pageIndex = currentPage;
             if (page?.page === 'Prev') pageIndex--;
             else if (page?.page === 'Next') pageIndex++;
             else pageIndex = page;
             dispatch(setCurrentPage(pageIndex));
-            fetchProductList(pageIndex, pageLimit, searchParam);
+            fetchList(modal, pageIndex, pageLimit, searchParam);
         }
     };
 
-    const onPageRowsChange = page => {
+    const onPageRowsChange = (page, modal) => {
+        const list = modal === "Products" ? allProductList : allCustomerList;
         dispatch(setCurrentPage(page === 0 ? 0 : 1));
         dispatch(setPageLimit(page));
         const pageValue =
             page === 0
-                ? allProductList?.totalRows
-                    ? allProductList?.totalRows
+                ? list?.totalRows
+                    ? list?.totalRows
                     : 0
                 : page;
         const prevPageValue =
             pageLimit === 0
-                ? allProductList?.totalRows
-                    ? allProductList?.totalRows
+                ? list?.totalRows
+                    ? list?.totalRows
                     : 0
                 : pageLimit;
         if (
-            prevPageValue < allProductList?.totalRows ||
-            pageValue < allProductList?.totalRows
+            prevPageValue < list?.totalRows ||
+            pageValue < list?.totalRows
         ) {
-            fetchProductList(page === 0 ? 0 : 1, page, searchParam);
+            fetchList(modal, page === 0 ? 0 : 1, page, searchParam);
         }
     };
 
@@ -106,10 +113,10 @@ const AllProductsTable = () => {
                         className="input_wrap small search_wrap"
                         value={searchParam}
                         onChange={(e) => {
-                            debounceHandleSearchInput(e);
+                            debounceHandleSearchInput(e, "Products");
                             dispatch(setSearchParam(e.target.value));
                         }}
-                        disabled={!selectedCustomer}
+                        disabled={Object.keys(selectedCustomer).length === 0}
                     />
                 </IconField>
             </div>
@@ -314,14 +321,15 @@ const AllProductsTable = () => {
                     {/* Left Section */}
                     <div className="flex-1 p-3">
                         <p className='text-left'>Name: {data.name}</p>
-                        <p className='text-left'>Available Quantity: {data.available_quantity}</p>
+                        <p className='text-left'>Available Quantity: {data.email}</p>
                     </div>
 
                     {/* Right Section */}
                     <div className="flex-1 p-3 flex flex-col">
-                        <p className='text-left'>MRP: {data.selling_price}</p>
+                        {/* <p className='text-left'>MRP: {data.selling_price}</p> */}
                         <Button type="button" disabled={error[data?._id]} onClick={(e) => {
                             dispatch(setSelectedCustomer(data))
+                            dispatch(setSearchCustomer(data?.name))
                             setHideMe(false)
                             console.log('%c%s', 'color: lime', '===> data:', data);
                         }}>Select</Button>
@@ -345,26 +353,27 @@ const AllProductsTable = () => {
                         className="input_wrap small search_wrap"
                         value={searchCustomer}
                         onChange={(e) => {
-                            debounceHandleSearchInput(e);
+                            debounceHandleSearchInput(e, "Customers");
                             dispatch(setSearchCustomer(e.target.value || ""));
-                            dispatch(setSelectedCustomer(null))
+                            dispatch(setSelectedCustomer({}))
                             setHideMe(true)
-                            if(!e.target.value){
+                            if (!e.target.value) {
                                 setHideMe(false)
                             }
                         }}
-                        />
+                    />
                 </IconField>
             </div>
         );
     };
-    
+
     console.log('%c%s', 'color: lime', '===> hideMe:', hideMe);
-    
-    return (
+    return (<>
+        {/* {commonLoading && <Loader />} */}
+
         <div className="card !border-none !bg-gray-800">
 
-            <DataTable value={hideMe === "" ? [{}] : allProductsData?.filter((p) => !selectedProducts?.some(s => s?._id === p._id))} header={header2} rows={10}>
+            <DataTable value={hideMe === "" ? [{}] : allCustomerList?.list} header={header2} rows={10}>
                 {hideMe ? <Column headerStyle={{ width: '8rem', textAlign: 'center', margin: "0", padding: "0" }} bodyStyle={{ textAlign: 'center', overflow: 'visible' }} body={customerBodyTemplate} /> : null}
             </DataTable>
 
@@ -372,8 +381,8 @@ const AllProductsTable = () => {
                 <CustomPaginator
                     dataList={allProductsData}
                     pageLimit={pageLimit}
-                    onPageChange={onPageChange}
-                    onPageRowsChange={onPageRowsChange}
+                    onPageChange={(page) => onPageChange(page, "Products")}
+                    onPageRowsChange={(page) => onPageRowsChange(page, "Products")}
                     currentPage={currentPage}
                     totalCount={allProductList?.totalRows}
                 />}
@@ -401,12 +410,13 @@ const AllProductsTable = () => {
                 <CustomPaginator
                     dataList={allProductsData}
                     pageLimit={pageLimit}
-                    onPageChange={onPageChange}
-                    onPageRowsChange={onPageRowsChange}
+                    onPageChange={(page) => onPageChange(page, "Customers")}
+                    onPageRowsChange={(page) => onPageRowsChange(page, "Customers")}
                     currentPage={currentPage}
                     totalCount={allProductList?.totalRows}
                 />}
         </div>
+    </>
     )
 }
 

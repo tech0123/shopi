@@ -7,78 +7,20 @@ import { InputNumber } from 'primereact/inputnumber';
 import { Button } from 'primereact/button';
 import { calcInitialValues, productsData } from '@/helper/commonValues';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedProducts, setCalcValues, setSubTotal, setModeOfPayment } from '@/store/slice/cartSlice';
+import { setSelectedProducts, setSelectedCustomer, setCalcValues, setSubTotal, setModeOfPayment } from '@/store/slice/cartSlice';
 import Image from 'next/image';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import '@/app/(dashboard)/cart/cart.css'
 import { Dropdown } from 'primereact/dropdown';
 import { setCurrentPage, setSearchParam, setPageLimit, getAllDataList } from '@/store/slice/commonSlice';
 import _ from 'lodash';
+import jwt from "jsonwebtoken";
 
 const SelectedProductsTable = () => {
     const dispatch = useDispatch()
     const { selectedProducts, subTotal, calcValues, modeOfPayment, selectedCustomer } = useSelector(({ cart }) => cart);
     const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(({ common }) => common)
     const [error, setError] = useState([]);
-
-    useEffect(() => {
-        dispatch(setSelectedProducts([
-            {
-                "_id": "66f24462abcaba82c0e6ae97",
-                "name": "Smartwatch",
-                "description": "Water-resistant backpack with padded laptop compartment",
-                "available_quantity": "300",
-                "discount": 1,
-                "tax": "6%",
-                "selling_price": "30.00",
-                "cost_price": "15.00",
-                "available_quantity": "300",
-                "qty": 1,
-                "amount": "29.00"
-            },
-            {
-                "_id": "66f24462abcaba82c0e6ae98",
-                "name": "Running Shoes",
-                "description": "Lightweight running shoes for men",
-                "available_quantity": "100",
-                "discount": 2,
-                "tax": "5%",
-                "selling_price": "70.00",
-                "cost_price": "40.00",
-                "available_quantity": "100",
-                "qty": 2,
-                "amount": "138.00"
-            },
-            {
-                "_id": "66f24462abcaba82c0e6aea5",
-                "name": "Ballpoint Pens",
-                "description": "Pack of 10 smooth-writing ballpoint pens",
-                "available_quantity": "1200",
-                "discount": 0,
-                "tax": "5%",
-                "selling_price": "3.00",
-                "cost_price": "1.50",
-                "available_quantity": "1200",
-                "qty": 10,
-                "amount": "30.00"
-            },
-            {
-                "_id": "66f24462abcaba82c0e6aeae",
-                "name": "Leather Jacket",
-                "description": "Genuine leather jacket for women",
-                "available_quantity": "100",
-                "discount": 0,
-                "tax": "5%",
-                "selling_price": "120.00",
-                "cost_price": "80.00",
-                "available_quantity": "100",
-                "qty": 2,
-                "amount": 240
-            }
-        ]))
-
-
-    }, [])
 
     const modeOfPaymentOptions = [
         { name: 'Cash', value: 'cash' },
@@ -136,8 +78,34 @@ const SelectedProductsTable = () => {
             }));
         };
 
+        const handleBilling = async (e) => {
+            console.log('payload', selectedProducts, modeOfPayment, subTotal, calcValues);
+
+            try {
+                const response = await fetch("/api/auth/getAuthId", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
+
+                // Check if the request was successful
+                if (!response) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Parse the response as JSON
+                const data = await response.json();
+                console.log('response data', data); // Log the parsed response data
+            } catch (error) {
+                console.error("Error:", error);
+                throw error;
+            }
+        };
+
 
         return (
+
             <div className="card !bg-gray-800 shadow-sm text-white p-5 pt-4">
                 <hr className=' mb-20' />
                 {/* <h5 className="text-md  font-medium mb-2">Summary</h5> */}
@@ -203,8 +171,8 @@ const SelectedProductsTable = () => {
                 </div>
 
                 <div className="flex justify-center items-center mt-12 w-full">
-                    <Button type="button" className='px-4 py-2 mx-2 bg-gray-900 rounded-lg' disabled={!selectedProducts?.length} onClick={(e) => { console.log('payload', selectedProducts, modeOfPayment, subTotal, calcValues) }}>Save</Button>
-                    <Button type="button" className='px-4 py-2 mx-2 bg-gray-900 rounded-lg' disabled={!selectedProducts?.length} onClick={(e) => { console.log('print') }}>Print</Button>
+                    <Button type="button" className='px-4 py-2 mx-2 bg-gray-900 rounded-lg' disabled={!selectedProducts?.length || Object.keys(selectedCustomer).length === 0} onClick={(e) => handleBilling(e)}>Save</Button>
+                    {/* <Button type="button" className='px-4 py-2 mx-2 bg-gray-900 rounded-lg' disabled={!selectedProducts?.length} onClick={(e) => { console.log('print') }}>Print</Button> */}
                 </div>
 
             </div>
