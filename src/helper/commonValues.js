@@ -7,11 +7,11 @@ export const linksOption = [
   { href: "/product", text: "Product" },
   { href: "/reports", text: "Reports" },
   { href: "/company", text: "Company" },
+  { href: "/customer", text: "Customer" },
   { href: "/employee", text: "Employee" },
   { href: "/manufacturer", text: "Manufacturer" },
   { href: "/attendance", text: "Employee Attendance" }
 ];
-
 
 export const usersOption = [
   { href: "/customer", text: "New User" },

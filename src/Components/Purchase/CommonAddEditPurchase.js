@@ -11,10 +11,17 @@ import { useParams, useRouter } from "next/navigation";
 import { FormProvider, useForm } from "react-hook-form";
 import PurchaseTableDialog from "./PurchaseTableDialog";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
-import { addItem, getAllDataList, updateItem } from "@/store/slice/commonSlice";
+import { addItem, getAllDataList, setCurrentPage, setPageLimit, setSearchParam, updateItem } from "@/store/slice/commonSlice";
 import CommonDeleteConfirmation from "@/helper/CommonComponent/CommonDeleteConfirmation";
 import { setAllPurchaseListData, setPurchaseTableData } from "@/store/slice/purchaseSlice";
-import { calculateTotal, default_search_key, convertIntoNumber, getFormattedDate } from "@/helper/commonValues";
+import { calculateTotal, default_search_key, manufacturer_search_key, convertIntoNumber, getFormattedDate, product_search_key } from "@/helper/commonValues";
+import { setFieldSearchParam, setManufactureSearchParam, setSelectedManufacturerData } from "@/store/slice/manufacturerSlice";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
+import { InputText } from "primereact/inputtext";
+import CustomPaginator from "@/helper/CommonComponent/CustomPaginator";
+import Image from "next/image";
+import { setAllProductsData } from "@/store/slice/cartSlice";
 
 const intialDialogState = {
   product: "",
@@ -80,13 +87,16 @@ const CommonAddEditPurchase = (props) => {
   const [purchaseTableDialog, setPurchaseTableDialog] = useState(false);
   const [selectedPurchaseData, setSelectedPurchaseData] = useState(intialDialogState)
   const [deleteItemDialog, setDeleteItemDialog] = useState(false);
-  const [productOptions, setProductOptions] = useState([]);
+  // const [showHideManufacturer, setShowHideManufacturer] = useState(false)
+  // const [manufacturerOptions, setManufacturerOptions] = useState([])
+  // const [productOptions, setProductOptions] = useState([]);
 
   const { purchaseTableData } = useSelector(
     ({ purchase }) => purchase
   );
-  const { allManufacturerList } = useSelector(({ manufacturer }) => manufacturer)
+  const { pageLimit, currentPage } = useSelector(({ common }) => common)
   const { allProductList } = useSelector(({ productItem }) => productItem)
+  const { allManufacturerList, manufactureSearchParam } = useSelector(({ manufacturer }) => manufacturer)
 
   const methods = useForm({
     resolver: yupResolver(schema),
@@ -119,14 +129,29 @@ const CommonAddEditPurchase = (props) => {
     }
   }, [allManufacturerList])
 
-  const fetchProductList = useCallback(async (key_name) => {
-    const payload = { modal_to_pass: key_name, search_key: default_search_key }
+  const fetchPurchaseList = useCallback(async (
+    key_name, 
+    start = 1,
+    limit = 7,
+    search = ''
+  ) => {
+    const payload = {  
+      start: start,
+      limit: limit,
+      search: search?.trim(),
+      modal_to_pass: key_name,
+      search_key: key_name === "Products" ? product_search_key : manufacturer_search_key, 
+    }
     const res = await dispatch(getAllDataList(payload))
   }, [])
 
   useEffect(() => {
-    fetchProductList("Manufacturers")
-    fetchProductList("Products")
+    fetchPurchaseList("Manufacturers", 0, 0)
+    fetchPurchaseList("Products")
+
+    return () => {
+
+    }
   }, []);
 
   useEffect(() => {
@@ -175,7 +200,7 @@ const CommonAddEditPurchase = (props) => {
     }
 
     if (res?.payload) {
-      dispatch(setAllPurchaseListData(res));
+      dispatch(setAllPurchaseListData(res?.payload));
       router.push('/purchase');
     }
   };
@@ -188,22 +213,22 @@ const CommonAddEditPurchase = (props) => {
     setPurchaseTableDialog(true);
     setSelectedPurchaseData(intialDialogState);
 
-    const filteredProductOptions = allProductList?.list?.map((item) => {
-      const filteredProductData = purchaseTableData.every((data) => { return data?.product !== item?._id && item })
+  //   const filteredProductOptions = allProductList?.list?.map((item) => {
+  //     const filteredProductData = purchaseTableData.every((data) => { return data?.product !== item?._id && item })
 
-      if (!purchaseTableData?.length || filteredProductData) {
-        return {
-          label: item?.name,
-          value: item?._id
-        }
-      }
-    }).filter((item) => item)
+  //     if (!purchaseTableData?.length || filteredProductData) {
+  //       return {
+  //         label: item?.name,
+  //         value: item?._id
+  //       }
+  //     }
+  //   }).filter((item) => item)
 
-    setProductOptions(filteredProductOptions)
+  //   setProductOptions(filteredProductOptions)
   }
 
   const handleEditItem = async (product) => {
-    fetchProductList("Products")
+    fetchPurchaseList("Products")
     setPurchaseTableDialog(true)
     setSelectedPurchaseData(product);
   };
@@ -263,6 +288,137 @@ const CommonAddEditPurchase = (props) => {
     </div>
   );
 
+  const onPageChange = (page, modal) => {
+    if (page !== currentPage) {
+      let pageIndex = currentPage;
+      if (page?.page === 'Prev') pageIndex--;
+      else if (page?.page === 'Next') pageIndex++;
+      else pageIndex = page;
+
+      dispatch(setCurrentPage(pageIndex));
+      fetchPurchaseList(
+        modal,
+        pageIndex,
+        pageLimit
+      );
+    }
+  };
+  
+  const onPageRowsChange = (page, modal) => {
+    const list = modal === "Products" ? allProductList : allManufacturerList;
+    dispatch(setCurrentPage(page === 0 ? 0 : 1));
+    dispatch(setPageLimit(page));
+    const pageValue =
+        page === 0
+            ? list?.totalRows
+                ? list?.totalRows
+                : 0
+            : page;
+    const prevPageValue =
+        pageLimit === 0
+            ? list?.totalRows
+                ? list?.totalRows
+                : 0
+            : pageLimit;
+    if (
+        prevPageValue < list?.totalRows ||
+        pageValue < list?.totalRows
+    ) {
+        fetchPurchaseList(
+          modal,
+          page === 0 ? 0 : 1,
+          page,
+        );
+      }
+  };
+
+  // const handleManufactureChange = (item) => {
+  //   const value = item?._id
+  //   setShowHideManufacturer(false)
+    
+  //   const fieldsObj = {
+  //     ...item,
+  //     product: value,
+  //     selling_price: ""
+  //   }
+    
+  //   dispatch(setManufactureSearchParam(item?.name))
+  //   dispatch(setSelectedManufacturerData(fieldsObj))
+  //   methods.reset(fieldsObj);
+  // }
+
+  // const header = () => {
+  //   return (
+  //     <div className="flex flex-wrap gap-2 justify-content-between align-items-center mb-4">
+  //         <IconField iconPosition="right" className='min-w-full min-h-10'>
+  //             <InputIcon className="pi pi-search mr-3" />
+  //               <InputText
+  //                 id="Search"
+  //                 placeholder="Search Manufacturer"
+  //                 type="search"
+  //                 className="input_wrap small search_wrap"
+  //                 value={manufactureSearchParam}
+  //                 onChange={(e) => {
+  //                   debounceHandleSearchInput(e);
+  //                   dispatch(setManufactureSearchParam(e.target.value));
+  //                   dispatch(setSelectedManufacturerData({}))
+  //                   setShowHideManufacturer(true)
+  //                   if (!e.target.value) {
+  //                     setShowHideManufacturer(false)
+  //                   }
+  //                 }}
+  //                 disabled={purchaseId}
+  //               />
+  //         </IconField>
+  //     </div>
+  //   );
+  // };
+
+  // const multiBodyTemplate = (data) => {
+  //   return (
+  //     <div className="container flex flex-col w-full">
+  //         <div className="flex justify-center p-1">
+  //             <Image src={data.image} alt={data?._id} width={150} height={150} />
+  //         </div>
+  //         <div className="flex flex-1 bg-gray-900 amount_content mt-2">
+  //             <div className="flex-1 p-3">
+  //                 <p className='text-left'>Name: {data.name}</p>
+  //                 <p className='text-left'>Code: {data?.code}</p>
+  //                 <div className="flex justify-center">
+  //                   <Button
+  //                     className="btn_primary" 
+  //                     onClick={(e) => {
+  //                       e.preventDefault();
+  //                       handleManufactureChange(data)
+  //                     }}
+  //                     >
+  //                     ADD
+  //                   </Button>
+  //                 </div>
+  //             </div>
+  //         </div>
+  //     </div>
+  //   );
+  // };
+
+  // const handleSearchInput = e => {
+  //   dispatch(setCurrentPage(1));
+  
+  //   fetchPurchaseList(
+  //     'Manufacturers',
+  //     currentPage,
+  //     pageLimit,
+  //     e.target.value?.trim(),
+  //   );
+  // };
+  
+  // const debounceHandleSearchInput = useCallback(
+  //   _.debounce(e => {
+  //       handleSearchInput(e);
+  //   }, 800),
+  //   [],
+  // );
+
   return (
     <>
       <div className="m-5 text-xl text-slate-300">{purchaseId ? "Edit" : "Add"} Purchase Item</div>
@@ -279,9 +435,26 @@ const CommonAddEditPurchase = (props) => {
                   options={manufacturerOptions}
                   isRequired={true}
                   fieldOnChange={(e) => {
+                    e.preventDefault()
                     handleManufacturerChange(e)
                   }}
                 />
+                {/* <DataTable
+                  className='!p-0 modal_datatable menu_facturers_data'
+                  value={showHideManufacturer === "" ? [{}] : allManufacturerList?.list} header={header} rows={10}
+                >
+                  {showHideManufacturer ? <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ overflow: 'visible', padding:"0 !important" }} body={multiBodyTemplate} /> : null}
+                </DataTable> */}
+                {/* {showHideManufacturer &&
+                  <CustomPaginator
+                    dataList={allManufacturerList?.list}
+                    pageLimit={pageLimit}
+                    onPageChange={(page) => onPageChange(page, "Manufacturers")}
+                    onPageRowsChange={(page) => onPageRowsChange(page, "Manufacturers")}
+                    currentPage={currentPage}
+                    totalCount={allProductList?.totalRows}
+                  />
+                } */}
               </Col>
               {inputFieldsList.map((field, i) => {
                 return (
@@ -307,6 +480,8 @@ const CommonAddEditPurchase = (props) => {
               onClick={e => {
                 e.preventDefault();
                 handleAddPurchaseItem()
+                dispatch(setSearchParam(''));
+                dispatch(setAllProductsData([]))
               }}
             >
               + Add
@@ -448,11 +623,12 @@ const CommonAddEditPurchase = (props) => {
         </form>
       </FormProvider>
       <PurchaseTableDialog
-        productOptions={productOptions}
+        intialDialogState={intialDialogState}
         purchaseTableDialog={purchaseTableDialog}
         selectedPurchaseData={selectedPurchaseData}
         setPurchaseTableDialog={setPurchaseTableDialog}
-        setTableValue={methods}
+        onPageChange={onPageChange}
+        onPageRowsChange={onPageRowsChange}
       />
       <CommonDeleteConfirmation
         open={deleteItemDialog}

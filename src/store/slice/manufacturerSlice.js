@@ -18,7 +18,8 @@ let initialState = {
   manufacturerDialog: false,
   selectedManufacturerData: manufacturerInitialData,
   deleteManufacturerDialog: false,
-  manufacturerOptions: []
+  manufacturerOptions: [],
+  manufactureSearchParam: ""
 };
 
 const manufacturerSlice = createSlice({
@@ -39,6 +40,9 @@ const manufacturerSlice = createSlice({
     },
     setManufacturerOptions: (state, action) => {
       state.manufacturerOptions = action.payload;
+    },
+    setManufactureSearchParam: (state, action) => {
+      state.manufactureSearchParam = action.payload;
     }
   }
 });
@@ -48,7 +52,8 @@ export const {
   setSelectedManufacturerData,
   setManufacturerDialog,
   setDeleteManufacturerDialog,
-  setManufacturerOptions
+  setManufacturerOptions,
+  setManufactureSearchParam
 } = manufacturerSlice.actions;
 
 export default manufacturerSlice.reducer;
