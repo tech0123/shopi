@@ -93,6 +93,8 @@ export const product_search_key = ["name", "description", "selling_price"];
 
 export const purchase_search_key = ["manufacturer_name", "bill_no", "gst_no", "mobile_number"];
 
+export const sales_search_key = ["customer_name", "email", "type", "mobile_number"];
+
 export const manufacturer_search_key = ["name", "email_address", "mobile_number", "gst_no"];
 
 export const employee_search_key = ["name", "email"];

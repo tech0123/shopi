@@ -7,6 +7,7 @@ import purchase from "./slice/purchaseSlice";
 import cart from "./slice/cartSlice";
 import attendance from "./slice/attendanceSlice";
 import customer from "./slice/customerSlice";
+import sales from "./slice/salesSlice";
 
 const reducers = combineReducers({
   employee,
@@ -17,6 +18,7 @@ const reducers = combineReducers({
   cart,
   attendance,
   customer,
+  sales
 });
 
 const store = configureStore({

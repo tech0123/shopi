@@ -7,6 +7,7 @@ import { writeFile } from "fs/promises";
 import { generateUniqueId } from "@/helper/commonValues";
 import Manufacturer from "@/lib/models/ManufacturerModel";
 import Purchase from "@/lib/models/PurchaseModal";
+import Sales from "@/lib/models/SalesModel";
 
 export async function POST(request) {
   await connectToMongo();
@@ -26,6 +27,8 @@ export async function POST(request) {
       modalToUse = Manufacturer;
     } else if (modal_to_pass === "purchase") {
       modalToUse = Purchase;
+    } else if (modal_to_pass === "sales") {
+      modalToUse = Sales;
     } else {
       return NextResponse.json(
         { err: 1, success: false, msg: "Invalid Model provided" },
@@ -42,6 +45,31 @@ export async function POST(request) {
     //   await writeFile(path, buffer);
     //   data.set("image", `/uploads/${uniqueFileName}.${file?.name?.split('.')?.pop()}`);
     // }
+
+    if (modal_to_pass === "purchase" && data?.purchase_record_table?.length) {
+      const updatePromises = data?.purchase_record_table?.map(async (product) => {
+        const { _id, quantity, ...restField } = product;
+
+        let existingProduct = await Product.findById(_id);
+        if (!existingProduct) {
+          throw new Error(`Product with ID ${_id} not found`);
+        }
+
+        existingProduct = {
+          ...existingProduct._doc,
+          ...restField,
+          available_quantity: parseInt(existingProduct?.available_quantity) + parseInt(quantity)
+        };
+
+        await Product.findByIdAndUpdate(
+          _id,
+          { $set: existingProduct },
+          { new: true }
+        );
+      });
+
+      await Promise.all(updatePromises);
+    }
 
     const addData = { ...data };
 
