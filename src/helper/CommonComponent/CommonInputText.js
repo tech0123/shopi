@@ -6,7 +6,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Calendar } from 'primereact/calendar';
 
 const CommonInputText = props => {
-  const { title='', id='', type="text", name='', placeholder='', isRequired=false, className='', options=[], disabled, fieldOnChange } = props;
+  const { title='', id='', type="text", name='', placeholder='', minDate , isRequired=false, className='', options=[], disabled, fieldOnChange } = props;
 
   const methods = useFormContext();
   const { control, register, setValue, watch } = methods;
@@ -30,6 +30,7 @@ const CommonInputText = props => {
                 <Calendar
                   id={id}
                   name={name}
+                  minDate={minDate && minDate}
                   value={value ? new Date(value) : ''}
                   placeholder={`Enter ${title}`}
                   showIcon

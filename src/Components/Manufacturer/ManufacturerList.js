@@ -18,6 +18,7 @@ import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
 import { addItem, deleteItem, getAllDataList, getSingleItem, updateItem, setCurrentPage, setPageLimit, setSearchParam, } from "@/store/slice/commonSlice";
 import { manufacturer_search_key } from "@/helper/commonValues";
+import Image from "next/image";
 
 const initialState = {
   code: "",
@@ -259,9 +260,9 @@ const ManufacturerList = () => {
     return (
       <div className="container flex flex-col border-white border-2 w-full">
         <div className="flex justify-center border-b-2 border-white p-2">
-          <img
-            src={`${rowData.image}`}
-            alt=""
+          <Image
+            src={rowData?.image}
+            alt={rowData?._id}
             width={150}
             height={150}
           />

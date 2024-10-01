@@ -6,6 +6,7 @@ import Employee from "@/lib/models/EmployeeModel";
 import Manufacturer from "@/lib/models/ManufacturerModel";
 import Attendance from "@/lib/models/AttendanceModel";
 import Purchase from "@/lib/models/PurchaseModal";
+import Sales from "@/lib/models/SalesModel";
 
 export async function POST(request) {
   await connectToMongo();
@@ -37,6 +38,8 @@ export async function POST(request) {
       modalToUse = Purchase;
     } else if (modal_to_pass === "Attendance") {
       modalToUse = Attendance;
+    } else if (modal_to_pass === "Sales") {
+      modalToUse = Sales;
     } else {
       return NextResponse.json(
         { data: [], err: 1, success: false, msg: "Invalid Modal" },

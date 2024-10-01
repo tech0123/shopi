@@ -6,6 +6,7 @@ import { setAllPurchaseListData } from "./purchaseSlice";
 import { setAllManufacturerList, setSelectedManufacturerData } from "./manufacturerSlice";
 import { setAllEmployeeList, setSelectedEmployeeData } from "./employeeSlice";
 import { setAllCustomerList, setSelectedCustomerData } from "./customerSlice";
+import { setAllSalesListData, setSelectedSalesItemData } from "./salesSlice";
 
 let initialState = {
   commonLoading: false,
@@ -44,6 +45,8 @@ export const getAllDataList = createAsyncThunk(
           dispatch(setAllManufacturerList(newObj));
         } else if (payload?.modal_to_pass === "Purchase") {
           dispatch(setAllPurchaseListData(newObj));
+        } else if (payload?.modal_to_pass === "Sales") {
+          dispatch(setAllSalesListData(newObj));
         } else if (payload?.modal_to_pass === "Customers") {
           const updatedData = newObj?.list?.map((item) => {
             const findType = customerTypeOptions?.find((type) => type.value === item.type)
@@ -88,7 +91,9 @@ export const getSingleItem = createAsyncThunk(
           dispatch(setSelectedManufacturerData(data));
         } else if (payload?.modal_to_pass === "customer") {
           dispatch(setSelectedCustomerData(data));
-        }
+        } else if (payload?.modal_to_pass === "sales") {
+          dispatch(setSelectedSalesItemData(data));
+        } 
         else {
           console.error("Modal issue");
         }
@@ -230,6 +235,8 @@ export const deleteItem = createAsyncThunk(
           dispatch(setAllManufacturerList(data));
         } else if (payload?.modal_to_pass === "purchase") {
           dispatch(setAllPurchaseListData(data));
+        } else if (payload?.modal_to_pass === "sales") {
+          dispatch(setAllSalesListData(data));
         } else if (payload?.modal_to_pass === "customer") {
           const updatedData = data?.list?.map((item) => {
             const findType = customerTypeOptions?.find((type) => type.value === item.type)
