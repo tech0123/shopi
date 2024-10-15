@@ -7,6 +7,7 @@ import Manufacturer from "@/lib/models/ManufacturerModel";
 import Attendance from "@/lib/models/AttendanceModel";
 import Purchase from "@/lib/models/PurchaseModal";
 import Sales from "@/lib/models/SalesModel";
+import AttendanceData from "@/Components/Attendance/AttendanceDates";
 
 export async function POST(request) {
   await connectToMongo();
@@ -23,7 +24,7 @@ export async function POST(request) {
       });
     };
     const { modal_to_pass, field_options = [], start = 1,
-      limit = 7, search = '', search_key = []
+      limit = 7, search = '', search_key = [], date
     } = await request.json();
 
     if (modal_to_pass === "Customers") {
@@ -38,6 +39,8 @@ export async function POST(request) {
       modalToUse = Purchase;
     } else if (modal_to_pass === "Attendance") {
       modalToUse = Attendance;
+    } else if (modal_to_pass === "AttendanceData") {
+      modalToUse = AttendanceData;
     } else if (modal_to_pass === "Sales") {
       modalToUse = Sales;
     } else {
@@ -63,6 +66,11 @@ export async function POST(request) {
       }
       : {};
 
+    if (modal_to_pass === "Attendance") {
+      if (date) {
+        query[`attendance_by_date.${date}`] = { $exists: true };
+      }
+    }
 
     const totalRecords = await modalToUse.countDocuments(query);
 
@@ -70,15 +78,27 @@ export async function POST(request) {
 
     data = await modalToUse.find(query).select(modifiedOptionKeys).skip(skip).limit(limit).lean();
 
+    if (modal_to_pass === "Attendance") {
+      data = data.map(item => {
+        const attendanceForDate = item.attendance_by_date[date];
+        return {
+          ...item,
+          attendance_by_date: attendanceForDate ? { [date]: attendanceForDate } : {}
+        };
+      });
+    }
 
-    const modifyProduct = await modifyProducts(data)
+    if (modal_to_pass === "Products") {
+      data = await modifyProducts(data);
+    }
+
 
     return NextResponse.json(
       {
         status: 200,
         err: 0,
         data: {
-          list: modal_to_pass === "Products" ? modifyProduct : data || [],
+          list: data || [],
           totalRows: totalRecords,
           pageNo: start
         },

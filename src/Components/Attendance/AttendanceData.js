@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Controller, FormProvider, useForm, useFormContext } from "react-hook-form";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
 import { addItem, getAllDataList, getSingleItem, setCurrentPage, setPageLimit, setSearchParam } from "@/store/slice/commonSlice";
-import { checkINOutData, getList, setAllAttendanceList, setSelectedAttendanceData, setAttendanceDialog } from "@/store/slice/attendanceSlice";
+import { checkINOutData, getList, setAllAttendanceList, setSelectedAttendanceData, setAttendanceDialog, getSingleData } from "@/store/slice/attendanceSlice";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
 import Image from "next/image";
@@ -24,6 +24,7 @@ import {
 import { attendance_search_key, employee_search_key } from "@/helper/commonValues";
 import { Calendar } from "primereact/calendar";
 import { seFormContext } from "react-hook-form";
+import { useParams } from "next/navigation";
 
 
 const initialState = {
@@ -48,20 +49,22 @@ const Attendance = () => {
 
     const { attendanceLoading, allAttendanceList, attendanceDialog, selectedAttendanceData } = useSelector(({ attendance }) => attendance)
     const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(({ common }) => common)
-    const { employeeLoading, allEmployeeList, selectedEmployeeData, employeeDialog, deleteEmployeeDialog } = useSelector(({ employee }) => employee);
+    // const { employeeLoading, allEmployeeList, selectedEmployeeData, employeeDialog, deleteEmployeeDialog } = useSelector(({ employee }) => employee);
 
+    const { date } = useParams();
 
-    const fetchEmployeeList = useCallback(async (
+    const fetchAttendanceList = useCallback(async (
         start = 1,
         limit = 7,
         search = ''
     ) => {
         const payload = {
-            modal_to_pass: "Employees",
-            search_key: employee_search_key,
+            modal_to_pass: "Attendance",
+            search_key: attendance_search_key,
             start: start,
             limit: limit,
             search: search?.trim(),
+            date
         }
         // const attendance_payload = { modal_to_pass: "Attendance", search_key: attendance_search_key }
         const res = await dispatch(getAllDataList(payload))
@@ -71,93 +74,20 @@ const Attendance = () => {
         // dispatch(setAllAttendanceList(res2))
     }, [dispatch])
 
-    // const fetchAttendanceList = useCallback(async () => {
-    //     const payload = {
-    //         modal_to_pass: "Attendance",
-    //         search_key: attendance_search_key,
-    //     }
-    //     const res = await dispatch(getAllDataList(payload))
-
-    // }, [dispatch])
-
     useEffect(() => {
-        fetchEmployeeList();
-        // fetchAttendanceList();
+        fetchAttendanceList()
     }, []);
 
-    const clickInFunction = (rowData) => {
-        const check_in_time = new Date();
-        const dateKey = check_in_time.toISOString().split('T')[0];
-
-        const payload = {
-            employee_id: rowData?._id,
-            name: rowData?.name || '',
-            date: dateKey,
-            check_in: check_in_time,
-            check_out: ''
-        };
-
-        dispatch(checkINOutData(payload));
-    };
-
-    const clickOutFunction = (rowData) => {
-        const check_out_time = new Date();
-        // console.log('check_out_time.toISOString()', check_out_time.toISOString())
-        const dateKey = check_out_time.toISOString().split('T')[0];
-
-        const payload = {
-            employee_id: rowData?._id,
-            name: rowData?.name || '',
-            date: dateKey,
-            check_out: check_out_time
-
-        };
-        dispatch(checkINOutData(payload));
-    };
-
     const checkInTemplete = (rowData) => {
-        // const isDisable = allAttendanceList?.length > 0 ? allAttendanceList.find((item) => {
 
-        //     const currentDate = new Date().toISOString().split('T')[0];
-        //     if (item?.employee_id === rowData?._id) {
-        //         if (item?.attendance_by_date[currentDate]?.check_in) {
-        //             return true;
-        //         } else {
-        //             return false;
-        //         }
-        //     }
-
-        // }) : false;
         return (
-            <Button severity="success" onClick={() => clickInFunction(rowData)}>In</Button>
+            <p>{new Date(rowData?.attendance_by_date?.[date]?.check_in)?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) || ''}</p>
         );
     };
 
     const checkOutTemplete = (rowData) => {
-        // const isDisable = allAttendanceList?.length > 0
-        //     ? allAttendanceList.find((item) => {
-        //         const currentDate = new Date().toISOString().split('T')[0];
-
-        //         if (item?.employee_id === rowData?._id) {
-        //             //     if (!item?.attendance_by_date[currentDate]?.check_in || item?.attendance_by_date[currentDate]?.check_out) {
-        //             //         console.log('if')
-
-        //             //         return true;
-        //             // }
-
-        //             if (item?.attendance_by_date[currentDate]?.check_out) {
-        //                 return true;
-        //             } else {
-        //                 return false;
-        //             }
-
-        //         }
-
-        //         // return false;
-        //     })
-        //     : true;
         return (
-            <Button severity="danger" onClick={() => clickOutFunction(rowData)}>Out</Button>
+            <p>{new Date(rowData?.attendance_by_date?.[date]?.check_out)?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) || ''}</p>
         );
     };
 
@@ -176,7 +106,7 @@ const Attendance = () => {
             else pageIndex = page;
 
             dispatch(setCurrentPage(pageIndex));
-            fetchEmployeeList(
+            fetchAttendanceList(
                 pageIndex,
                 pageLimit,
                 searchParam,
@@ -190,21 +120,21 @@ const Attendance = () => {
         dispatch(setPageLimit(page));
         const pageValue =
             page === 0
-                ? allEmployeeList?.totalRows
-                    ? allEmployeeList?.totalRows
+                ? allAttendanceList?.totalRows
+                    ? allAttendanceList?.totalRows
                     : 0
                 : page;
         const prevPageValue =
             pageLimit === 0
-                ? allEmployeeList?.totalRows
-                    ? allEmployeeList?.totalRows
+                ? allAttendanceList?.totalRows
+                    ? allAttendanceList?.totalRows
                     : 0
                 : pageLimit;
         if (
-            prevPageValue < allEmployeeList?.totalRows ||
-            pageValue < allEmployeeList?.totalRows
+            prevPageValue < allAttendanceList?.totalRows ||
+            pageValue < allAttendanceList?.totalRows
         ) {
-            fetchEmployeeList(
+            fetchAttendanceList(
                 page === 0 ? 0 : 1,
                 page,
                 searchParam,
@@ -224,8 +154,8 @@ const Attendance = () => {
 
     const onSubmit = async (data) => {
         let res = '';
-        const date = new Date();
-        const dateKey = date?.toISOString().split('T')[0];
+        const dateFormat = new Date(date);
+        const dateKey = dateFormat?.toISOString().split('T')[0];
 
         // const cin = new Date(data?.check_in)
         // const cout = new Date(data?.check_out);
@@ -284,11 +214,11 @@ const Attendance = () => {
     const handleEditItem = async (attendance) => {
         dispatch(setAttendanceDialog(true))
         console.log("attendance", attendance)
-        const payload = { modal_to_pass: "attendance", id: attendance }
-        const res = await dispatch(getSingleItem(payload))
-        const date = new Date();
-        const dateKey = date.toISOString().split('T')[0];
-
+        const payload = { id: attendance }
+        const res = await dispatch(getSingleData(payload))
+        const dateFormat = new Date(date);
+        const dateKey = dateFormat?.toISOString().split('T')[0];
+        console.log('res', res)
         const in_time = new Date(res?.payload?.attendance_by_date[dateKey]?.check_in);
         const out_time = new Date(res?.payload?.attendance_by_date[dateKey]?.check_out);
 
@@ -304,16 +234,7 @@ const Attendance = () => {
                 <p className="cursor-pointer text-sm" onClick={() => handleEditItem(rowData)}>
                     Edit
                 </p>
-                <div className="mt-2 w-full">
-                    <Button className="w-full" onClick={() => clickInFunction(rowData)}>
-                        In
-                    </Button>
-                </div>
-                <div className="mt-2 w-full">
-                    <Button className="w-full" onClick={() => clickOutFunction(rowData)}>
-                        Out
-                    </Button>
-                </div>
+
             </div>
         );
     };
@@ -326,6 +247,12 @@ const Attendance = () => {
                         <p className="text-left text-sm">
                             Name: {rowData?.name}
                         </p>
+                        <p className="text-left text-sm">
+                            Check In: {new Date(rowData?.attendance_by_date?.[date]?.check_in)?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                        </p>
+                        <p className="text-left text-sm">
+                            Check Out: {new Date(rowData?.attendance_by_date?.[date]?.check_out)?.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+                        </p>
 
                         <div className="text-left mt-1">
                             {actionBodyResponsiveTemplate(rowData)}
@@ -335,25 +262,19 @@ const Attendance = () => {
             </div>
         );
     };
-
+    console.log('allAttendanceList', allAttendanceList)
     return (
         <>
-            {commonLoading || attendanceLoading && <Loader />}
+            {commonLoading && <Loader />}
             <CommonDataTable
                 tableName="Attendance"
                 moduleName='attendance'
                 tableColumns={tableColumns}
-                // allItemList={allAttendanceList}
-                allItemList={allEmployeeList}
+                allItemList={allAttendanceList}
                 handleChangeSearch={handleChangeSearch}
                 searchParam={searchParam}
-                // handleAddItem={handleAddItem}
                 handleEditItem={handleEditItem}
-                // handleDeleteItem={handleDeleteItem}
                 responsiveTableTemplete={responsiveTableTemplete}
-                // deleteItemDialog={deleteProductDialog}
-                // hideDeleteDialog={hideProductDeleteDialog}
-                // deleteItem={handleDeleteProduct}
                 isDisable={false}
                 pageLimit={pageLimit}
                 onPageChange={onPageChange}

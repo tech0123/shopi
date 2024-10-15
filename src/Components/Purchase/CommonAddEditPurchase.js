@@ -15,13 +15,14 @@ import { addItem, getAllDataList, setCurrentPage, setPageLimit, setSearchParam, 
 import CommonDeleteConfirmation from "@/helper/CommonComponent/CommonDeleteConfirmation";
 import { setAllPurchaseListData, setPurchaseTableData } from "@/store/slice/purchaseSlice";
 import { calculateTotal, default_search_key, manufacturer_search_key, convertIntoNumber, getFormattedDate, product_search_key } from "@/helper/commonValues";
-import { setFieldSearchParam, setManufactureSearchParam, setSelectedManufacturerData } from "@/store/slice/manufacturerSlice";
+import { setFieldSearchParam, setManufacturerOptions, setManufactureSearchParam, setSelectedManufacturerData } from "@/store/slice/manufacturerSlice";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import CustomPaginator from "@/helper/CommonComponent/CustomPaginator";
 import Image from "next/image";
 import { setAllProductsData } from "@/store/slice/cartSlice";
+import { Dropdown } from "primereact/dropdown";
 
 const intialDialogState = {
   product: "",
@@ -48,7 +49,7 @@ const schema = yup.object().shape({
   purchase_date: yup.string().required("Please enter Purchase Date."),
   bill_no: yup.string().required("Please enter Bill Number"),
   gst_no: yup.string().required("Please enter GST Number."),
-  mobile_number: yup.string().required("Please enter Mobile Number."),
+  mobile_number: yup.string().matches(/^[0-9]{10}$/, "Mobile number must be exactly 10 digits.").required("Please enter Mobile Number."),
   address: yup.string().required("Please enter Address."),
 });
 
@@ -113,8 +114,10 @@ const CommonAddEditPurchase = (props) => {
       return item?._id === value
     })
     const fieldsObj = {
-      ...findManufacturerData,
-      [name]: value
+      [name]: value,
+      address: findManufacturerData?.address,
+      mobile_number: findManufacturerData?.mobile_number,
+      gst_no: findManufacturerData?.gst_no
     }
     methods.reset(fieldsObj);
   }
@@ -130,17 +133,17 @@ const CommonAddEditPurchase = (props) => {
   }, [allManufacturerList])
 
   const fetchPurchaseList = useCallback(async (
-    key_name, 
+    key_name,
     start = 1,
     limit = 7,
     search = ''
   ) => {
-    const payload = {  
+    const payload = {
       start: start,
       limit: limit,
       search: search?.trim(),
       modal_to_pass: key_name,
-      search_key: key_name === "Products" ? product_search_key : manufacturer_search_key, 
+      search_key: key_name === "Products" ? product_search_key : manufacturer_search_key,
     }
     const res = await dispatch(getAllDataList(payload))
   }, [])
@@ -148,10 +151,6 @@ const CommonAddEditPurchase = (props) => {
   useEffect(() => {
     fetchPurchaseList("Manufacturers", 0, 0)
     fetchPurchaseList("Products")
-
-    return () => {
-
-    }
   }, []);
 
   useEffect(() => {
@@ -177,7 +176,7 @@ const CommonAddEditPurchase = (props) => {
 
   const onSubmit = async data => {
     let res = '';
-
+    console.log('data', data)
     const updatedPurchaseItemsTableData = data?.purchase_record_table?.map((item) => {
       const { unique_id, ...rest } = item;
       return rest
@@ -213,18 +212,18 @@ const CommonAddEditPurchase = (props) => {
     setPurchaseTableDialog(true);
     setSelectedPurchaseData(intialDialogState);
 
-  //   const filteredProductOptions = allProductList?.list?.map((item) => {
-  //     const filteredProductData = purchaseTableData.every((data) => { return data?.product !== item?._id && item })
+    //   const filteredProductOptions = allProductList?.list?.map((item) => {
+    //     const filteredProductData = purchaseTableData.every((data) => { return data?.product !== item?._id && item })
 
-  //     if (!purchaseTableData?.length || filteredProductData) {
-  //       return {
-  //         label: item?.name,
-  //         value: item?._id
-  //       }
-  //     }
-  //   }).filter((item) => item)
+    //     if (!purchaseTableData?.length || filteredProductData) {
+    //       return {
+    //         label: item?.name,
+    //         value: item?._id
+    //       }
+    //     }
+    //   }).filter((item) => item)
 
-  //   setProductOptions(filteredProductOptions)
+    //   setProductOptions(filteredProductOptions)
   }
 
   const handleEditItem = async (product) => {
@@ -251,6 +250,7 @@ const CommonAddEditPurchase = (props) => {
             handleEditItem(rowData)
           }}
         />
+
         <Button
           icon="pi pi-trash"
           rounded
@@ -303,45 +303,45 @@ const CommonAddEditPurchase = (props) => {
       );
     }
   };
-  
+
   const onPageRowsChange = (page, modal) => {
     const list = modal === "Products" ? allProductList : allManufacturerList;
     dispatch(setCurrentPage(page === 0 ? 0 : 1));
     dispatch(setPageLimit(page));
     const pageValue =
-        page === 0
-            ? list?.totalRows
-                ? list?.totalRows
-                : 0
-            : page;
+      page === 0
+        ? list?.totalRows
+          ? list?.totalRows
+          : 0
+        : page;
     const prevPageValue =
-        pageLimit === 0
-            ? list?.totalRows
-                ? list?.totalRows
-                : 0
-            : pageLimit;
+      pageLimit === 0
+        ? list?.totalRows
+          ? list?.totalRows
+          : 0
+        : pageLimit;
     if (
-        prevPageValue < list?.totalRows ||
-        pageValue < list?.totalRows
+      prevPageValue < list?.totalRows ||
+      pageValue < list?.totalRows
     ) {
-        fetchPurchaseList(
-          modal,
-          page === 0 ? 0 : 1,
-          page,
-        );
-      }
+      fetchPurchaseList(
+        modal,
+        page === 0 ? 0 : 1,
+        page,
+      );
+    }
   };
 
   // const handleManufactureChange = (item) => {
   //   const value = item?._id
   //   setShowHideManufacturer(false)
-    
+
   //   const fieldsObj = {
   //     ...item,
   //     product: value,
   //     selling_price: ""
   //   }
-    
+
   //   dispatch(setManufactureSearchParam(item?.name))
   //   dispatch(setSelectedManufacturerData(fieldsObj))
   //   methods.reset(fieldsObj);
@@ -403,7 +403,7 @@ const CommonAddEditPurchase = (props) => {
 
   // const handleSearchInput = e => {
   //   dispatch(setCurrentPage(1));
-  
+
   //   fetchPurchaseList(
   //     'Manufacturers',
   //     currentPage,
@@ -411,13 +411,34 @@ const CommonAddEditPurchase = (props) => {
   //     e.target.value?.trim(),
   //   );
   // };
-  
+
   // const debounceHandleSearchInput = useCallback(
   //   _.debounce(e => {
   //       handleSearchInput(e);
   //   }, 800),
   //   [],
   // );
+
+
+  // const [filterManufacturerOptions, setFilterManufacturerOptions] = useState([]);
+  // const [filterValue, setFilterValue] = useState("");
+
+  // const { control, register, setValue, watch } = methods;
+
+  // const handleFilterChange = (event) => {
+  //   const input = event.originalEvent.target.value;
+
+  //   if (input) {
+  //     setFilterValue(input);
+  //     const filtered = manufacturerOptions.filter(manufacturer =>
+  //       manufacturer.label.toLowerCase().includes(input.toLowerCase())
+  //     );
+  //     setFilterManufacturerOptions(filtered);
+  //   } else {
+  //     setFilterManufacturerOptions([]);
+  //   }
+
+  // };
 
   return (
     <>
@@ -438,7 +459,28 @@ const CommonAddEditPurchase = (props) => {
                     e.preventDefault()
                     handleManufacturerChange(e)
                   }}
+
                 />
+                {/* <div className="card flex justify-content-center">
+                  <Dropdown
+                    filter
+                    id="Manufacturer"
+                    name='manufacturer'
+                    options={filterManufacturerOptions}
+                    value={watch("manufacturer")}
+                    placeholder="Select a Manufacturer"
+                    onChange={(e) => {
+                      e.preventDefault();
+                      handleManufacturerChange(e);
+                    }}
+                    optionLabel="label"
+                    filterBy="label"
+                    showClear
+                    onFilter={handleFilterChange}
+                    className="w-full md:w-14rem"
+                  />
+                </div> */}
+
                 {/* <DataTable
                   className='!p-0 modal_datatable menu_facturers_data'
                   value={showHideManufacturer === "" ? [{}] : allManufacturerList?.list} header={header} rows={10}

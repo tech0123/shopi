@@ -101,3 +101,4 @@ export const employee_search_key = ["name", "email"];
 
 export const customer_search_key = ["name", "email"];
 
+export const attendance_search_key = ["name"];

@@ -26,6 +26,7 @@ const CommonDataTable = (props) => {
     onPageChange,
     onPageRowsChange,
     currentPage,
+    isDisable = true,
   } = props
 
   const [globalFilter, setGlobalFilter] = useState(null);
@@ -57,13 +58,13 @@ const CommonDataTable = (props) => {
           className="mr-2"
           onClick={() => handleEditItem(rowData?._id)}
         />
-        <Button
+        {isDisable && <Button
           icon="pi pi-trash"
           rounded
           outlined
           severity="danger"
           onClick={() => handleDeleteItem(rowData)}
-        />
+        />}
       </div>
     );
   };
@@ -85,12 +86,12 @@ const CommonDataTable = (props) => {
               />
             </IconField>
           </div>
-          <Button
+          {isDisable && <Button
             className="btn_primary"
             onClick={handleAddItem}
           >
             + Add
-          </Button>
+          </Button>}
         </div>
       </div>
 
@@ -126,6 +127,7 @@ const CommonDataTable = (props) => {
             style={{ minWidth: "12rem" }}
             className="max-lg:hidden"
           />
+    
         </DataTable>
         <DataTable
           value={allItemList?.list}
