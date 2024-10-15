@@ -1,4 +1,5 @@
-import "../../app/globals.css";
+import "../globals.css";
+import "../scss/Style.scss";
 import "primeicons/primeicons.css";
 import { Inter } from "next/font/google";
 import "bootstrap/dist/css/bootstrap.min.css";
