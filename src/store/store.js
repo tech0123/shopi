@@ -1,13 +1,14 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import employee from "./slice/employeeSlice";
-import productItem from "./slice/productItemSlice";
-import common from "./slice/commonSlice";
-import manufacturer from "./slice/manufacturerSlice";
-import purchase from "./slice/purchaseSlice";
 import cart from "./slice/cartSlice";
-import attendance from "./slice/attendanceSlice";
-import customer from "./slice/customerSlice";
 import sales from "./slice/salesSlice";
+import report from "./slice/reportSlice";
+import common from "./slice/commonSlice";
+import employee from "./slice/employeeSlice";
+import purchase from "./slice/purchaseSlice";
+import customer from "./slice/customerSlice";
+import attendance from "./slice/attendanceSlice";
+import productItem from "./slice/productItemSlice";
+import manufacturer from "./slice/manufacturerSlice";
 
 const reducers = combineReducers({
   employee,
@@ -18,7 +19,8 @@ const reducers = combineReducers({
   cart,
   attendance,
   customer,
-  sales
+  sales,
+  report
 });
 
 const store = configureStore({

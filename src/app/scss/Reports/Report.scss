@@ -1,0 +1,144 @@
+
+.chat-inner-wrap {
+    border: 1px solid $borderColor;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    background-color: $bgWhite;
+    &.storage_back {
+      background: linear-gradient(
+          70deg,
+          #e9eeff 5.98%,
+          rgba(233, 238, 255, 0) 99.13%
+        );
+        // url(../../Images/storage_bg.png);
+      background-position: center right;
+      border-color: $borderblue;
+
+      .chat_header {
+        border-color: $borderblue;
+      }
+      .chat_boxs {
+        height: 328px;
+        overflow: auto;
+        .chat_box {
+          border-bottom: 1px solid #fff;
+        }
+      }
+
+      .storge_details {
+        .row {
+          align-items: center;
+        }
+        .delete_btn {
+          button {
+            padding: 10px 40px;
+          }
+        }
+      }
+    }
+
+    .chat_header {
+      padding: 15px;
+      border-bottom: 1px solid $borderColor;
+      .row {
+        align-items: center;
+      }
+    }
+}
+
+.chat_box {
+    padding: 20px 15px;
+    .highcharts-container {
+      height: 315px !important;
+    }
+    &.piechart_wrapper {
+      display: flex;
+      align-items: center;
+      height: 255px;
+      overflow: auto;
+      .pie_chart_inner {
+        width: 65%;
+      }
+      .pie_chart_value {
+        width: 35%;
+
+        ul {
+          li {
+            text-align: center;
+            margin-bottom: 12px;
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            &.yellow_text {
+              span {
+                color: $textYellow;
+              }
+            }
+            &.purple_text {
+              span {
+                color: $textpurple;
+              }
+
+              h3 {
+                &::after {
+                  background: linear-gradient(180deg, #8e7af6 0%, #9f8cfa 100%);
+                }
+              }
+            }
+            &.light_purple_text {
+              span {
+                color: $textLightpurple;
+              }
+
+              h3 {
+                &::after {
+                  background: linear-gradient(180deg, #c6cffd 0%, #dce2ff 100%);
+                }
+              }
+            }
+            &.blue_text {
+              span {
+                color: $textblue;
+              }
+              h3 {
+                &::after {
+                  background: linear-gradient(180deg, #8cf 0%, #3aabff 100%);
+                }
+              }
+            }
+            h3 {
+              font-size: 14px;
+              line-height: 20px;
+              font-weight: 400;
+              position: relative;
+              margin-bottom: 0;
+              display: inline-block;
+              // padding-left: 25px;
+
+              &::after {
+                content: '';
+                position: absolute;
+                width: 18px;
+                height: 18px;
+                background: linear-gradient(180deg, #ffd572 0%, #febd38 100%);
+                left: 0;
+                top: 3px;
+                border-radius: 50%;
+                display: none;
+              }
+            }
+            span {
+              display: block;
+              font-size: 17px;
+              line-height: 22px;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+      .highcharts-container {
+        height: 215px !important;
+      }
+    }
+  }
