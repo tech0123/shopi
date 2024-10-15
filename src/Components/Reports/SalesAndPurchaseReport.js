@@ -1,15 +1,25 @@
 'use client';
-import { memo, useMemo } from "react";
+import { memo, useEffect, useMemo } from "react";
 import Highcharts from 'highcharts';
 import { useSelector } from "react-redux";
 import { Col, Row } from "react-bootstrap";
 import HighchartsReact from "highcharts-react-official";
 import variablePie from 'highcharts/modules/variable-pie.js';
 
-variablePie(Highcharts);
+// variablePie(Highcharts);
 
 const SalesAndPurchaseReport = () => {
   const { reportsData } = useSelector(({ report }) => report)
+
+  useEffect(() => {
+    import('highcharts/modules/variable-pie')
+      .then((module) => {
+        module.default(Highcharts);
+      })
+      .catch((error) => {
+        console.error("Failed to load Highcharts variable-pie module:", error);
+      });
+  }, []);
 
   const salesOptionsData = useMemo(() => {
     let salesData = [];

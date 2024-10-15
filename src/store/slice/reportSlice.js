@@ -14,7 +14,7 @@ export const getSalesReportData = payload => async dispatch => {
     dispatch(setReportLoading(true));
 
     const res = await axios.post(`api/reports/salesReport`, payload);
-    const { msg, err } = res.data;
+    const { msg, err } = res?.data;
 
     const updatedData = {
         purchase_report_data: res?.data?.purchase_report_data,
