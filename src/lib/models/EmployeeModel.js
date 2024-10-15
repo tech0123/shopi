@@ -7,7 +7,8 @@ const EmployeeSchema = new mongoose.Schema({
   mobile_number: { type: String, required: true },
   role: { type: Number, required: true },
   salary: { type: Number, required: true },
-  password: { type: String, required: true }
+  password: { type: String, required: true },
+
 });
 
 const Employee =

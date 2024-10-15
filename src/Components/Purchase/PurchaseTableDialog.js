@@ -21,12 +21,12 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 
 const schema = yup.object().shape({
-    product: yup.string().required("Please enter Product Name."),
-    description: yup.string().required("Please enter Description."),
-    quantity: yup.string().required("Please enter Quantity."),
-    tax: yup.string().required("Please enter Tax."),
-    selling_price: yup.string().required("Please enter Selling Price."),
-    cost_price: yup.string().required("Please enter Cost Price.")
+  product: yup.string().required("Please enter Product Name."),
+  description: yup.string().required("Please enter Description."),
+  quantity: yup.string().required("Please enter Quantity."),
+  tax: yup.string().required("Please enter Tax."),
+  selling_price: yup.string().required("Please enter Selling Price."),
+  cost_price: yup.string().required("Please enter Cost Price.")
 });
 
 const inputFieldsList = [
@@ -73,7 +73,7 @@ const PurchaseTableDialog = props => {
   const [showHideProductData, setShowHideProductData] = useState(false)
 
   const { intialDialogState, purchaseTableDialog, selectedPurchaseData, setPurchaseTableDialog, onPageChange, onPageRowsChange } = props;
-  
+
   const { purchaseTableData } = useSelector(
     ({ purchase }) => purchase
   );
@@ -92,10 +92,10 @@ const PurchaseTableDialog = props => {
 
   const filteredProductData = useMemo(() => {
     let data = [];
-    if(allProductList?.list?.length){
+    if (allProductList?.list?.length) {
       data = allProductList?.list?.map((item) => {
         const isProductAvailable = purchaseTableData.every((data) => { return data?.product !== item?._id && item })
-        
+
         if (!purchaseTableData?.length || isProductAvailable) {
           return item
         }
@@ -104,8 +104,8 @@ const PurchaseTableDialog = props => {
 
     return data
     // setProductOptions(data)  
-  },[allProductList?.list])
-  
+  }, [allProductList?.list])
+
   const methods = useForm({
     resolver: yupResolver(schema),
     defaultValues: selectedPurchaseData
@@ -115,13 +115,13 @@ const PurchaseTableDialog = props => {
     return () => {
       methods.reset(intialDialogState);
     }
-  },[])
+  }, [intialDialogState, methods])
 
   useEffect(() => {
-    if(selectedPurchaseData){
-        methods.reset(selectedPurchaseData)
+    if (selectedPurchaseData) {
+      methods.reset(selectedPurchaseData)
     }
-  },[selectedPurchaseData])
+  }, [selectedPurchaseData])
 
   const fetchProductList = useCallback(async (
     key_name,
@@ -129,11 +129,11 @@ const PurchaseTableDialog = props => {
     limit = 7,
     search = '') => {
     const payload = {
-        modal_to_pass: key_name, 
-        start: start,
-        limit: limit,
-        search: search?.trim(),
-        search_key: product_search_key
+      modal_to_pass: key_name,
+      start: start,
+      limit: limit,
+      search: search?.trim(),
+      search_key: product_search_key
     }
     const res = await dispatch(getAllDataList(payload))
     // if (res) {
@@ -144,7 +144,7 @@ const PurchaseTableDialog = props => {
   const handleProuctChange = (item) => {
     const value = item?._id
     setShowHideProductData(false)
-    
+
     const fieldsObj = {
       ...item,
       product: value,
@@ -158,66 +158,66 @@ const PurchaseTableDialog = props => {
   const onSubmit = data => {
     let storePurchaseTableData = [...purchaseTableData]
     const productOptionData = allProductList?.list?.find((item) => item?._id === data?.product)
-    
-    if(data?.unique_id) {
-        let purchaseData = [...purchaseTableData]
-        const index = purchaseData?.findIndex((index) => index?.unique_id === data?.unique_id)
 
-        if(index !== -1) {
-            const oldObj = purchaseData[index]
-            const newObj = {
-                ...oldObj,
-                ...data,
-                product_name: productOptionData?.name
-            }
-            purchaseData[index] = newObj
+    if (data?.unique_id) {
+      let purchaseData = [...purchaseTableData]
+      const index = purchaseData?.findIndex((index) => index?.unique_id === data?.unique_id)
+
+      if (index !== -1) {
+        const oldObj = purchaseData[index]
+        const newObj = {
+          ...oldObj,
+          ...data,
+          product_name: productOptionData?.name
         }
-      
-        storePurchaseTableData = purchaseData
-    } else {   
-        const updatedObj = {
-            ...data,
-            unique_id: generateUniqueId(),
-            product_name: productOptionData?.name,
-        }
-        
-        storePurchaseTableData = [...purchaseTableData, updatedObj]
+        purchaseData[index] = newObj
       }
 
-      dispatch(setPurchaseTableData(storePurchaseTableData))
-      setPurchaseTableDialog(false)
+      storePurchaseTableData = purchaseData
+    } else {
+      const updatedObj = {
+        ...data,
+        unique_id: generateUniqueId(),
+        product_name: productOptionData?.name,
+      }
+
+      storePurchaseTableData = [...purchaseTableData, updatedObj]
+    }
+
+    dispatch(setPurchaseTableData(storePurchaseTableData))
+    setPurchaseTableDialog(false)
   };
 
   const multiBodyTemplate = (data) => {
     return (
       <div className="container flex flex-col w-full">
-          <div className="flex justify-center p-1">
-            <Image src={data.image} alt={data?._id} width={150} height={150} />
+        <div className="flex justify-center p-1">
+          <Image src={data.image} alt={data?._id} width={150} height={150} />
+        </div>
+        <div className="flex flex-1 bg-gray-900 amount_content mt-2">
+          <div className="flex-1 p-3">
+            <p className='text-left'>Name: {data.name}</p>
+            <p className='text-left'>Code: {data?.code}</p>
+            <div className="flex justify-center">
+              <Button
+                className="btn_primary"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleProuctChange(data)
+                }}
+              >
+                ADD
+              </Button>
+            </div>
           </div>
-          <div className="flex flex-1 bg-gray-900 amount_content mt-2">
-              <div className="flex-1 p-3">
-                  <p className='text-left'>Name: {data.name}</p>
-                  <p className='text-left'>Code: {data?.code}</p>
-                  <div className="flex justify-center">
-                    <Button
-                      className="btn_primary" 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handleProuctChange(data)
-                      }}
-                      >
-                      ADD
-                    </Button>
-                  </div>
-              </div>
-          </div>
+        </div>
       </div>
     );
   };
 
   const handleSearchInput = e => {
     dispatch(setCurrentPage(1));
-  
+
     fetchProductList(
       'Products',
       currentPage,
@@ -225,41 +225,41 @@ const PurchaseTableDialog = props => {
       e.target.value?.trim(),
     );
   };
-  
+
   const debounceHandleSearchInput = useCallback(
     _.debounce(e => {
-        handleSearchInput(e);
+      handleSearchInput(e);
     }, 800),
     [],
   );
-  
+
   const header = () => {
     return (
       <div className="flex flex-wrap gap-2 justify-content-between align-items-center mb-4">
-          <IconField iconPosition="right" className='min-w-full min-h-10'>
-              <InputIcon className="pi pi-search mr-3" />
-                <InputText
-                  id="Search"
-                  placeholder="Search Product"
-                  type="search"
-                  className="input_wrap small search_wrap"
-                  value={searchParam}
-                  onChange={(e) => {
-                    setSelectedProductData({})
-                    debounceHandleSearchInput(e);
-                    dispatch(setSearchParam(e.target.value));
-                    setShowHideProductData(true)
-                    if (!e.target.value) {
-                      setShowHideProductData(false)
-                    }
-                  }}
-                  disabled={purchaseId}
-                />
-          </IconField>
+        <IconField iconPosition="right" className='min-w-full min-h-10'>
+          <InputIcon className="pi pi-search mr-3" />
+          <InputText
+            id="Search"
+            placeholder="Search Product"
+            type="search"
+            className="input_wrap small search_wrap"
+            value={searchParam}
+            onChange={(e) => {
+              setSelectedProductData({})
+              debounceHandleSearchInput(e);
+              dispatch(setSearchParam(e.target.value));
+              setShowHideProductData(true)
+              if (!e.target.value) {
+                setShowHideProductData(false)
+              }
+            }}
+            disabled={purchaseId}
+          />
+        </IconField>
       </div>
     );
   };
-
+  console.log('filteredProductData', filteredProductData)
   return (
     <Dialog
       visible={purchaseTableDialog}
@@ -291,7 +291,7 @@ const PurchaseTableDialog = props => {
                   className='!p-0 modal_datatable'
                   value={showHideProductData === "" ? [{}] : filteredProductData} header={header} rows={10}
                 >
-                  {showHideProductData ? <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ overflow: 'visible', padding:"0 !important" }} body={multiBodyTemplate} /> : null}
+                  {showHideProductData ? <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ overflow: 'visible', padding: "0 !important" }} body={multiBodyTemplate} /> : null}
                 </DataTable>
                 {showHideProductData &&
                   <CustomPaginator

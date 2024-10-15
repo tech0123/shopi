@@ -6,16 +6,16 @@ import { Dropdown } from "primereact/dropdown";
 import { Calendar } from 'primereact/calendar';
 
 const CommonInputText = props => {
-  const { title='', id='', type="text", name='', placeholder='', minDate , isRequired=false, className='', options=[], disabled, fieldOnChange } = props;
+  const { title = '', id = '', type = "text", name = '', placeholder = '', minDate, isRequired = false, className = '', options = [], disabled, fieldOnChange } = props;
 
   const methods = useFormContext();
   const { control, register, setValue, watch } = methods;
 
   return (
     <div className={`form_input ${className}`}>
-     {title && (
+      {title && (
         <div className="w-6rem">
-          {title} {isRequired && <span className="fs-6" style={{ color: "red"}}>*</span>}
+          {title} {isRequired && <span className="fs-6" style={{ color: "red" }}>*</span>}
         </div>
       )}
       <div className="mt-3 mb-3">
@@ -59,6 +59,12 @@ const CommonInputText = props => {
                   placeholder={`Enter ${title}`}
                   className="input_select"
                   timeOnly
+                  timeFormat="HH:mm"
+                  onChange={(e) => {
+                    setValue(name, e.value, { shouldValidate: true });
+                    console.log('e.value', e.value)
+                  }}
+
                 // {...register(time, { required: true })}
                 />
               )
@@ -126,17 +132,17 @@ const CommonInputText = props => {
                   placeholder={`Enter ${title}`}
                   className='input_wrap'
                   onChange={fieldOnChange ? fieldOnChange : (e) => setValue(name, e?.target?.value, { shouldValidate: true })}
-                  // {...register(name, { required: true })}
+                // {...register(name, { required: true })}
                 />
               )
             }
           />
         )}
-      {methods?.formState?.errors?.[name] &&
-        <p className="text-red-500 text-xs mt-1">
-          {methods?.formState?.errors[name]?.message}
-        </p>
-      }
+        {methods?.formState?.errors?.[name] &&
+          <p className="text-red-500 text-xs mt-1">
+            {methods?.formState?.errors[name]?.message}
+          </p>
+        }
       </div>
     </div>
   );

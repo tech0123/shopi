@@ -7,6 +7,7 @@ import { setAllManufacturerList, setSelectedManufacturerData } from "./manufactu
 import { setAllEmployeeList, setSelectedEmployeeData } from "./employeeSlice";
 import { setAllCustomerList, setSelectedCustomerData } from "./customerSlice";
 import { setAllSalesListData, setSelectedSalesItemData } from "./salesSlice";
+import { setAllAttendanceList } from "./attendanceSlice";
 
 let initialState = {
   commonLoading: false,
@@ -58,6 +59,8 @@ export const getAllDataList = createAsyncThunk(
           const updatedObject = { ...newObj, list: updatedData }
           dispatch(setAllCustomerList(updatedObject));
 
+        } else if (payload?.modal_to_pass === "Attendance") {
+          dispatch(setAllAttendanceList(newObj));
         } else {
           console.error("Modal issue");
         }
@@ -93,7 +96,7 @@ export const getSingleItem = createAsyncThunk(
           dispatch(setSelectedCustomerData(data));
         } else if (payload?.modal_to_pass === "sales") {
           dispatch(setSelectedSalesItemData(data));
-        } 
+        }
         else {
           console.error("Modal issue");
         }
