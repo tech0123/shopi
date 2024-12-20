@@ -248,15 +248,15 @@ const ProductList = () => {
   const actionBodyResponsiveTemplate = rowData => {
     return (
       <>
-        <p className="text-left text-sm" onClick={() => handleEditItem(rowData)}>
+        <Button className="text-left text-sm bg-white text-black px-2 py-1 m-1" onClick={() => handleEditItem(rowData)}>
           Edit
-        </p>
-        <p
-          className="text-left text-sm"
+        </Button>
+        <Button
+          className="text-left text-sm bg-white text-black px-2 py-1 m-1"
           onClick={() => handleDeleteItem(rowData)}
         >
           Delete
-        </p>
+        </Button>
       </>
     );
   };

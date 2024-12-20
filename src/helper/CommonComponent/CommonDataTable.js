@@ -105,7 +105,7 @@ const CommonDataTable = (props) => {
           // totalRecords={totalRecords}
           // onPage={onPageChange}
           globalFilter={globalFilter}
-          className="max-lg:hidden"
+          className="max-xl:hidden"
         >
           {tableColumns?.map((column, i) => {
             return (
