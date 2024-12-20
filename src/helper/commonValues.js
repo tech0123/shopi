@@ -1,16 +1,16 @@
 import toast from "react-hot-toast";
 
 export const linksOption = [
-  { href: "/sales", text: "Sales" },
-  { href: "/purchase", text: "Purchase" },
   { href: "/users", text: "Users" },
   { href: "/product", text: "Product" },
-  { href: "/reports", text: "Reports" },
-  { href: "/company", text: "Company" },
-  { href: "/customer", text: "Customer" },
-  { href: "/employee", text: "Employee" },
-  { href: "/manufacturer", text: "Manufacturer" },
-  { href: "/attendance", text: "Employee Attendance" }
+  { href: "/", text: "Sales" },
+  { href: "/", text: "Purchase" },
+  { href: "/", text: "Reports" },
+  { href: "/", text: "Company" },
+  { href: "/", text: "Customer" },
+  { href: "/", text: "Employee" },
+  { href: "/", text: "Manufacturer" },
+  { href: "/", text: "Employee Attendance" }
 ];
 
 export const usersOption = [
