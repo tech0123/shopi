@@ -17,6 +17,14 @@ export default function LoginForm() {
         },
         body: JSON.stringify({ email: data.email, password: data.password })
       });
+
+      const responseData = await response.json();
+
+      if (!responseData.success) { 
+        return toast.error("Login Failed", responseData.message);
+      }
+
+
       toast.success("Login successful")
     } catch (error) {
       console.error("Error:", error);

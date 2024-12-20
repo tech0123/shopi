@@ -70,7 +70,7 @@ const inputFieldsList = [
   { fieldTitle: "Tax", fieldId: "Tax", fieldName: 'tax', fieldRequired: true },
   { fieldTitle: "Selling Price", fieldId: "SellingPrice", fieldName: 'selling_price', fieldRequired: true },
   { fieldTitle: "Cost Price", fieldId: "CostPrice", fieldName: 'cost_price', fieldRequired: true },
-  { fieldTitle: "Image", fieldId: "Image", fieldName: 'image' },
+  { fieldTitle: "Image", fieldId: "Image", fieldName: 'image', fieldRequired: true },
 ]
 
 const ProductList = () => {

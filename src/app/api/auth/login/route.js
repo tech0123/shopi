@@ -20,17 +20,17 @@ export async function POST(request) {
         console.log('reqBody', reqBody)
 
         if (!user) {
-            return NextResponse.json({ error: "User Doesn't Exists" }, { status: 400 });
+            return NextResponse.json({ error: "User Doesn't Exists", success: false }, { status: 400 });
         }
 
         const validPassword = await bcryptjs.compare(password, user.password)
 
         if (!validPassword) {
-            return NextResponse.json({ error: "User Password Doesn't Exists" }, { status: 400 });
+            return NextResponse.json({ error: "User Password Doesn't Exists", success: false }, { status: 400 });
         }
 
         if (!user.role) {
-            return NextResponse.json({ error: "User role not found", user }, { status: 400 });
+            return NextResponse.json({ error: "User role not found", success: false }, { status: 400 });
         }
 
         const tokenData = { id: user._id }
