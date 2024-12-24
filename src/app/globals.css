@@ -5,21 +5,22 @@
 body {
   color: #ffffff !important;
   font-size: 14px;
-  background-color: #2d3647 !important;
+  /* background-color: #2d3647 !important; */
+  background-color: #000000b4 !important;
 }
 
 .form_input {
   width: 100%;
-  margin-bottom: 33px
+  margin-bottom: 33px;
 }
 
 .form_input div {
   color: #ffffff;
-  margin-bottom: 6px
+  margin-bottom: 6px;
 }
 
 .title_wrap {
-  color: #ffffff
+  color: #ffffff;
 }
 
 .input_wrap {
@@ -30,6 +31,7 @@ body {
   color: #ffffff;
   line-height: 17px;
   background-color: #000;
+  border: 1px solid #90909198;
 }
 
 .input_wrap:hover,
@@ -51,7 +53,6 @@ body {
 .number_right .p-inputnumber-input {
   text-align: right;
 }
-
 
 .input_number .p-inputnumber-input:hover,
 .input_number .p-inputnumber-input:focus {
@@ -144,23 +145,26 @@ body {
 }
 
 .modal_datatable .p-datatable-header,
-.modal_datatable td{
+.modal_datatable td {
   padding: 0px;
 }
 
 .table_wrapper {
   border-radius: 20px;
-  margin: 0px 50px 0px 50px;
-  box-shadow: 0px 0px 10px 0px gray;
+  /* margin: 0px 50px 0px 50px; */
+  margin: 50px;
+  /* box-shadow: 0px 0px 10px 0px gray; */
 }
-
+.table_wrapper .p-paginator {
+  background-color: rgba(43, 40, 40, 0.836);
+}
 .table_wrapper .p-paginator-bottom {
   border-radius: 0px 0px 20px 20px;
 }
-.menu_facturers_data{
+.menu_facturers_data {
   position: relative;
 }
-.menu_facturers_data .p-datatable-wrapper{
+.menu_facturers_data .p-datatable-wrapper {
   overflow: auto;
   position: absolute;
   z-index: 1;
@@ -229,7 +233,145 @@ body {
 .action-icon-size .pi {
   font-size: 2rem;
 }
-.p-progress-spinner-circle{
+.p-progress-spinner-circle {
   animation: none;
   stroke: #fff;
+}
+
+.personal-details {
+  border-left: 1px solid #fff;
+  height: 190px !important;
+}
+.card-details {
+  border-left: 1px solid #fff;
+}
+.table_image {
+  height: 60px;
+  width: 60px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.card-image {
+  height: 200px;
+  width: 150px;
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.p-datatable-thead {
+  border-bottom: 1px solid;
+}
+.p-datatable-thead tr th {
+  /* background-color: rgba(43, 40, 40, 0.836); */
+  background-color: #000;
+  color: #f1f1f1;
+}
+.p-datatable-tbody tr {
+  border-bottom: 1px solid #90909198;
+}
+.p-datatable .p-datatable-tbody > tr:nth-child(odd) {
+  background-color: #000;
+}
+.p-datatable .p-datatable-tbody > tr:nth-child(even) {
+  /* background-color: #262626; */
+  background-color: #000;
+  /* background-color: rgba(43, 40, 40, 0.836); */
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  /* border: 1px solid #90909198; */
+  padding: 10px;
+}
+.p-datatable .p-datatable-tbody > tr > td:first-child {
+  display: flex;
+  justify-content: center;
+}
+.header_title {
+  padding: 20px 48px;
+  border-bottom: 1px solid #90909198;
+}
+.header_title .add_btn {
+  border: 1px solid #90909198;
+  color: #90909198 !important;
+}
+.header_title .add_btn {
+  color: #fff !important;
+}
+
+.table_wrapper .p-inputwrapper {
+  /* background-color: rgba(43, 40, 40, 0.836); */
+  background-color: #000;
+}
+
+.personal-details .product-description {
+  height: 40px !important;
+}
+/*=============================== responsive ===============================*/
+
+@media (max-width: 1279px) {
+  .p-datatable .p-datatable-tbody > tr > td {
+    border: 0px;
+    display: flex;
+    width: 100%;
+  }
+  .p-datatable-thead tr th {
+    display: none;
+  }
+  .p-datatable-thead {
+    border-bottom: 0px;
+  }
+  .table_wrapper {
+    margin: 0 20px;
+  }
+  .header_title {
+    padding: 20px 20px !important;
+  }
+  .product-card {
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    border-radius: 12px;
+    padding: 0 !important;
+  }
+  .card-image {
+    padding: 0 !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+  }
+  .card-image img {
+    border-radius: 10px !important;
+    overflow: hidden !important;
+  }
+}
+
+@media (max-width: 767px) {
+  /* =============== */
+  .p-datatable .p-datatable-tbody {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .p-datatable .p-datatable-tbody > tr {
+    width: 50%;
+  }
+  /* ================ */
+  .personal-details {
+    border-top: 1px solid #fff;
+    border-left: 0px;
+  }
+  .card-details {
+    border-top: 0px;
+    border-left: 0px;
+  }
+  .card-image {
+    width: 100%;
+  }
+}
+
+@media (max-width: 575px) {
+  .p-datatable .p-datatable-tbody > tr {
+    width: 100%;
+  }
 }

@@ -1,16 +1,29 @@
-'use client'
+"use client";
 import * as yup from "yup";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import _ from 'lodash';
+import _ from "lodash";
 import { Col, Row } from "react-bootstrap";
 import Loader from "@/helper/CommonComponent/Loader";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { FormProvider, useForm } from "react-hook-form";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
-import { addItem, getSingleItem, updateItem, deleteItem, getAllDataList, setCurrentPage, setPageLimit, setSearchParam } from "@/store/slice/commonSlice";
-import { setDeleteProductDialog, setSelectedProductData, setProductDialog, } from "@/store/slice/productItemSlice";
+import {
+  addItem,
+  getSingleItem,
+  updateItem,
+  deleteItem,
+  getAllDataList,
+  setCurrentPage,
+  setPageLimit,
+  setSearchParam,
+} from "@/store/slice/commonSlice";
+import {
+  setDeleteProductDialog,
+  setSelectedProductData,
+  setProductDialog,
+} from "@/store/slice/productItemSlice";
 import { memo, useCallback, useEffect } from "react";
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
 import Image from "next/image";
@@ -24,7 +37,7 @@ const initialState = {
   discount: "",
   tax: "",
   selling_price: "",
-  cost_price: ""
+  cost_price: "",
 };
 
 const schema = yup.object().shape({
@@ -34,93 +47,120 @@ const schema = yup.object().shape({
   discount: yup.string().required("Please enter Discount."),
   tax: yup.string().required("Please enter Tax."),
   selling_price: yup.string().required("Please enter Selling Price."),
-  cost_price: yup.string().required("Please enter Cost Price.")
+  cost_price: yup.string().required("Please enter Cost Price."),
 });
 
-const imageBodyTemplate = rowData => {
+const imageBodyTemplate = (rowData) => {
   return (
-    <Image
-      src={rowData?.image || ''}
-      alt={rowData?._id || "Image not found"}
-      className="shadow-2 border-round"
-      width={150}
-      height={150}
-      style={{ objectFit: "cover" }}
-    />
+    <div className="table_image">
+      <Image
+        src={rowData?.image || ""}
+        alt={rowData?._id || "Image not found"}
+        className="shadow-2 border-round table_img h-100 w-100 object-cover transition duration-300 ease-in-out hover:scale-110"
+        width={100}
+        height={100}
+        style={{ objectFit: "cover" }}
+      />
+    </div>
   );
 };
 
 const tableColumns = [
-  { field: 'image', header: "Image", body: imageBodyTemplate },
-  { field: 'id', header: "Id" },
-  { field: 'name', header: "Name" },
-  { field: 'description', header: "Description" },
-  { field: 'available_quantity', header: "Available Quantity" },
-  { field: 'discount', header: "Discount" },
-  { field: 'tax', header: "Tax" },
-  { field: 'selling_price', header: "Selling Price" },
-  { field: 'cost_price', header: "Cost Price" },
-]
+  { field: "image", header: "Image", body: imageBodyTemplate },
+  { field: "id", header: "Id" },
+  { field: "name", header: "Name" },
+  { field: "description", header: "Description" },
+  { field: "available_quantity", header: "Available Quantity" },
+  { field: "discount", header: "Discount" },
+  { field: "tax", header: "Tax" },
+  { field: "selling_price", header: "Selling Price" },
+  { field: "cost_price", header: "Cost Price" },
+];
 
 const inputFieldsList = [
-  { fieldTitle: "Name", fieldId: "Name", fieldName: 'name', fieldRequired: true },
-  { fieldTitle: "Description", fieldId: "Description", fieldName: 'description', fieldRequired: true },
-  { fieldTitle: "Available Quantity", fieldId: "AvailableQuantity", fieldName: 'available_quantity', fieldRequired: true },
-  { fieldTitle: "Discount", fieldId: "Discount", fieldName: 'discount', fieldRequired: true },
-  { fieldTitle: "Tax", fieldId: "Tax", fieldName: 'tax', fieldRequired: true },
-  { fieldTitle: "Selling Price", fieldId: "SellingPrice", fieldName: 'selling_price', fieldRequired: true },
-  { fieldTitle: "Cost Price", fieldId: "CostPrice", fieldName: 'cost_price', fieldRequired: true },
-  { fieldTitle: "Image", fieldId: "Image", fieldName: 'image'},
-]
+  {
+    fieldTitle: "Name",
+    fieldId: "Name",
+    fieldName: "name",
+    fieldRequired: true,
+  },
+  {
+    fieldTitle: "Description",
+    fieldId: "Description",
+    fieldName: "description",
+    fieldRequired: true,
+  },
+  {
+    fieldTitle: "Available Quantity",
+    fieldId: "AvailableQuantity",
+    fieldName: "available_quantity",
+    fieldRequired: true,
+  },
+  {
+    fieldTitle: "Discount",
+    fieldId: "Discount",
+    fieldName: "discount",
+    fieldRequired: true,
+  },
+  { fieldTitle: "Tax", fieldId: "Tax", fieldName: "tax", fieldRequired: true },
+  {
+    fieldTitle: "Selling Price",
+    fieldId: "SellingPrice",
+    fieldName: "selling_price",
+    fieldRequired: true,
+  },
+  {
+    fieldTitle: "Cost Price",
+    fieldId: "CostPrice",
+    fieldName: "cost_price",
+    fieldRequired: true,
+  },
+  { fieldTitle: "Image", fieldId: "Image", fieldName: "image" },
+];
 
 const ProductList = () => {
   const dispatch = useDispatch();
 
-  const { allProductList, productDialog, selectedProductData, deleteProductDialog } = useSelector(({ productItem }) => productItem)
-  const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(({ common }) => common)
+  const {
+    allProductList,
+    productDialog,
+    selectedProductData,
+    deleteProductDialog,
+  } = useSelector(({ productItem }) => productItem);
+  const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(
+    ({ common }) => common
+  );
 
-  const fetchProductList = useCallback(async (
-    start = 1,
-    limit = 7,
-    search = ''
-  ) => {
-    const payload = {
-      modal_to_pass: "Products",
-      search_key: product_search_key,
-      start: start,
-      limit: limit,
-      search: search?.trim(),
-    }
-    const res = await dispatch(getAllDataList(payload))
-
-  }, [dispatch])
+  const fetchProductList = useCallback(
+    async (start = 1, limit = 7, search = "") => {
+      const payload = {
+        modal_to_pass: "Products",
+        search_key: product_search_key,
+        start: start,
+        limit: limit,
+        search: search?.trim(),
+      };
+      const res = await dispatch(getAllDataList(payload));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
-    fetchProductList(
-      currentPage,
-      pageLimit,
-      searchParam
-    );
+    fetchProductList(currentPage, pageLimit, searchParam);
   }, []);
 
-  const onPageChange = page => {
+  const onPageChange = (page) => {
     if (page !== currentPage) {
       let pageIndex = currentPage;
-      if (page?.page === 'Prev') pageIndex--;
-      else if (page?.page === 'Next') pageIndex++;
+      if (page?.page === "Prev") pageIndex--;
+      else if (page?.page === "Next") pageIndex++;
       else pageIndex = page;
-
       dispatch(setCurrentPage(pageIndex));
-      fetchProductList(
-        pageIndex,
-        pageLimit,
-        searchParam,
-
-      );
+      fetchProductList(pageIndex, pageLimit, searchParam);
     }
   };
 
-  const onPageRowsChange = page => {
+  const onPageRowsChange = (page) => {
     dispatch(setCurrentPage(page === 0 ? 0 : 1));
     dispatch(setPageLimit(page));
     const pageValue =
@@ -139,22 +179,17 @@ const ProductList = () => {
       prevPageValue < allProductList?.totalRows ||
       pageValue < allProductList?.totalRows
     ) {
-      fetchProductList(
-        page === 0 ? 0 : 1,
-        page,
-        searchParam,
-
-      );
+      fetchProductList(page === 0 ? 0 : 1, page, searchParam);
     }
   };
 
   const methods = useForm({
     resolver: yupResolver(schema),
-    defaultValues: selectedProductData
+    defaultValues: selectedProductData,
   });
 
   const onSubmit = async (data) => {
-    let res = '';
+    let res = "";
     const payload = {
       ...data,
       modal_to_pass: "product",
@@ -162,13 +197,12 @@ const ProductList = () => {
       start: currentPage,
       limit: pageLimit,
       search: searchParam,
-    }
+    };
 
     // if (productImageState) {
     //   const base64Image = await fileToBase64(productImageState);
     //   payload = { ...payload, image: base64Image }
     // }
-
 
     if (data?._id) {
       res = await dispatch(updateItem(payload));
@@ -176,50 +210,46 @@ const ProductList = () => {
       res = await dispatch(addItem(payload));
     }
     if (res?.payload) {
-      dispatch(setProductDialog(false))
+      dispatch(setProductDialog(false));
     }
   };
 
-  const handleSearchInput = e => {
+  const handleSearchInput = (e) => {
     dispatch(setCurrentPage(1));
 
-    fetchProductList(
-      currentPage,
-      pageLimit,
-      e.target.value?.trim(),
-    );
+    fetchProductList(currentPage, pageLimit, e.target.value?.trim());
   };
 
-  const handleChangeSearch = e => {
+  const handleChangeSearch = (e) => {
     debounceHandleSearchInput(e);
     dispatch(setSearchParam(e.target.value));
-  }
+  };
 
   const debounceHandleSearchInput = useCallback(
-    _.debounce(e => {
+    _.debounce((e) => {
       handleSearchInput(e);
     }, 800),
-    [],
+    []
   );
 
   const handleAddItem = () => {
     dispatch(setSelectedProductData(initialState));
     // dispatch(setProductImageState(null));
     methods.reset(initialState);
-    dispatch(setProductDialog(true))
+    dispatch(setProductDialog(true));
   };
 
   const handleEditItem = async (product) => {
-    dispatch(setProductDialog(true))
+    dispatch(setProductDialog(true));
     // dispatch(setProductImageState(null));
-    const payload = { modal_to_pass: "product", id: product }
-    const res = await dispatch(getSingleItem(payload))
+    const payload = { modal_to_pass: "product", id: product };
+    const res = await dispatch(getSingleItem(payload));
     if (res?.payload) {
       methods.reset(res?.payload);
     }
   };
 
-  const handleDeleteItem = product => {
+  const handleDeleteItem = (product) => {
     dispatch(setSelectedProductData(product));
     methods.reset(product);
     dispatch(setDeleteProductDialog(true));
@@ -231,24 +261,27 @@ const ProductList = () => {
 
   const handleDeleteProduct = async () => {
     const payload = {
-      modal_to_pass: 'product',
+      modal_to_pass: "product",
       search_key: product_search_key,
       id: selectedProductData?._id,
       start: currentPage,
       limit: pageLimit,
-      search: searchParam
+      search: searchParam,
     };
-    const res = await dispatch(deleteItem(payload))
+    const res = await dispatch(deleteItem(payload));
 
     if (res?.payload) {
       dispatch(setDeleteProductDialog(false));
     }
   };
 
-  const actionBodyResponsiveTemplate = rowData => {
+  const actionBodyResponsiveTemplate = (rowData) => {
     return (
       <>
-        <Button className="text-left text-sm bg-white text-black px-2 py-1 m-1" onClick={() => handleEditItem(rowData)}>
+        <Button
+          className="text-left text-sm bg-white text-black px-2 py-1 m-1"
+          onClick={() => handleEditItem(rowData)}
+        >
           Edit
         </Button>
         <Button
@@ -261,39 +294,32 @@ const ProductList = () => {
     );
   };
 
-  const responsiveTableTemplete = rowData => {
+  const responsiveTableTemplete = (rowData) => {
     return (
-      <div className="container flex flex-col border-white border-2 w-full">
-        <div className="flex justify-center border-b-2 border-white p-2">
+      <div className="container flex flex-md-row flex-column border-white border-2 product-card">
+        <div className="flex justify-center card-image">
           <Image
-            src={rowData?.image || ''}
+            src={rowData?.image || ""}
             alt={rowData?._id || "Image not found"}
-            width={150}
-            height={150}
+            className="card-img w-100 h-100 object-cover transition duration-300 ease-in-out hover:scale-110"
+            width={100}
+            height={100}
           />
         </div>
-        <div className="flex flex-1 flex-col md:flex-row">
-          <div className="flex-1 border-r-2 border-white p-2">
-            <p className="text-left text-sm">
-              ID: {rowData.id}
-            </p>
-            <p className="text-left text-sm">
-              Name: {rowData.name}
-            </p>
-            <p className="text-left text-sm">
+        <div className="flex flex-1 flex-col flex-md-row">
+          <div className="flex-1 p-2 personal-details">
+            <p className="text-left text-sm">ID: {rowData.id}</p>
+            <p className="text-left text-sm">Name: {rowData.name}</p>
+            <p className="text-left text-sm product-description">
               Description: {rowData.description}
             </p>
             <p className="text-left text-sm">
               Available Qty: {rowData.available_quantity}
             </p>
           </div>
-          <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
-            <p className="text-left text-sm">
-              Discount: {rowData.discount}
-            </p>
-            <p className="text-left text-sm">
-              Tax: {rowData.tax}
-            </p>
+          <div className="flex-1 p-2 flex flex-col card-details">
+            <p className="text-left text-sm">Discount: {rowData.discount}</p>
+            <p className="text-left text-sm">Tax: {rowData.tax}</p>
             <p className="text-left text-sm">
               Selling Price: {rowData.selling_price}
             </p>
@@ -313,7 +339,7 @@ const ProductList = () => {
       {commonLoading && <Loader />}
       <CommonDataTable
         tableName="Products"
-        moduleName='product'
+        moduleName="product"
         tableColumns={tableColumns}
         allItemList={allProductList}
         handleChangeSearch={handleChangeSearch}
@@ -335,7 +361,7 @@ const ProductList = () => {
         visible={productDialog}
         style={{ width: "55rem" }}
         breakpoints={{ "960px": "75vw", "641px": "90vw" }}
-        header={`${methods.watch('_id') ? 'Edit' : "Add"} Product`}
+        header={`${methods.watch("_id") ? "Edit" : "Add"} Product`}
         modal
         className="p-fluid"
         onHide={() => dispatch(setProductDialog(false))}
@@ -355,7 +381,7 @@ const ProductList = () => {
                         isRequired={field.fieldRequired}
                       />
                     </Col>
-                  )
+                  );
                 })}
               </Row>
               {/* <div class="file-upload">
@@ -375,9 +401,9 @@ const ProductList = () => {
             <div className="mt-3 me-2 flex justify-end items-center gap-4">
               <Button
                 className="btn_transparent"
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault();
-                  dispatch(setProductDialog(false))
+                  dispatch(setProductDialog(false));
                 }}
               >
                 Cancel
@@ -391,5 +417,5 @@ const ProductList = () => {
       </Dialog>
     </>
   );
-}
+};
 export default memo(ProductList);

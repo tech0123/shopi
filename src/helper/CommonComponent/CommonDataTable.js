@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { memo, useState } from "react";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
@@ -27,7 +27,7 @@ const CommonDataTable = (props) => {
     onPageRowsChange,
     currentPage,
     isDisable = true,
-  } = props
+  } = props;
 
   const [globalFilter, setGlobalFilter] = useState(null);
 
@@ -48,7 +48,7 @@ const CommonDataTable = (props) => {
     </div>
   );
 
-  const actionBodyTemplate = rowData => {
+  const actionBodyTemplate = (rowData) => {
     return (
       <div>
         <Button
@@ -58,21 +58,23 @@ const CommonDataTable = (props) => {
           className="mr-2"
           onClick={() => handleEditItem(rowData?._id)}
         />
-        {isDisable && <Button
-          icon="pi pi-trash"
-          rounded
-          outlined
-          severity="danger"
-          onClick={() => handleDeleteItem(rowData)}
-        />}
+        {isDisable && (
+          <Button
+            icon="pi pi-trash"
+            rounded
+            outlined
+            severity="danger"
+            onClick={() => handleDeleteItem(rowData)}
+          />
+        )}
       </div>
     );
   };
 
   return (
     <>
-      <div className="m-5 d-flex justify-between">
-        <h4 className="text-white">{tableName}</h4>
+      <div className="d-flex justify-between align-items-center header_title">
+        <h4 className="text-white m-0">{tableName}</h4>
         <div className="d-flex gap-3">
           <div>
             <IconField iconPosition="left">
@@ -80,18 +82,17 @@ const CommonDataTable = (props) => {
                 id="search"
                 placeholder="Search"
                 type="search"
-                className="input_wrap small search_wrap"
+                className="input_wrap small search_wrap search_input"
                 value={searchParam}
                 onChange={handleChangeSearch}
               />
             </IconField>
           </div>
-          {isDisable && <Button
-            className="btn_primary"
-            onClick={handleAddItem}
-          >
-            + Add
-          </Button>}
+          {isDisable && (
+            <Button className="btn_primary add_btn" onClick={handleAddItem}>
+              + Add
+            </Button>
+          )}
         </div>
       </div>
 
@@ -118,7 +119,7 @@ const CommonDataTable = (props) => {
                 style={{ minWidth: "12rem" }}
                 className="max-lg:hidden"
               />
-            )
+            );
           })}
           <Column
             header="Action"
@@ -127,7 +128,6 @@ const CommonDataTable = (props) => {
             style={{ minWidth: "12rem" }}
             className="max-lg:hidden"
           />
-    
         </DataTable>
         <DataTable
           value={allItemList?.list}
@@ -139,9 +139,11 @@ const CommonDataTable = (props) => {
           // onPage={onPageChange}
           globalFilter={globalFilter}
           className="mt-10 block xl:hidden"
-
         >
-          <Column body={responsiveTableTemplete} style={{ minWidth: "12rem" }} />
+          <Column
+            body={responsiveTableTemplete}
+            style={{ minWidth: "12rem" }}
+          />
         </DataTable>
         <CustomPaginator
           dataList={allItemList?.list}
