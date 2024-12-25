@@ -364,7 +364,7 @@ const ProductList = () => {
         breakpoints={{ "960px": "75vw", "641px": "90vw" }}
         header={`${methods.watch("_id") ? "Edit" : "Add"} Product`}
         modal
-        className="p-fluid"
+        className="p-fluid common_modal"
         onHide={() => dispatch(setProductDialog(false))}
         draggable={false}
       >
@@ -385,6 +385,7 @@ const ProductList = () => {
                   );
                 })}
               </Row>
+
               {/* <div class="file-upload">
                 <label for="file-upload" class='custom-file-upload  bg-black text-white  font-bold py-2 px-4 rounded shadow-md hover:bg-cyan-600 cursor-pointer'>
                   {productImageState ? 'Uploaded' : selectedProductData?._id ? 'Change Image' : "Choose Image"}

@@ -288,7 +288,7 @@ const Attendance = () => {
                 breakpoints={{ "960px": "75vw", "641px": "90vw" }}
                 header={`${methods.watch('_id') ? 'Edit' : "Add"} Attendance`}
                 modal
-                className="p-fluid"
+                className="p-fluid "
                 onHide={() => dispatch(setAttendanceDialog(false))}
             >
                 <FormProvider {...methods}>

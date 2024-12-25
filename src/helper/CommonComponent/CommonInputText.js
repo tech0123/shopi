@@ -18,7 +18,7 @@ const CommonInputText = props => {
           {title} {isRequired && <span className="fs-6" style={{ color: "red" }}>*</span>}
         </div>
       )}
-      <div className="mt-3 mb-3">
+      <div className="input_box_gap">
         {type === 'date' ? (
           <Controller
             name={name}

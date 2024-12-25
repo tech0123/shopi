@@ -388,7 +388,7 @@ const EmployeeList = () => {
         breakpoints={{ "960px": "75vw", "641px": "90vw" }}
         header={`${methods.watch("_id") ? "Edit" : "Add"} Employee`}
         modal
-        className="p-fluid"
+        className="p-fluid common_modal"
         onHide={() => dispatch(setEmployeeDialog(false))}
       >
         <FormProvider {...methods}>
