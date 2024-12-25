@@ -296,17 +296,18 @@ const ProductList = () => {
 
   const responsiveTableTemplete = (rowData) => {
     return (
-      <div className="container flex flex-md-row flex-column border-white border-2 product-card">
+      <div className="container flex flex-md-row flex-column product-card">
         <div className="flex justify-center card-image">
           <Image
             src={rowData?.image || ""}
             alt={rowData?._id || "Image not found"}
-            className="card-img w-100 h-100 object-cover transition duration-300 ease-in-out hover:scale-110"
+            // className="card-img w-100 h-100 object-cover transition duration-300 ease-in-out hover:scale-110"
+            className="card-img w-100 object-cover object-center h-100 transition duration-300 ease-in-out hover:scale-110"
             width={100}
             height={100}
           />
         </div>
-        <div className="flex flex-1 flex-col flex-md-row">
+        <div className="flex flex-1 flex-col flex-md-row card-partition">
           <div className="flex-1 p-2 personal-details">
             <p className="text-left text-sm">ID: {rowData.id}</p>
             <p className="text-left text-sm">Name: {rowData.name}</p>

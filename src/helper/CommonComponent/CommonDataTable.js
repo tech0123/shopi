@@ -75,7 +75,7 @@ const CommonDataTable = (props) => {
     <>
       <div className="d-flex justify-between align-items-center header_title">
         <h4 className="text-white m-0">{tableName}</h4>
-        <div className="d-flex gap-3">
+        <div className="d-flex  search-partition">
           <div>
             <IconField iconPosition="left">
               <InputText
@@ -96,7 +96,7 @@ const CommonDataTable = (props) => {
         </div>
       </div>
 
-      <div className="table_wrapper">
+      <div className="table_wrapper ">
         <DataTable
           value={allItemList?.list}
           dataKey="id"
@@ -117,7 +117,7 @@ const CommonDataTable = (props) => {
                 body={column?.body}
                 sortable
                 style={{ minWidth: "12rem" }}
-                className="max-lg:hidden"
+                className="max-xl:hidden"
               />
             );
           })}
