@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import * as yup from "yup";
 import { Button } from "primereact/button";
@@ -10,21 +10,38 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { FormProvider, useForm } from "react-hook-form";
-import { setAllSalesListData, setSalesItemSearchParam, setSalesTableData } from "@/store/slice/salesSlice";
+import {
+  setAllSalesListData,
+  setSalesItemSearchParam,
+  setSalesTableData,
+} from "@/store/slice/salesSlice";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
-import { calculateTotal, convertIntoNumber, customer_search_key, getFormattedDate, product_search_key, sales_search_key } from "@/helper/commonValues";
-import { addItem, getAllDataList, setCurrentPage, setPageLimit, updateItem } from "@/store/slice/commonSlice";
+import {
+  calculateTotal,
+  convertIntoNumber,
+  customer_search_key,
+  getFormattedDate,
+  product_search_key,
+  sales_search_key,
+} from "@/helper/commonValues";
+import {
+  addItem,
+  getAllDataList,
+  setCurrentPage,
+  setPageLimit,
+  updateItem,
+} from "@/store/slice/commonSlice";
 import CommonDeleteConfirmation from "@/helper/CommonComponent/CommonDeleteConfirmation";
 
 const intialDialogState = {
-    product: "",
-    quantity: "",
-    selling_price: "",
-    cost_price: "",
-    tax: "",
-    description: "",
-    unique_id: "",
-};  
+  product: "",
+  quantity: "",
+  selling_price: "",
+  cost_price: "",
+  tax: "",
+  description: "",
+  unique_id: "",
+};
 
 const schema = yup.object().shape({
   customer: yup.string().required("Please enter Customer Name."),
@@ -33,28 +50,60 @@ const schema = yup.object().shape({
   bill_no: yup.string().required("Please enter Bill No."),
   type: yup.string().required("Please select Customer Type."),
   mobile_number: yup.string().required("Please enter Mobile Number."),
-  address: yup.string().required("Please enter Address.")
+  address: yup.string().required("Please enter Address."),
 });
 
 const inputFieldsList = [
-    { fieldTitle: "Sales Date", fieldId: "SalesDate", fieldName: 'sales_date', type: 'date', min_date: new Date(), isRequired: true },
-    { fieldTitle: "Bill No", fieldId: "BillNo", fieldName: 'bill_no', isRequired: true },
-    { fieldTitle: "Customer Type", fieldId: "CustomerType", fieldName: 'type', isRequired: true },
-    { fieldTitle: "Email", fieldId: "Email", fieldName: 'email', isRequired: true },
-    { fieldTitle: "Mobile Number", fieldId: "Mobile Number", fieldName: 'mobile_number', isRequired: true },
-    { fieldTitle: "Address", fieldId: "Address", fieldName: 'address', isRequired: true },
-  ]
+  {
+    fieldTitle: "Sales Date",
+    fieldId: "SalesDate",
+    fieldName: "sales_date",
+    type: "date",
+    min_date: new Date(),
+    isRequired: true,
+  },
+  {
+    fieldTitle: "Bill No",
+    fieldId: "BillNo",
+    fieldName: "bill_no",
+    isRequired: true,
+  },
+  {
+    fieldTitle: "Customer Type",
+    fieldId: "CustomerType",
+    fieldName: "type",
+    isRequired: true,
+  },
+  {
+    fieldTitle: "Email",
+    fieldId: "Email",
+    fieldName: "email",
+    isRequired: true,
+  },
+  {
+    fieldTitle: "Mobile Number",
+    fieldId: "Mobile Number",
+    fieldName: "mobile_number",
+    isRequired: true,
+  },
+  {
+    fieldTitle: "Address",
+    fieldId: "Address",
+    fieldName: "address",
+    isRequired: true,
+  },
+];
 
-  const tableColumns = [
-    { field: 'product_name', header: "Product Name" },
-    { field: 'quantity', header: "Quantity" },
-    { field: 'selling_price', header: "Selling Price" },
-    { field: 'cost_price', header: "Cost Price" },
-    { field: 'tax', header: "Tax" },
-    { field: 'description', header: "Description" },
-  ]
-  
-const CommonAddEditSales = props => {
+const tableColumns = [
+  { field: "product_name", header: "Product Name" },
+  { field: "quantity", header: "Quantity" },
+  { field: "selling_price", header: "Selling Price" },
+  { field: "cost_price", header: "Cost Price" },
+  { field: "tax", header: "Tax" },
+  { field: "description", header: "Description" },
+];
+
+const CommonAddEditSales = (props) => {
   const { initialValue } = props;
   const router = useRouter();
   const dispatch = useDispatch();
@@ -62,80 +111,87 @@ const CommonAddEditSales = props => {
 
   const [salesTableDialog, setSalesTableDialog] = useState(false);
   const [deleteItemDialog, setDeleteItemDialog] = useState(false);
-  const [selectedSalesItemData, setSelectedSalesItemData] = useState(intialDialogState)
+  const [selectedSalesItemData, setSelectedSalesItemData] = useState(
+    intialDialogState
+  );
 
-  const { allCustomerList } = useSelector(({ customer }) => customer)
-  const { allProductList } = useSelector(({ productItem }) => productItem)
-  const { salesTableData } = useSelector(({ sales }) => sales) 
-  const { searchParam, pageLimit, currentPage } = useSelector(({ common }) => common)
+  const { allCustomerList } = useSelector(({ customer }) => customer);
+  const { allProductList } = useSelector(({ productItem }) => productItem);
+  const { salesTableData } = useSelector(({ sales }) => sales);
+  const { searchParam, pageLimit, currentPage } = useSelector(
+    ({ common }) => common
+  );
 
-  const fetchSalesList = useCallback(async (
-    key_name, 
-    start = 1,
-    limit = 7,
-    search = ''
-  ) => {
-    const payload = {  
-      start: start,
-      limit: limit,
-      search: search?.trim(),
-      modal_to_pass: key_name,
-      search_key: key_name === "Products" ? product_search_key : customer_search_key, 
-    }
-    dispatch(getAllDataList(payload))
-  }, [])
+  const fetchSalesList = useCallback(
+    async (key_name, start = 1, limit = 7, search = "") => {
+      const payload = {
+        start: start,
+        limit: limit,
+        search: search?.trim(),
+        modal_to_pass: key_name,
+        search_key:
+          key_name === "Products" ? product_search_key : customer_search_key,
+      };
+      dispatch(getAllDataList(payload));
+    },
+    []
+  );
 
   useEffect(() => {
-    fetchSalesList("Customers", 0, 0)
-    fetchSalesList("Products")
+    fetchSalesList("Customers", 0, 0);
+    fetchSalesList("Products");
   }, []);
 
   useEffect(() => {
-      methods.reset(initialValue);
-  },[initialValue]);
+    methods.reset(initialValue);
+  }, [initialValue]);
 
   const methods = useForm({
     resolver: yupResolver(schema),
-    defaultValues: initialValue
+    defaultValues: initialValue,
   });
 
-  const values = methods.getValues()
+  const values = methods.getValues();
 
   const customerOptions = useMemo(() => {
     if (allCustomerList?.list?.length) {
-      const data = allCustomerList?.list?.map(item => ({
+      const data = allCustomerList?.list?.map((item) => ({
         label: item?.name,
-        value: item?._id
+        value: item?._id,
       }));
       return data;
     }
-  }, [allCustomerList])
+  }, [allCustomerList]);
 
   useEffect(() => {
     if (salesTableData?.length) {
-      const calculated_subTotal = calculateTotal(salesTableData, 'cost_price')
-      const current_discount = values?.discount ? values?.discount : 0
-      const current_tax = values?.tax ? values?.tax : 0
-      const calculated_tax = ((calculated_subTotal - current_discount) * current_tax) / 100
-      const calculated_total_amount = calculated_subTotal - current_discount - calculated_tax
+      const calculated_subTotal = calculateTotal(salesTableData, "cost_price");
+      const current_discount = values?.discount ? values?.discount : 0;
+      const current_tax = values?.tax ? values?.tax : 0;
+      const calculated_tax =
+        ((calculated_subTotal - current_discount) * current_tax) / 100;
+      const calculated_total_amount =
+        calculated_subTotal - current_discount - calculated_tax;
 
       const obj = {
         sub_total: convertIntoNumber(calculated_subTotal),
         total_amount: convertIntoNumber(calculated_total_amount),
         sales_record_table: salesTableData,
-      }
-      methods.reset((prev) => ({ ...prev, ...obj }))
+      };
+      methods.reset((prev) => ({ ...prev, ...obj }));
     }
-  }, [salesTableData])
+  }, [salesTableData]);
 
-  const onSubmit = async data => {
-    let res = '';
+  const onSubmit = async (data) => {
+    let res = "";
 
     const updatedSalesItemsTableData = data?.sales_record_table?.map((item) => {
       const { unique_id, ...rest } = item;
-      return rest
-    })
-    const findManufacturerObj = customerOptions?.find((item) => item?.value === data?.customer)
+      return rest;
+    });
+    const findManufacturerObj = customerOptions?.find(
+      (item) => item?.value === data?.customer
+    );
 
     let payload = {
       ...data,
@@ -144,8 +200,8 @@ const CommonAddEditSales = props => {
       customer_name: findManufacturerObj?.label,
       sales_record_table: updatedSalesItemsTableData,
       sales_date: getFormattedDate(data?.purchase_date),
-    }
-    
+    };
+
     if (salesId) {
       res = await dispatch(updateItem(payload));
     } else {
@@ -154,157 +210,139 @@ const CommonAddEditSales = props => {
 
     if (res?.payload) {
       dispatch(setAllSalesListData(res?.payload));
-      router.push('/sales');
+      router.push("/sales");
     }
   };
 
-    const handleCustomerChange = (e) => {
-        const name = e?.target?.name;
-        const value = e?.target?.value
-    
-        const findCustomerData = allCustomerList?.list?.find((item) => {
-          return item?._id === value
-        })
-        const fieldsObj = {
-            [name]: value,
-            type: findCustomerData?.type,
-            email: findCustomerData.email,
-            address: findCustomerData?.address,
-            mobile_number: findCustomerData?.mobile_number,
-        }
-        methods.reset((prev) => ({...prev, ...fieldsObj }));
-    }
+  const handleCustomerChange = (e) => {
+    const name = e?.target?.name;
+    const value = e?.target?.value;
 
-    const onPageChange = (page, modal) => {
-      if (page !== currentPage) {
-        let pageIndex = currentPage;
-        if (page?.page === 'Prev') pageIndex--;
-        else if (page?.page === 'Next') pageIndex++;
-        else pageIndex = page;
-    
-        dispatch(setCurrentPage(pageIndex));
-        fetchSalesList(
-          modal,
-          pageIndex,
-          pageLimit
-        );
-      }
+    const findCustomerData = allCustomerList?.list?.find((item) => {
+      return item?._id === value;
+    });
+    const fieldsObj = {
+      [name]: value,
+      type: findCustomerData?.type,
+      email: findCustomerData.email,
+      address: findCustomerData?.address,
+      mobile_number: findCustomerData?.mobile_number,
     };
-     
-    const onPageRowsChange = (page, modal) => {
-      const list = modal === "Products" ? allProductList : allCustomerList;
-      dispatch(setCurrentPage(page === 0 ? 0 : 1));
-      dispatch(setPageLimit(page));
-      const pageValue =
-          page === 0
-              ? list?.totalRows
-                  ? list?.totalRows
-                  : 0
-              : page;
-      const prevPageValue =
-          pageLimit === 0
-              ? list?.totalRows
-                  ? list?.totalRows
-                  : 0
-              : pageLimit;
-      if (
-          prevPageValue < list?.totalRows ||
-          pageValue < list?.totalRows
-      ) {
-          fetchSalesList(
-            modal,
-            page === 0 ? 0 : 1,
-            page,
-          );
-        }
-    };
+    methods.reset((prev) => ({ ...prev, ...fieldsObj }));
+  };
 
-    const hideDeleteDialog = () => {
-        setDeleteItemDialog(false)
+  const onPageChange = (page, modal) => {
+    if (page !== currentPage) {
+      let pageIndex = currentPage;
+      if (page?.page === "Prev") pageIndex--;
+      else if (page?.page === "Next") pageIndex++;
+      else pageIndex = page;
+
+      dispatch(setCurrentPage(pageIndex));
+      fetchSalesList(modal, pageIndex, pageLimit);
     }
+  };
 
-    const handleDeleteProduct = () => {
-        const updatedSalesTableData = salesTableData?.filter((item) => item?.unique_id !== selectedSalesItemData?.unique_id)
-        dispatch(setSalesTableData(updatedSalesTableData))
-        hideDeleteDialog();
-      };
+  const onPageRowsChange = (page, modal) => {
+    const list = modal === "Products" ? allProductList : allCustomerList;
+    dispatch(setCurrentPage(page === 0 ? 0 : 1));
+    dispatch(setPageLimit(page));
+    const pageValue =
+      page === 0 ? (list?.totalRows ? list?.totalRows : 0) : page;
+    const prevPageValue =
+      pageLimit === 0 ? (list?.totalRows ? list?.totalRows : 0) : pageLimit;
+    if (prevPageValue < list?.totalRows || pageValue < list?.totalRows) {
+      fetchSalesList(modal, page === 0 ? 0 : 1, page);
+    }
+  };
 
-    const deleteProductDialogFooter = (
-        <div className="d-flex justify-end gap-4">
-          <Button
-            label="No"
-            icon="pi pi-times"
-            outlined
-            onClick={hideDeleteDialog}
-          />
-          <Button
-            label="Yes"
-            icon="pi pi-check"
-            severity="danger"
-            onClick={handleDeleteProduct}
-          />
-        </div>
+  const hideDeleteDialog = () => {
+    setDeleteItemDialog(false);
+  };
+
+  const handleDeleteProduct = () => {
+    const updatedSalesTableData = salesTableData?.filter(
+      (item) => item?.unique_id !== selectedSalesItemData?.unique_id
     );
+    dispatch(setSalesTableData(updatedSalesTableData));
+    hideDeleteDialog();
+  };
 
-    const handleEditItem = async (product) => {
-        fetchSalesList("Sales")
-        setSalesTableDialog(true)
-        setSelectedSalesItemData(product);
-        dispatch(setSalesItemSearchParam(product?.product_name))
-    };
-    
-    const handleDeleteItem = async (product) => {
-        setDeleteItemDialog(true)
-        setSelectedSalesItemData(product);
-    };
+  const deleteProductDialogFooter = (
+    <div className="d-flex justify-end gap-4">
+      <Button
+        label="No"
+        icon="pi pi-times"
+        outlined
+        onClick={hideDeleteDialog}
+      />
+      <Button
+        label="Yes"
+        icon="pi pi-check"
+        severity="danger"
+        onClick={handleDeleteProduct}
+      />
+    </div>
+  );
 
-    const actionBodyTemplate = rowData => {
-        return (
-          <>
-            <Button
-              icon="pi pi-pencil"
-              rounded
-              outlined
-              className="mr-2"
-              onClick={(e) => {
-                e.preventDefault();
-                handleEditItem(rowData)
-              }}
-            />
-            <Button
-              icon="pi pi-trash"
-              rounded
-              outlined
-              severity="danger"
-              onClick={(e) => {
-                e.preventDefault();
-                handleDeleteItem(rowData)
-              }}
-            />
-          </>
-        );
-    };
+  const handleEditItem = async (product) => {
+    fetchSalesList("Sales");
+    setSalesTableDialog(true);
+    setSelectedSalesItemData(product);
+    dispatch(setSalesItemSearchParam(product?.product_name));
+  };
+
+  const handleDeleteItem = async (product) => {
+    setDeleteItemDialog(true);
+    setSelectedSalesItemData(product);
+  };
+
+  const actionBodyTemplate = (rowData) => {
+    return (
+      <>
+        <Button
+          icon="pi pi-pencil"
+          rounded
+          outlined
+          className="mr-2"
+          onClick={(e) => {
+            e.preventDefault();
+            handleEditItem(rowData);
+          }}
+        />
+        <Button
+          icon="pi pi-trash"
+          rounded
+          outlined
+          severity="danger"
+          onClick={(e) => {
+            e.preventDefault();
+            handleDeleteItem(rowData);
+          }}
+        />
+      </>
+    );
+  };
 
   return (
     <>
-        <div className="m-5 text-xl text-slate-300">
-        {salesId ? "Edit" : "Add"} Sales Item
-        </div>
-        <FormProvider {...methods}>
+      {/* <div className="m-5 text-xl text-slate-300"> */}
+      <div className="modal_title">{salesId ? "Edit" : "Add"} Sales Item</div>
+      <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <div className="form_container">
+          <div className="form__container">
             <Row>
               <Col lg={3}>
                 <CommonInputText
-                  type='single_select'
+                  type="single_select"
                   title="Customer"
                   id="Customer"
-                  name='customer'
+                  name="customer"
                   options={customerOptions}
                   isRequired={true}
                   fieldOnChange={(e) => {
-                    e.preventDefault()
-                    handleCustomerChange(e)
+                    e.preventDefault();
+                    handleCustomerChange(e);
                   }}
                 />
                 {/* <DataTable
@@ -339,18 +377,18 @@ const CommonAddEditSales = props => {
                       fieldOnChange={field?.fieldOnChange}
                     />
                   </Col>
-                )
+                );
               })}
             </Row>
           </div>
-          <div className="me-20 mt-5 mb-3 d-flex justify-end">
+          <div className="d-flex justify-end main_modal_add_btn">
             <Button
               className="btn_primary"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 setSalesTableDialog(true);
                 setSelectedSalesItemData(intialDialogState);
-                dispatch(setSalesItemSearchParam(''))
+                dispatch(setSalesItemSearchParam(""));
               }}
             >
               + Add
@@ -375,7 +413,7 @@ const CommonAddEditSales = props => {
                       sortable
                       style={{ minWidth: "12rem" }}
                     />
-                  )
+                  );
                 })}
                 <Column
                   header="Action"
@@ -404,28 +442,43 @@ const CommonAddEditSales = props => {
                         </Col>
                         <Col lg={6}>
                           <CommonInputText
-                            type='number'
-                            id='Discount'
-                            name='discount'
+                            type="number"
+                            id="Discount"
+                            name="discount"
                             className="mb-0"
-                            placeholder='Discount'
+                            placeholder="Discount"
                             disabled={!salesTableData?.length}
                             fieldOnChange={(e) => {
-                              const calculated_subTotal = calculateTotal(salesTableData, 'cost_price')
-                              const current_discount = e?.value ? e?.value : 0
-                              const current_tax = values?.tax ? values?.tax : 0
-                              const calculated_tax = ((calculated_subTotal - current_discount) * (current_tax)) / 100
+                              const calculated_subTotal = calculateTotal(
+                                salesTableData,
+                                "cost_price"
+                              );
+                              const current_discount = e?.value ? e?.value : 0;
+                              const current_tax = values?.tax ? values?.tax : 0;
+                              const calculated_tax =
+                                ((calculated_subTotal - current_discount) *
+                                  current_tax) /
+                                100;
 
-                              const calculated_total_amount = calculated_subTotal - current_discount - calculated_tax
+                              const calculated_total_amount =
+                                calculated_subTotal -
+                                current_discount -
+                                calculated_tax;
 
                               const obj = {
-                                sub_total: convertIntoNumber(calculated_subTotal),
-                                total_amount: convertIntoNumber(calculated_total_amount),
+                                sub_total: convertIntoNumber(
+                                  calculated_subTotal
+                                ),
+                                total_amount: convertIntoNumber(
+                                  calculated_total_amount
+                                ),
                                 sales_record_table: salesTableData,
-                              }
+                              };
 
-                              methods.reset((prev) => ({ ...prev, ...obj }))
-                              methods.setValue('discount', current_discount, { shouldValidate: true })
+                              methods.reset((prev) => ({ ...prev, ...obj }));
+                              methods.setValue("discount", current_discount, {
+                                shouldValidate: true,
+                              });
                             }}
                           />
                         </Col>
@@ -436,27 +489,44 @@ const CommonAddEditSales = props => {
                         </Col>
                         <Col lg={6}>
                           <CommonInputText
-                            id='Tax'
-                            name='tax'
-                            type='number'
-                            placeholder='Tax'
+                            id="Tax"
+                            name="tax"
+                            type="number"
+                            placeholder="Tax"
                             className="mb-0"
                             disabled={!salesTableData?.length}
                             fieldOnChange={(e) => {
-                              const calculated_subTotal = calculateTotal(salesTableData, 'cost_price')
-                              const current_discount = values?.discount ? values?.discount : 0
-                              const current_tax = e?.value ? e?.value : 0
-                              const calculated_tax = ((calculated_subTotal - current_discount) * current_tax) / 100
-                              const calculated_total_amount = calculated_subTotal - current_discount - calculated_tax
+                              const calculated_subTotal = calculateTotal(
+                                salesTableData,
+                                "cost_price"
+                              );
+                              const current_discount = values?.discount
+                                ? values?.discount
+                                : 0;
+                              const current_tax = e?.value ? e?.value : 0;
+                              const calculated_tax =
+                                ((calculated_subTotal - current_discount) *
+                                  current_tax) /
+                                100;
+                              const calculated_total_amount =
+                                calculated_subTotal -
+                                current_discount -
+                                calculated_tax;
 
                               const obj = {
                                 sales_record_table: salesTableData,
-                                sub_total: convertIntoNumber(calculated_subTotal),
-                                total_amount: convertIntoNumber(calculated_total_amount),
-                              }
+                                sub_total: convertIntoNumber(
+                                  calculated_subTotal
+                                ),
+                                total_amount: convertIntoNumber(
+                                  calculated_total_amount
+                                ),
+                              };
 
-                              methods.reset((prev) => ({ ...prev, ...obj }))
-                              methods.setValue('tax', current_tax, { shouldValidate: true })
+                              methods.reset((prev) => ({ ...prev, ...obj }));
+                              methods.setValue("tax", current_tax, {
+                                shouldValidate: true,
+                              });
                             }}
                           />
                         </Col>
@@ -475,12 +545,13 @@ const CommonAddEditSales = props => {
               </Row>
             </div>
           </div>
-          <div className="me-10 flex justify-end items-center gap-3 mb-5">
+          {/* <div className="me-10 flex justify-end items-center gap-3 mb-5"> */}
+          <div className="me-10 flex justify-end items-center gap-3 mb-5 main_modal_btn_grup_group">
             <Button
               className="btn_transparent"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
-                router.push('/sales');
+                router.push("/sales");
               }}
             >
               Cancel

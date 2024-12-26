@@ -74,7 +74,7 @@ const CommonDataTable = (props) => {
   return (
     <>
       <div className="d-flex justify-between align-items-center header_title">
-        <h4 className="text-white m-0">{tableName}</h4>
+        <div className="text-white header_logo m-0">{tableName}</div>
         <div className="d-flex  search-partition">
           <div>
             <IconField iconPosition="left">
