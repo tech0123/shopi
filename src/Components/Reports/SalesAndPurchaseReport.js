@@ -1,18 +1,18 @@
-'use client';
+"use client";
 import { memo, useEffect, useMemo } from "react";
-import Highcharts from 'highcharts';
+import Highcharts from "highcharts";
 import { useSelector } from "react-redux";
 import { Col, Row } from "react-bootstrap";
 import HighchartsReact from "highcharts-react-official";
-import variablePie from 'highcharts/modules/variable-pie.js';
+import variablePie from "highcharts/modules/variable-pie.js";
 
 // variablePie(Highcharts);
 
 const SalesAndPurchaseReport = () => {
-  const { reportsData } = useSelector(({ report }) => report)
+  const { reportsData } = useSelector(({ report }) => report);
 
   useEffect(() => {
-    import('highcharts/modules/variable-pie')
+    import("highcharts/modules/variable-pie")
       .then((module) => {
         module.default(Highcharts);
       })
@@ -25,32 +25,32 @@ const SalesAndPurchaseReport = () => {
     let salesData = [];
 
     if (reportsData?.sales_report_data?.list?.length > 0) {
-      salesData = reportsData?.sales_report_data?.list?.map(item => {
+      salesData = reportsData?.sales_report_data?.list?.map((item) => {
         return item?.amount;
       });
     }
 
     const options = {
       chart: {
-        type: 'column',
+        type: "column",
       },
       title: {
-        text: '',
+        text: "",
       },
       xAxis: {
         categories: reportsData?.sales_report_data?.date || [],
         crosshair: false,
         labels: {
           style: {
-            color: '#7B7B7B',
+            color: "#7B7B7B",
           },
         },
-        lineColor: '#D7D7D7',
+        lineColor: "#D7D7D7",
         lineWidth: 1,
       },
       yAxis: {
         title: {
-          text: 'Total Sales',
+          text: "Total Sales",
         },
       },
       plotOptions: {
@@ -68,27 +68,27 @@ const SalesAndPurchaseReport = () => {
       series: [
         {
           data: salesData,
-          color: '#373AA5',
+          color: "#373AA5",
           pointWidth: 10,
-          name: 'Sales',
+          name: "Sales",
         },
       ],
       tooltip: {
         formatter: function () {
           return (
-            '<div>' +
+            "<div>" +
             '<span class="tooltip-x">' +
             this.x +
-            '</span>' +
-            '</div>' +
-            '<div> <br>' +
+            "</span>" +
+            "</div>" +
+            "<div> <br>" +
             '<span style="color:' +
             this.point.color +
             '">\u25CF</span> <b>' +
             this.series.name +
-            '</b> - ' +
+            "</b> - " +
             this.y +
-            '</div>'
+            "</div>"
           );
         },
       },
@@ -110,32 +110,32 @@ const SalesAndPurchaseReport = () => {
     let purchaseData = [];
 
     if (reportsData?.purchase_report_data?.list?.length > 0) {
-      purchaseData = reportsData?.purchase_report_data?.list?.map(item => {
+      purchaseData = reportsData?.purchase_report_data?.list?.map((item) => {
         return item?.amount;
       });
     }
 
     const options = {
       chart: {
-        type: 'column',
+        type: "column",
       },
       title: {
-        text: '',
+        text: "",
       },
       xAxis: {
         categories: reportsData?.purchase_report_data?.date || [],
         crosshair: false,
         labels: {
           style: {
-            color: '#7B7B7B',
+            color: "#7B7B7B",
           },
         },
-        lineColor: '#D7D7D7',
+        lineColor: "#D7D7D7",
         lineWidth: 1,
       },
       yAxis: {
         title: {
-          text: 'Total Purchase',
+          text: "Total Purchase",
         },
       },
       plotOptions: {
@@ -153,27 +153,27 @@ const SalesAndPurchaseReport = () => {
       series: [
         {
           data: purchaseData,
-          color: '#373AA5',
+          color: "#373AA5",
           pointWidth: 10,
-          name: 'Purchase',
+          name: "Purchase",
         },
       ],
       tooltip: {
         formatter: function () {
           return (
-            '<div>' +
+            "<div>" +
             '<span class="tooltip-x">' +
             this.x +
-            '</span>' +
-            '</div>' +
-            '<div> <br>' +
+            "</span>" +
+            "</div>" +
+            "<div> <br>" +
             '<span style="color:' +
             this.point.color +
             '">\u25CF</span> <b>' +
             this.series.name +
-            '</b> - ' +
+            "</b> - " +
             this.y +
-            '</div>'
+            "</div>"
           );
         },
       },
@@ -193,15 +193,23 @@ const SalesAndPurchaseReport = () => {
 
   return (
     <>
-      <div className="chat_wrapper storage_back m-5">
+      <div className="chat_wrapper storage_back">
         <Row className="g-3">
-          <Col lg={6}>
+          <Col lg={6} className="mx-0 chart_gap">
+            <div className="chart_title">
+              <h6 className="value_title m-0">{`₹ ${
+                reportsData?.purchase_report_data?.total_count || 0
+              }`}</h6>
+              <h5 className="total_title m-0">Total Purchase Count</h5>
+            </div>
             <div className="chat-inner-wrap">
               <div className="chat_header">
                 <Row className="justify-content-between g-2">
                   <Col sm={6}>
                     <div className="chat_header_text">
-                      <h5 className="text-yellow-600">Total Sales of Current year</h5>
+                      <h5 className="text-yellow-600">
+                        Total Sales of Current year
+                      </h5>
                     </div>
                   </Col>
                 </Row>
@@ -214,13 +222,21 @@ const SalesAndPurchaseReport = () => {
               </div>
             </div>
           </Col>
-          <Col lg={6}>
+          <Col lg={6} className="mx-0 chart_gap">
+            <div className="chart_title">
+              <h6 className="value_title m-0">{`₹ ${
+                reportsData?.sales_report_data?.total_count || 0
+              }`}</h6>
+              <h5 className="total_title m-0">Total Sale</h5>
+            </div>
             <div className="chat-inner-wrap">
               <div className="chat_header">
                 <Row className="justify-content-between g-2">
                   <Col sm={6}>
                     <div className="chat_header_text">
-                      <h5 className="text-yellow-600">Total Purchase of Current year</h5>
+                      <h5 className="text-yellow-600">
+                        Total Purchase of Current year
+                      </h5>
                     </div>
                   </Col>
                 </Row>

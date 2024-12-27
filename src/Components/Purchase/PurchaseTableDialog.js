@@ -6,10 +6,19 @@ import { Button } from "primereact/button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { FormProvider, useForm, useFormContext } from "react-hook-form";
-import { calculateTotal, generateUniqueId, product_search_key } from "@/helper/commonValues";
+import {
+  calculateTotal,
+  generateUniqueId,
+  product_search_key,
+} from "@/helper/commonValues";
 import { setPurchaseTableData } from "@/store/slice/purchaseSlice";
 import CommonInputText from "@/helper/CommonComponent/CommonInputText";
-import { getAllDataList, setCurrentPage, setPageLimit, setSearchParam } from "@/store/slice/commonSlice";
+import {
+  getAllDataList,
+  setCurrentPage,
+  setPageLimit,
+  setSearchParam,
+} from "@/store/slice/commonSlice";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import CustomPaginator from "@/helper/CommonComponent/CustomPaginator";
@@ -26,7 +35,7 @@ const schema = yup.object().shape({
   quantity: yup.string().required("Please enter Quantity."),
   tax: yup.string().required("Please enter Tax."),
   selling_price: yup.string().required("Please enter Selling Price."),
-  cost_price: yup.string().required("Please enter Cost Price.")
+  cost_price: yup.string().required("Please enter Cost Price."),
 });
 
 const inputFieldsList = [
@@ -34,51 +43,58 @@ const inputFieldsList = [
   //   fieldTitle: "Product",
   //   fieldId: "Product",
   //   fieldName: "product",
-  //   type:'single_select', 
-  //   options: productsOptions, 
+  //   type:'single_select',
+  //   options: productsOptions,
   //   isequired: true
   // },
   {
     fieldTitle: "Cost Price",
     fieldId: "CostPrice",
     fieldName: "cost_price",
-    isequired: true
+    isequired: true,
   },
   { fieldTitle: "Tax", fieldId: "Tax", fieldName: "tax", isequired: true },
   {
     fieldTitle: "Description",
     fieldId: "Description",
     fieldName: "description",
-    isequired: true
+    isequired: true,
   },
   {
     fieldTitle: "Quantity",
     fieldId: "Quantity",
     fieldName: "quantity",
-    isequired: true
+    isequired: true,
   },
   {
     fieldTitle: "Selling Price",
     fieldId: "SellingPrice",
     fieldName: "selling_price",
-    isequired: true
+    isequired: true,
   },
 ];
 
-const PurchaseTableDialog = props => {
+const PurchaseTableDialog = (props) => {
   const dispatch = useDispatch();
   const { purchaseId } = useParams();
-  const [productOptions, setProductOptions] = useState([])
-  const [selectedProductData, setSelectedProductData] = useState({})
-  const [showHideProductData, setShowHideProductData] = useState(false)
+  const [productOptions, setProductOptions] = useState([]);
+  const [selectedProductData, setSelectedProductData] = useState({});
+  const [showHideProductData, setShowHideProductData] = useState(false);
 
-  const { intialDialogState, purchaseTableDialog, selectedPurchaseData, setPurchaseTableDialog, onPageChange, onPageRowsChange } = props;
+  const {
+    intialDialogState,
+    purchaseTableDialog,
+    selectedPurchaseData,
+    setPurchaseTableDialog,
+    onPageChange,
+    onPageRowsChange,
+  } = props;
 
-  const { purchaseTableData } = useSelector(
-    ({ purchase }) => purchase
+  const { purchaseTableData } = useSelector(({ purchase }) => purchase);
+  const { allProductList } = useSelector(({ productItem }) => productItem);
+  const { searchParam, pageLimit, currentPage } = useSelector(
+    ({ common }) => common
   );
-  const { allProductList } = useSelector(({ productItem }) => productItem)
-  const { searchParam, pageLimit, currentPage } = useSelector(({ common }) => common)
 
   // const productsOptions = useMemo(() => {
   //   if(allProductList?.list?.length){
@@ -88,104 +104,111 @@ const PurchaseTableDialog = props => {
   //     }));
   //     return data;
   //   }
-  // },[allProductList]) 
+  // },[allProductList])
 
   const filteredProductData = useMemo(() => {
     let data = [];
     if (allProductList?.list?.length) {
-      data = allProductList?.list?.map((item) => {
-        const isProductAvailable = purchaseTableData.every((data) => { return data?.product !== item?._id && item })
+      data = allProductList?.list
+        ?.map((item) => {
+          const isProductAvailable = purchaseTableData.every((data) => {
+            return data?.product !== item?._id && item;
+          });
 
-        if (!purchaseTableData?.length || isProductAvailable) {
-          return item
-        }
-      }).filter((item) => item)
+          if (!purchaseTableData?.length || isProductAvailable) {
+            return item;
+          }
+        })
+        .filter((item) => item);
     }
 
-    return data
-    // setProductOptions(data)  
-  }, [allProductList?.list])
+    return data;
+    // setProductOptions(data)
+  }, [allProductList?.list]);
 
   const methods = useForm({
     resolver: yupResolver(schema),
-    defaultValues: selectedPurchaseData
+    defaultValues: selectedPurchaseData,
   });
 
   useEffect(() => {
     return () => {
       methods.reset(intialDialogState);
-    }
-  }, [intialDialogState, methods])
+    };
+  }, [intialDialogState, methods]);
 
   useEffect(() => {
     if (selectedPurchaseData) {
-      methods.reset(selectedPurchaseData)
+      methods.reset(selectedPurchaseData);
     }
-  }, [selectedPurchaseData])
+  }, [selectedPurchaseData]);
 
-  const fetchProductList = useCallback(async (
-    key_name,
-    start = 1,
-    limit = 7,
-    search = '') => {
-    const payload = {
-      modal_to_pass: key_name,
-      start: start,
-      limit: limit,
-      search: search?.trim(),
-      search_key: product_search_key
-    }
-    const res = await dispatch(getAllDataList(payload))
-    // if (res) {
-    //     dispatch(setAllProductsData(modifyProducts(res)))
-    // }
-  }, [])
+  const fetchProductList = useCallback(
+    async (key_name, start = 1, limit = 7, search = "") => {
+      const payload = {
+        modal_to_pass: key_name,
+        start: start,
+        limit: limit,
+        search: search?.trim(),
+        search_key: product_search_key,
+      };
+      const res = await dispatch(getAllDataList(payload));
+      // if (res) {
+      //     dispatch(setAllProductsData(modifyProducts(res)))
+      // }
+    },
+    []
+  );
 
   const handleProuctChange = (item) => {
-    const value = item?._id
-    setShowHideProductData(false)
+    const value = item?._id;
+    setShowHideProductData(false);
 
     const fieldsObj = {
       ...item,
       product: value,
-      selling_price: ""
-    }
-    dispatch(setSearchParam(item?.name))
-    setSelectedProductData(fieldsObj)
+      selling_price: "",
+    };
+    dispatch(setSearchParam(item?.name));
+    setSelectedProductData(fieldsObj);
     methods.reset(fieldsObj);
-  }
+  };
 
-  const onSubmit = data => {
-    let storePurchaseTableData = [...purchaseTableData]
-    const productOptionData = allProductList?.list?.find((item) => item?._id === data?.product)
+  const onSubmit = (data) => {
+    let storePurchaseTableData = [...purchaseTableData];
+    const productOptionData = allProductList?.list?.find(
+      (item) => item?._id === data?.product
+    );
 
     if (data?.unique_id) {
-      let purchaseData = [...purchaseTableData]
-      const index = purchaseData?.findIndex((index) => index?.unique_id === data?.unique_id)
+      let purchaseData = [...purchaseTableData];
+      const index = purchaseData?.findIndex(
+        (index) => index?.unique_id === data?.unique_id
+      );
 
       if (index !== -1) {
-        const oldObj = purchaseData[index]
+        const oldObj = purchaseData[index];
         const newObj = {
           ...oldObj,
           ...data,
-          product_name: productOptionData?.name
-        }
-        purchaseData[index] = newObj
+          product_name: productOptionData?.name,
+        };
+        purchaseData[index] = newObj;
       }
 
-      storePurchaseTableData = purchaseData
+      storePurchaseTableData = purchaseData;
     } else {
       const updatedObj = {
         ...data,
         unique_id: generateUniqueId(),
         product_name: productOptionData?.name,
-      }
+      };
 
-      storePurchaseTableData = [...purchaseTableData, updatedObj]
+      storePurchaseTableData = [...purchaseTableData, updatedObj];
     }
 
-    dispatch(setPurchaseTableData(storePurchaseTableData))
-    setPurchaseTableDialog(false)
+    dispatch(setPurchaseTableData(storePurchaseTableData));
+    setPurchaseTableDialog(false);
   };
 
   const multiBodyTemplate = (data) => {
@@ -196,14 +219,14 @@ const PurchaseTableDialog = props => {
         </div>
         <div className="flex flex-1 bg-gray-900 amount_content mt-2">
           <div className="flex-1 p-3">
-            <p className='text-left'>Name: {data.name}</p>
-            <p className='text-left'>Code: {data?.code}</p>
+            <p className="text-left">Name: {data.name}</p>
+            <p className="text-left">Code: {data?.code}</p>
             <div className="flex justify-center">
               <Button
                 className="btn_primary"
                 onClick={(e) => {
                   e.preventDefault();
-                  handleProuctChange(data)
+                  handleProuctChange(data);
                 }}
               >
                 ADD
@@ -215,28 +238,28 @@ const PurchaseTableDialog = props => {
     );
   };
 
-  const handleSearchInput = e => {
+  const handleSearchInput = (e) => {
     dispatch(setCurrentPage(1));
 
     fetchProductList(
-      'Products',
+      "Products",
       currentPage,
       pageLimit,
-      e.target.value?.trim(),
+      e.target.value?.trim()
     );
   };
 
   const debounceHandleSearchInput = useCallback(
-    _.debounce(e => {
+    _.debounce((e) => {
       handleSearchInput(e);
     }, 800),
-    [],
+    []
   );
 
   const header = () => {
     return (
       <div className="flex flex-wrap gap-2 justify-content-between align-items-center mb-4">
-        <IconField iconPosition="right" className='min-w-full min-h-10'>
+        <IconField iconPosition="right" className="min-w-full min-h-10">
           <InputIcon className="pi pi-search mr-3" />
           <InputText
             id="Search"
@@ -245,12 +268,12 @@ const PurchaseTableDialog = props => {
             className="input_wrap small search_wrap"
             value={searchParam}
             onChange={(e) => {
-              setSelectedProductData({})
+              setSelectedProductData({});
               debounceHandleSearchInput(e);
               dispatch(setSearchParam(e.target.value));
-              setShowHideProductData(true)
+              setShowHideProductData(true);
               if (!e.target.value) {
-                setShowHideProductData(false)
+                setShowHideProductData(false);
               }
             }}
             disabled={purchaseId}
@@ -259,7 +282,7 @@ const PurchaseTableDialog = props => {
       </div>
     );
   };
-  console.log('filteredProductData', filteredProductData)
+  console.log("filteredProductData", filteredProductData);
   return (
     <Dialog
       visible={purchaseTableDialog}
@@ -267,7 +290,7 @@ const PurchaseTableDialog = props => {
       breakpoints={{ "960px": "75vw", "641px": "90vw" }}
       header={`${methods.watch("unique_id") ? "Edit" : "Add"} Purchase Item`}
       modal
-      className="p-fluid"
+      className="p-fluid common_modal purchase_modal"
       onHide={() => setPurchaseTableDialog(false)}
       draggable={false}
     >
@@ -288,43 +311,59 @@ const PurchaseTableDialog = props => {
                   }}
                 /> */}
                 <DataTable
-                  className='!p-0 modal_datatable'
-                  value={showHideProductData === "" ? [{}] : filteredProductData} header={header} rows={10}
+                  className="!p-0 modal_datatable"
+                  value={
+                    showHideProductData === "" ? [{}] : filteredProductData
+                  }
+                  header={header}
+                  rows={10}
                 >
-                  {showHideProductData ? <Column headerStyle={{ width: '8rem', textAlign: 'center' }} bodyStyle={{ overflow: 'visible', padding: "0 !important" }} body={multiBodyTemplate} /> : null}
+                  {showHideProductData ? (
+                    <Column
+                      headerStyle={{ width: "8rem", textAlign: "center" }}
+                      bodyStyle={{
+                        overflow: "visible",
+                        padding: "0 !important",
+                      }}
+                      body={multiBodyTemplate}
+                    />
+                  ) : null}
                 </DataTable>
-                {showHideProductData &&
+                {showHideProductData && (
                   <CustomPaginator
                     dataList={filteredProductData}
                     pageLimit={pageLimit}
                     onPageChange={(page) => onPageChange(page, "Products")}
-                    onPageRowsChange={(page) => onPageRowsChange(page, "Products")}
+                    onPageRowsChange={(page) =>
+                      onPageRowsChange(page, "Products")
+                    }
                     currentPage={currentPage}
                     totalCount={allProductList?.totalRows}
                   />
-                }
+                )}
               </Col>
-              {!showHideProductData && inputFieldsList.map((field, i) => {
-                return (
-                  <Col lg={6} key={i}>
-                    <CommonInputText
-                      id={field?.fieldId}
-                      title={field?.fieldTitle}
-                      body={field?.fieldBody}
-                      name={field?.fieldName}
-                      type={field?.type}
-                      options={field?.options}
-                      isRequired={field?.isequired}
-                    />
-                  </Col>
-                );
-              })}
+              {!showHideProductData &&
+                inputFieldsList.map((field, i) => {
+                  return (
+                    <Col lg={6} key={i}>
+                      <CommonInputText
+                        id={field?.fieldId}
+                        title={field?.fieldTitle}
+                        body={field?.fieldBody}
+                        name={field?.fieldName}
+                        type={field?.type}
+                        options={field?.options}
+                        isRequired={field?.isequired}
+                      />
+                    </Col>
+                  );
+                })}
             </Row>
           </div>
           <div className="mt-3 me-2 flex justify-end items-center gap-4">
             <Button
               className="btn_transparent"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 setPurchaseTableDialog(false);
               }}

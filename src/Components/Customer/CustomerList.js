@@ -340,6 +340,7 @@ const CustomerList = () => {
         header={`${methods.watch("_id") ? "Edit" : "Add"} Customer`}
         modal
         className="p-fluid common_modal"
+        draggable={false}
         onHide={() => dispatch(setCustomerDialog(false))}
       >
         <FormProvider {...methods}>
@@ -363,7 +364,7 @@ const CustomerList = () => {
                 })}
               </Row>
             </div>
-            <div className="mt-3 me-2 flex justify-end items-center gap-4">
+            <div className="mt-3 me-2 flex justify-end items-center gap-4 modal__btn__group">
               <Button
                 className="btn_transparent"
                 onClick={(e) => {

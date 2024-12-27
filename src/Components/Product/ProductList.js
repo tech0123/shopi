@@ -365,8 +365,8 @@ const ProductList = () => {
         header={`${methods.watch("_id") ? "Edit" : "Add"} Product`}
         modal
         className="p-fluid common_modal"
-        onHide={() => dispatch(setProductDialog(false))}
         draggable={false}
+        onHide={() => dispatch(setProductDialog(false))}
       >
         <FormProvider {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
@@ -400,7 +400,7 @@ const ProductList = () => {
                 />
               </div> */}
             </div>
-            <div className="mt-3 me-2 flex justify-end items-center gap-4">
+            <div className="mt-3 me-2 flex justify-end items-center gap-4 modal__btn__group">
               <Button
                 className="btn_transparent"
                 onClick={(e) => {

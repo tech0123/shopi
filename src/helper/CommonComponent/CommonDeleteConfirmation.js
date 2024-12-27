@@ -1,17 +1,18 @@
 import { Dialog } from "primereact/dialog";
 import React, { memo } from "react";
 
-const CommonDeleteConfirmation = props => {
+const CommonDeleteConfirmation = (props) => {
   const { open, hideContent, footerContent } = props;
   return (
     <Dialog
       modal
       visible={open}
-      header="Delete Confirmation"
+      header="Delete"
       style={{ width: "32rem", fontFamily: "Helvetica" }}
       breakpoints={{ "960px": "75vw", "641px": "90vw" }}
       footer={footerContent}
       onHide={hideContent}
+      className="common_modal del_modal"
     >
       <div className="d-flex align-middle justify-center gap-2 confirmation-content">
         <i
