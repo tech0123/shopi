@@ -1,10 +1,9 @@
 "use client";
 import { memo, useEffect, useMemo } from "react";
-import Highcharts from "highcharts";
+import Highcharts, { color } from "highcharts";
 import { useSelector } from "react-redux";
 import { Col, Row } from "react-bootstrap";
-import HighchartsReact from "highcharts-react-official";
-import variablePie from "highcharts/modules/variable-pie.js";
+import { Chart } from "primereact/chart";
 
 // variablePie(Highcharts);
 
@@ -21,175 +20,65 @@ const SalesAndPurchaseReport = () => {
       });
   }, []);
 
-  const salesOptionsData = useMemo(() => {
-    let salesData = [];
-
-    if (reportsData?.sales_report_data?.list?.length > 0) {
-      salesData = reportsData?.sales_report_data?.list?.map((item) => {
-        return item?.amount;
-      });
-    }
-
-    const options = {
-      chart: {
-        type: "column",
-      },
-      title: {
-        text: "",
-      },
-      xAxis: {
-        categories: reportsData?.sales_report_data?.date || [],
-        crosshair: false,
-        labels: {
-          style: {
-            color: "#7B7B7B",
-          },
-        },
-        lineColor: "#D7D7D7",
-        lineWidth: 1,
-      },
-      yAxis: {
-        title: {
-          text: "Total Sales",
+  const options = {
+    scales: {
+      x: {
+        ticks: {
+          color: "#ffff", // Set the X-axis label color
         },
       },
-      plotOptions: {
-        column: {
-          pointPadding: 0,
-          borderWidth: 0,
+      y: {
+        grid: {
+          color: "grey", // Set the Y-axis grid line color
+        },
+        beginAtZero: true,
+        ticks: {
+          color: "#ffff", // Set the Y-axis label color
         },
       },
-      credits: {
-        enabled: false,
-      },
+    },
+    plugins: {
       legend: {
-        enabled: false,
+        display: false, // Hide the legend
       },
-      series: [
-        {
-          data: salesData,
-          color: "#373AA5",
-          pointWidth: 10,
-          name: "Sales",
-        },
-      ],
-      tooltip: {
-        formatter: function () {
-          return (
-            "<div>" +
-            '<span class="tooltip-x">' +
-            this.x +
-            "</span>" +
-            "</div>" +
-            "<div> <br>" +
-            '<span style="color:' +
-            this.point.color +
-            '">\u25CF</span> <b>' +
-            this.series.name +
-            "</b> - " +
-            this.y +
-            "</div>"
-          );
-        },
-      },
-      responsive: {
-        rules: [
-          {
-            condition: {
-              maxWidth: 500,
-            },
-          },
-        ],
-      },
-    };
+    },
+  };
 
-    return options;
-  }, [reportsData?.sales_report_data?.list]);
+  const salesData = reportsData?.sales_report_data?.list?.map((item) => {
+    return item.amount;
+  });
 
-  const purchaseOptionsData = useMemo(() => {
-    let purchaseData = [];
+  const purchaseData = reportsData?.purchase_report_data?.list?.map((item) => {
+    return item.amount;
+  });
 
-    if (reportsData?.purchase_report_data?.list?.length > 0) {
-      purchaseData = reportsData?.purchase_report_data?.list?.map((item) => {
-        return item?.amount;
-      });
-    }
+  const displayPurchaseData = {
+    labels: reportsData?.purchase_report_data?.date,
+    datasets: [
+      {
+        label: "Purchase",
+        data: purchaseData,
+        backgroundColor: ["#ffff"],
+        borderColor: ["#ffff"],
+        borderWidth: 1,
+      },
+    ],
+  };
 
-    const options = {
-      chart: {
-        type: "column",
-      },
-      title: {
-        text: "",
-      },
-      xAxis: {
-        categories: reportsData?.purchase_report_data?.date || [],
-        crosshair: false,
-        labels: {
-          style: {
-            color: "#7B7B7B",
-          },
-        },
-        lineColor: "#D7D7D7",
-        lineWidth: 1,
-      },
-      yAxis: {
-        title: {
-          text: "Total Purchase",
-        },
-      },
-      plotOptions: {
-        column: {
-          pointPadding: 0,
-          borderWidth: 0,
-        },
-      },
-      credits: {
-        enabled: false,
-      },
-      legend: {
-        enabled: false,
-      },
-      series: [
-        {
-          data: purchaseData,
-          color: "#373AA5",
-          pointWidth: 10,
-          name: "Purchase",
-        },
-      ],
-      tooltip: {
-        formatter: function () {
-          return (
-            "<div>" +
-            '<span class="tooltip-x">' +
-            this.x +
-            "</span>" +
-            "</div>" +
-            "<div> <br>" +
-            '<span style="color:' +
-            this.point.color +
-            '">\u25CF</span> <b>' +
-            this.series.name +
-            "</b> - " +
-            this.y +
-            "</div>"
-          );
-        },
-      },
-      responsive: {
-        rules: [
-          {
-            condition: {
-              maxWidth: 500,
-            },
-          },
-        ],
-      },
-    };
+  // console.log(reportsData?.sales_report_data?.date);
 
-    return options;
-  }, [reportsData?.sales_report_data?.list]);
+  const displaySalesData = {
+    labels: reportsData?.sales_report_data?.date,
+    datasets: [
+      {
+        label: "Sales",
+        data: salesData,
+        backgroundColor: ["#ffff"],
+        borderColor: ["#ffff"],
+        borderWidth: 1,
+      },
+    ],
+  };
 
   return (
     <>
@@ -204,21 +93,31 @@ const SalesAndPurchaseReport = () => {
             </div>
             <div className="chat-inner-wrap">
               <div className="chat_header">
-                <Row className="justify-content-between g-2">
-                  <Col sm={6}>
+                <div className="justify-content-between g-2">
+                  <div>
                     <div className="chat_header_text">
-                      <h5 className="text-yellow-600">
-                        Total Sales of Current year
+                      <h5 className="m-0 header_text">
+                        Total Purchase of Current year
                       </h5>
                     </div>
-                  </Col>
-                </Row>
+                  </div>
+                </div>
               </div>
               <div className="chat_box">
-                <HighchartsReact
+                {/* <HighchartsReact
                   highcharts={Highcharts}
                   options={salesOptionsData}
-                />
+                /> */}
+                {/* <div className="card">
+                  <Chart type="bar" data={displaySalesData} options={options} />
+                </div> */}
+                <div className="card">
+                  <Chart
+                    type="bar"
+                    data={displayPurchaseData}
+                    options={options}
+                  />
+                </div>
               </div>
             </div>
           </Col>
@@ -234,23 +133,30 @@ const SalesAndPurchaseReport = () => {
                 <Row className="justify-content-between g-2">
                   <Col sm={6}>
                     <div className="chat_header_text">
-                      <h5 className="text-yellow-600">
-                        Total Purchase of Current year
+                      <h5 className="m-0 header_text">
+                        Total Sales of Current year
                       </h5>
                     </div>
                   </Col>
                 </Row>
               </div>
               <div className="chat_box">
-                <HighchartsReact
+                {/* <HighchartsReact
                   highcharts={Highcharts}
                   options={purchaseOptionsData}
-                />
+                /> */}
+                <div className="card">
+                  <Chart type="bar" data={displaySalesData} options={options} />
+                </div>
               </div>
             </div>
           </Col>
         </Row>
       </div>
+
+      {/* <div className="card">
+        <Chart type="bar" data={data} options={options} />
+      </div> */}
     </>
   );
 };

@@ -26,12 +26,20 @@ const Report = () => {
           <h5 style={{ color: "#c5a838" }}>Total Sale</h5>
         </div> 
       </div>*/}
+      {/* =================================== */}
+      {/* =================================== */}
       <div>
         <SalesAndPurchaseReport />
       </div>
       <div>
         <CustomerReport />
       </div>
+      {/* =================================== */}
+      {/* <React.StrictMode>
+        <PrimeReactProvider>
+          <App />
+        </PrimeReactProvider>
+      </React.StrictMode> */}
     </>
   );
 };

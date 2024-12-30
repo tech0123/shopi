@@ -8,12 +8,12 @@ export default function Home() {
         {/* <SignOutButton redirectUrl={routes.push('/sign-in')}/> */}
       </div>
       <div className="main flex justify-center items-center">
-        <div className="container grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="container grid grid-cols-1 lg:grid-cols-2 gap-5 home_page_btn_group">
           {linksOption?.map(({ text, href }) => (
             <Link
               key={text}
               href={href}
-              className="flex justify-center items-center p-4 w-full max-w-xs mx-auto my-8 bg-gray-100 text-black"
+              className="flex justify-center items-center p-4 w-full max-w-xs mx-auto my-8 common__btn"
             >
               {text}
             </Link>
@@ -27,6 +27,6 @@ export default function Home() {
 export async function generateMetadata() {
   return {
     title: "Home | Shopi",
-    description: "Home Page of Shopi"
-  }
+    description: "Home Page of Shopi",
+  };
 }
