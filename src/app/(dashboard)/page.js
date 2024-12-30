@@ -13,7 +13,7 @@ export default function Home() {
             <Link
               key={text}
               href={href}
-              className="flex justify-center items-center p-4 w-full max-w-xs mx-auto my-8 common__btn"
+              className="flex justify-center items-center p-4 w-full max-w-xs mx-auto my-8 gradient_common_btn"
             >
               {text}
             </Link>

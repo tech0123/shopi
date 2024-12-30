@@ -40,7 +40,6 @@ const SalesListing = () => {
       }
       dispatch(getAllDataList(payload))
     }, [dispatch])
-
     useEffect(() => {
       fetchSalesList(
         "Sales",
@@ -48,7 +47,6 @@ const SalesListing = () => {
         pageLimit,
         searchParam
       )
-
       return () => {
           dispatch(setSearchParam(''));
       }
@@ -70,7 +68,6 @@ const SalesListing = () => {
         );
       }
     };
-
     const onPageRowsChange = page => {
       dispatch(setCurrentPage(page === 0 ? 0 : 1));
       dispatch(setPageLimit(page));

@@ -52,7 +52,7 @@ const CommonInputText = (props) => {
                 placeholder={`Enter ${title}`}
                 showIcon
                 dateFormat="dd-mm-yy"
-                // maxDate={new Date()}
+                // maxDate={new Date()}s
                 readOnlyInput
                 onChange={(e) =>
                   setValue(name, e.target.value, { shouldValidate: true })
@@ -105,6 +105,7 @@ const CommonInputText = (props) => {
                 maxFractionDigits={2}
                 disabled={disabled}
                 className="input_number"
+                autoComplete="off"
                 onChange={
                   fieldOnChange
                     ? fieldOnChange
@@ -151,6 +152,7 @@ const CommonInputText = (props) => {
                 type={type}
                 name={name}
                 value={value}
+                autoComplete="off"
                 placeholder={`Enter ${title}`}
                 className="input_wrap"
                 onChange={

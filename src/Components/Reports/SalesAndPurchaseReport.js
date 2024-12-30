@@ -82,15 +82,58 @@ const SalesAndPurchaseReport = () => {
 
   return (
     <>
+      <Row className=" card___item m-0 justify-start flex-wrap">
+        <Col lg={3} md={4} sm={6} className="card-items">
+          <div className="item-content">
+            <h6 className="main_title m-0">{`₹ ${
+              reportsData?.purchase_report_data?.total_count || 0
+            }`}</h6>
+            <h5 className="sub_title m-0">Total Purchase Count</h5>
+          </div>
+        </Col>
+        <Col lg={3} md={4} sm={6} className="card-items">
+          <div className="item-content">
+            <h6 className="m-0 main_title">{`₹ ${
+              reportsData?.sales_report_data?.total_count || 0
+            }`}</h6>
+            <h5 className="m-0 sub_title">Total Sale</h5>
+          </div>
+        </Col>
+        <Col lg={3} md={4} sm={6} className="card-items">
+          <div className="item-content">
+            <h6 className="m-0 main_title">lorem-input</h6>
+            <h5 className="m-0 sub_title">lorem-input</h5>
+          </div>
+        </Col>
+        <Col lg={3} md={4} sm={6} className="card-items">
+          <div className="item-content">
+            <h6 className="m-0 main_title">lorem-input</h6>
+            <h5 className="m-0 sub_title">lorem-input</h5>
+          </div>
+        </Col>
+        <Col lg={3} md={4} sm={6} className="card-items">
+          <div className="item-content">
+            <h6 className="m-0 main_title">lorem-input</h6>
+            <h5 className="m-0 sub_title">lorem-input</h5>
+          </div>
+        </Col>
+        <Col lg={3} md={4} sm={6} className="card-items">
+          <div className="item-content">
+            <h6 className="m-0 main_title">lorem-input</h6>
+            <h5 className="m-0 sub_title">lorem-input</h5>
+          </div>
+        </Col>
+      </Row>
+
       <div className="chat_wrapper storage_back">
         <Row className="g-3">
           <Col lg={6} className="mx-0 chart_gap">
-            <div className="chart_title">
+            {/* <div className="chart_title">
               <h6 className="value_title m-0">{`₹ ${
                 reportsData?.purchase_report_data?.total_count || 0
               }`}</h6>
               <h5 className="total_title m-0">Total Purchase Count</h5>
-            </div>
+            </div> */}
             <div className="chat-inner-wrap">
               <div className="chat_header">
                 <div className="justify-content-between g-2">
@@ -122,23 +165,23 @@ const SalesAndPurchaseReport = () => {
             </div>
           </Col>
           <Col lg={6} className="mx-0 chart_gap">
-            <div className="chart_title">
+            {/* <div className="chart_title">
               <h6 className="value_title m-0">{`₹ ${
                 reportsData?.sales_report_data?.total_count || 0
               }`}</h6>
               <h5 className="total_title m-0">Total Sale</h5>
-            </div>
+            </div> */}
             <div className="chat-inner-wrap">
               <div className="chat_header">
-                <Row className="justify-content-between g-2">
-                  <Col sm={6}>
+                <div className="justify-content-between g-2">
+                  <div>
                     <div className="chat_header_text">
                       <h5 className="m-0 header_text">
                         Total Sales of Current year
                       </h5>
                     </div>
-                  </Col>
-                </Row>
+                  </div>
+                </div>
               </div>
               <div className="chat_box">
                 {/* <HighchartsReact
