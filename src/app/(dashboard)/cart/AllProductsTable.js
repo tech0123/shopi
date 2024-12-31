@@ -103,8 +103,8 @@ const AllProductsTable = () => {
 
   const header = () => {
     return (
-      <div className="flex flex-wrap gap-2 justify-content-between align-items-center m-4 mt-0">
-        <h6 className="m-2 inline">Products:</h6>
+      <div className="flex flex-wrap gap-2 justify-content-between align-items-center  mt-0 product_select_content">
+        <h6 className="m-0 inline products_name">Products:</h6>
         <IconField iconPosition="right" className="min-w-full min-h-10">
           <InputIcon className="pi pi-search mr-6" />
           <InputText
@@ -218,7 +218,8 @@ const AllProductsTable = () => {
         </div>
 
         {/* Bottom Sections */}
-        <div className="flex flex-1 bg-gray-900 ">
+        {/* <div className="flex flex-1 bg-gray-900 "> */}
+        <div className="flex flex-1">
           {/* Left Section */}
           <div className="flex-1 p-3">
             <p className="text-left">Name: {data.name}</p>
@@ -400,7 +401,7 @@ const AllProductsTable = () => {
     return (
       <div className="container flex flex-col w-full">
         {/* Bottom Sections */}
-        <div className="flex flex-1 bg-gray-900 mx-3 ">
+        <div className="flex flex- mx-3 ">
           {/* Left Section */}
           <div className="flex-1 p-3">
             <p className="text-left">Name: {data.name}</p>
@@ -429,11 +430,12 @@ const AllProductsTable = () => {
 
   const header2 = () => {
     return (
-      <div className="flex flex-wrap gap-2 justify-content-between align-items-center m-4 mb-0 pb-0">
-        <h6 className="m-2 inline">Customer:</h6>
+      <div className="flex flex-wrap gap-2 justify-content-between align-items-center mb-0 pb-0">
+        <h6 className="m-0 inline customer_name">Customer:</h6>
         <IconField iconPosition="right" className="min-w-full min-h-10 inline">
           <InputIcon className="pi pi-search mr-6" />
           <InputText
+            autoComplete="off"
             id="search"
             placeholder="Search Customer"
             type="search"
@@ -458,7 +460,7 @@ const AllProductsTable = () => {
     <>
       {/* {commonLoading && <Loader />} */}
 
-      <div className="card !border-none !bg-gray-800">
+      <div className="card main_cart_box">
         <DataTable
           value={hideMe === "" ? [{}] : allCustomerList?.list}
           header={header2}

@@ -188,15 +188,15 @@ const SelectedProductsTable = () => {
     // };
 
     return (
-      <div className="card !bg-gray-800 shadow-sm text-white p-5 pt-4">
-        <hr className=" mb-20" />
+      <div className="card product_add_content shadow-sm">
+        <hr className="" />
         {/* <h5 className="text-md  font-medium mb-2">Summary</h5> */}
 
         <div className="flex flex-col gap-1">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center bill_partition">
             <span className=" text-sm">SubTotal:</span>
             <InputNumber
-              className="input_number  bg-gray-800 border-gray-600"
+              className="input_number"
               maxFractionDigits={2}
               useGrouping={false}
               value={subTotal}
@@ -204,12 +204,12 @@ const SelectedProductsTable = () => {
             />
           </div>
 
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center bill_partition">
             <span className=" text-sm">Discount:</span>
             <InputNumber
               placeholder="Discount"
               name="discount"
-              className="input_number  bg-gray-800 border-gray-600"
+              className="input_number"
               maxFractionDigits={2}
               useGrouping={false}
               value={calcValues?.discount}
@@ -223,13 +223,12 @@ const SelectedProductsTable = () => {
               }
             />
           </div>
-
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center bill_partition">
             <span className=" text-sm">Tax:</span>
             <InputNumber
               placeholder="Tax"
               name="tax"
-              className="input_number  bg-gray-800 border-gray-600"
+              className="input_number "
               maxFractionDigits={2}
               useGrouping={false}
               value={calcValues?.tax}
@@ -244,11 +243,11 @@ const SelectedProductsTable = () => {
             />
           </div>
 
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center bill_partition">
             <span className=" text-sm">Grand Total:</span>
             {/* <span className="font-medium text-sm">{calcValues.grandTotal}</span> */}
             <InputNumber
-              className="input_number  bg-gray-800 border-gray-600"
+              className="input_number "
               maxFractionDigits={2}
               useGrouping={false}
               value={calcValues.grandTotal}
@@ -257,11 +256,11 @@ const SelectedProductsTable = () => {
           </div>
         </div>
 
-        <hr className="mt-20 mb-10" />
+        <hr />
 
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center bill_partition">
           <span className="text-sm">Mode of Payment:</span>
-          <span className="text-sm font-light">
+          <span className="text-sm font-light option_text">
             <Dropdown
               value={modeOfPayment}
               onChange={(e) => dispatch(setModeOfPayment(e.value))}
@@ -271,15 +270,15 @@ const SelectedProductsTable = () => {
                 Object.keys(selectedCustomer)?.length === 0 || searchParam
               }
               placeholder="Select Mode of Payment"
-              className="m-0 text-sm"
+              className="m-0 cash_option"
             />
           </span>
         </div>
 
-        <div className="flex justify-center items-center mt-12 w-full">
+        <div className="flex justify-center items-center w-full product_save_btm">
           <Button
             type="button"
-            className="px-4 py-2 mx-2 bg-gray-900 rounded-lg"
+            className="px-4 py-2 mx-2 ounded-lg save-btn"
             disabled={
               !selectedProducts?.length ||
               Object.keys(selectedCustomer).length === 0
@@ -296,19 +295,29 @@ const SelectedProductsTable = () => {
 
   const PreviouslyOrderedTable = () => {
     return (
-      <Accordion className="gap-2 mx-5 mt-5">
+      <Accordion className="gap-2 pro_card_gap">
         <AccordionTab header="Previously Bought Products">
           {selectedProducts?.length > 0 ? (
             selectedProducts.map((product, index) => (
               <div
                 key={index}
-                className="p-2 flex flex-col sm:flex-row justify-between items-center sm:items-start"
+                className="flex sm:flex-row justify-between align-items-center items-center sm:items-start"
               >
-                <p className="m-0 max-sm:text-center">
-                  <strong>{product.name}</strong>
-                  <br />
-                  Qty: {product.qty} | Price: {product.selling_price}
-                </p>
+                <div className="d-flex align-items-center">
+                  <div className="flex justify-center select_product_image">
+                    <Image
+                      src={product.image}
+                      alt={product?._id}
+                      width={100}
+                      height={100}
+                    />
+                  </div>
+                  <p className="m-0 select_product_content">
+                    <strong>{product.name}</strong>
+                    <br />
+                    Qty: {product.qty} | Price: {product.selling_price}
+                  </p>
+                </div>
                 <Button
                   type="button"
                   icon="pi pi-plus-circle"
@@ -621,8 +630,8 @@ const SelectedProductsTable = () => {
   };
 
   return (
-    <div className="card !border-none !bg-gray-800">
-      <h6>Products Added:</h6>
+    <div className="card !border-none product_card">
+      <h6 className="m-0 product_add">Products Added:</h6>
       <div
         className={` ${
           searchParam || Object.keys(selectedCustomer)?.length === 0
