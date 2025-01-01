@@ -32,6 +32,7 @@ import {
   updateItem,
 } from "@/store/slice/commonSlice";
 import CommonDeleteConfirmation from "@/helper/CommonComponent/CommonDeleteConfirmation";
+import Image from "next/image";
 
 const intialDialogState = {
   product: "",
@@ -324,6 +325,46 @@ const CommonAddEditSales = (props) => {
     );
   };
 
+  const responsiveTableTemplete = (rowData) => {
+    return (
+      <div className="container flex flex-md-row flex-column product-card">
+        <div className="flex justify-center card-image">
+          <Image
+            src={rowData?.image || ""}
+            alt={rowData?._id || "Image not found"}
+            // className="card-img w-100 h-100 object-cover transition duration-300 ease-in-out hover:scale-110"
+            className="card-img w-100 object-cover object-center h-100 transition duration-300 ease-in-out hover:scale-110"
+            width={100}
+            height={100}
+          />
+        </div>
+        <div className="flex flex-1 flex-col flex-md-row card-partition">
+          <div className="flex-1 p-2 personal-details">
+            <p className="text-left text-sm">ID: {rowData.id}</p>
+            <p className="text-left text-sm">Name: {rowData.name}</p>
+            <p className="text-left text-sm product-description">
+              Description: {rowData.description}
+            </p>
+            <p className="text-left text-sm">
+              Available Qty: {rowData.available_quantity}
+            </p>
+          </div>
+          <div className="flex-1 p-2 flex flex-col card-details">
+            <p className="text-left text-sm">Discount: {rowData.discount}</p>
+            <p className="text-left text-sm">Tax: {rowData.tax}</p>
+            <p className="text-left text-sm">
+              Selling Price: {rowData.selling_price}
+            </p>
+            <p className="text-left text-sm">
+              Cost Price: {rowData.cost_price}
+            </p>
+            <div className="text-left mt-1">{actionBodyTemplate(rowData)}</div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       {/* <div className="m-5 text-xl text-slate-300"> */}
@@ -381,9 +422,9 @@ const CommonAddEditSales = (props) => {
               })}
             </Row>
           </div>
-          <div className="d-flex justify-end main_modal_add_btn">
+          <div className="d-flex justify-end main_modal_add_btn ">
             <Button
-              className="btn_primary"
+              className="btn_primary gradient_common_btn modal_add_btn"
               onClick={(e) => {
                 e.preventDefault();
                 setSalesTableDialog(true);
@@ -397,6 +438,7 @@ const CommonAddEditSales = (props) => {
           <div>
             <div className="table_wrapper">
               <DataTable
+                className="max-xl:hidden"
                 value={salesTableData}
                 dataKey="id"
                 paginator
@@ -419,6 +461,19 @@ const CommonAddEditSales = (props) => {
                   header="Action"
                   body={actionBodyTemplate}
                   exportable={false}
+                  style={{ minWidth: "12rem" }}
+                />
+              </DataTable>
+              <DataTable
+                value={salesTableData}
+                dataKey="id"
+                paginator
+                rows={10}
+                rowsPerPageOptions={[5, 10, 25]}
+                className="mt-10 block xl:hidden"
+              >
+                <Column
+                  body={responsiveTableTemplete}
                   style={{ minWidth: "12rem" }}
                 />
               </DataTable>
@@ -556,7 +611,7 @@ const CommonAddEditSales = (props) => {
             >
               Cancel
             </Button>
-            <Button type="submit" className="btn_primary">
+            <Button type="submit" className="btn_primary gradient_common_btn">
               Submit
             </Button>
           </div>

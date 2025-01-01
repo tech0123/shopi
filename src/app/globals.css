@@ -22,7 +22,6 @@
 body {
   color: #ffffff !important;
   font-size: 14px;
-  /* background-color: #2d3647 !important; */
   background-color: var(--body-bg) !important;
 }
 
@@ -32,13 +31,11 @@ body {
 }
 
 .form_input div {
-  /* color: #ffffff; */
   color: var(--white-color);
   margin-bottom: 6px;
 }
 
 .title_wrap {
-  /* color: #ffffff; */
   color: var(--white-color);
 }
 
@@ -48,12 +45,9 @@ body {
   padding: 12px;
   font-size: 14px;
   font-weight: 400;
-  /* color: #ffffff; */
   color: var(--white-color);
   line-height: 17px;
-  /* background-color: #000; */
   background-color: var(--dark-color);
-  /* border: 1px solid #90909198; */
   border: 1px solid var(--light-color);
 }
 
@@ -85,7 +79,6 @@ body {
 .input_number .p-inputnumber-input:hover,
 .input_number .p-inputnumber-input:focus {
   box-shadow: 0px 0px 7px 0px gray;
-  /* color: #ffffff; */
   color: var(--white-color);
 }
 
@@ -97,24 +90,18 @@ body {
   font-size: 14px;
   font-weight: 400;
   line-height: 17px;
-  /* border: 1px solid #90909198; */
-  /* color: #90909198; */
   border: 1px solid var(--light-color);
   color: var(--light-color);
-  /* background-color: #000; */
   background-color: var(--dark-color);
 }
 .p-dropdown-header {
-  background-color: #000;
   background-color: var(--dark-color);
   padding: 10px 5px;
 }
 .p-dropdown-panel {
-  /* border: 1px solid #90909198; */
   border: 1px solid var(--light-color);
 }
 .p-dropdown-item {
-  /* border-top: 1px solid #91909059; */
   border-bottom: 1px solid var(--drop-item);
 }
 .p-dropdown-filter-container {
@@ -128,14 +115,10 @@ body {
 .p-dropdown-filter:focus {
   box-shadow: none !important;
 }
-/* .dropdown-filter:focus {
-  box-shadow: none !important;
-} */
 .input_select .p-inputtext {
   padding: 0;
 }
 .input_select .p-dropdown-item:hover {
-  /* background-color: #1f1f1f; */
   background-color: var(--drop-item-hover);
 }
 .input_select .p-dropdown-item:first-child {
@@ -161,49 +144,25 @@ body {
 }
 .date_wrapper .p-component,
 .p-datepicker-header {
-  /* background-color: #000; */
   background-color: var(--dark-color);
 }
 .p-datepicker-header {
-  /* border-bottom: 1px solid #454545; */
   background-color: var(--normal-background-color);
 }
 .p-datepicker {
-  /* background-color: #000; */
-  /* border: 1px solid #454545; */
   background-color: var(--dark-color);
   border: 1px solid var(--normal-background-color);
 }
 .input_select:hover,
 .input_select:focus {
   box-shadow: 0px 0px 7px 0px gray;
-  /* color: #ffffff; */
   color: var(--white-color);
 }
 .date_wrapper {
   width: 100%;
 }
 
-/* .date_wrapper input {
-  padding: 10px;
-  background: #000;
-  font-size: 14px;
-} */
-
-/* .date_wrapper .p-datepicker-trigger {
-  background: #000;
-  border-radius: 0px 8px 8px 0px;
-}
-
-.date_wrapper .p-inputtext:hover,
-.date_wrapper .p-inputtext:focus {
-  border: none;
-  box-shadow: 0px 0px 7px 0px gray;
-  color: #ffffff;
-} */
-
 .del_modal .confirmation-content {
-  /* color: red; */
   color: var(--red-color);
   font-weight: 600;
   font-size: 20px;
@@ -220,11 +179,8 @@ body {
   border-radius: 20px;
   overflow: hidden;
 }
-/* .common_modal .form_container {
-  background-color: red;
-} */
+
 .common_modal .p-dialog-header {
-  /* border-bottom: 1px solid #90909198; */
   border-bottom: 1px solid var(--light-color);
 }
 .common_modal .p-dialog-header,
@@ -235,46 +191,40 @@ body {
 /* .common_modal .input_wrap, */
 .common_modal input,
 .common_modal .input_select,
-.main__modal-area .btn_transparent,
+/* .main_modal_area .btn_transparent, */
 .common_modal .btn_transparent {
-  /* border: 1px solid #454545; */
   border: 1px solid var(--normal-background-color);
 }
 .p-dialog-footer {
-  /* background-color: #000; */
   background-color: var(--dark-color);
 }
-.main__modal-area .btn_transparent:hover,
+.main_modal_area .btn_transparent:hover,
 .common_modal .btn_transparent:hover {
-  /* background-color: #454545; */
   background-color: var(--normal-background-color);
   box-shadow: none;
 }
-.main__modal-area .btn_primary {
-  /* border: 1px solid #454545; */
-  border: 1px solid var(--normal-background-color);
-}
-.main__modal-area .btn_primary,
+.main_modal_area .btn_primary,
 .common_modal .btn_primary {
-  /* background-color: #454545; */
   background-color: var(--normal-background-color);
   color: #fff;
 }
-.main__modal-area .btn_primary:hover,
+.main_modal_area .btn_primary:hover,
 .common_modal .btn_primary:hover {
   background-color: transparent;
   color: #fff;
   box-shadow: none;
-  /* border: 1px solid #454545; */
-  border: 1px solid var(--normal-background-color);
+  /* border: 1px solid var(--normal-background-color); */
+}
+.common_modal .gradient_common_btn {
+  border-radius: 5px;
+  padding: 6px 12px !important;
+  font-size: 15px;
 }
 .btn_primary {
   display: flex;
   padding: 8px;
   width: 100px;
   font-size: 14px;
-  /* color: #ffffff; */
-  /* background: #000; */
   color: var(--white-color);
   background-color: var(--dark-color);
   border-radius: 5px;
@@ -282,18 +232,23 @@ body {
   box-shadow: 0px 0px 2px 0px var(--dark-color);
 }
 .btn_primary:hover {
-  /* color: #e3e3e3e2; */
   color: var(--btn-primary);
   box-shadow: 0px 0px 7px 0px var(--dark-color);
 }
-
+.common_modal .btn_transparent {
+  background-color: var(--body-bg);
+  border: 2px solid var(--light-color);
+  border-radius: 5px;
+}
+.common_modal .btn_transparent:hover {
+  background-color: var(--light-color);
+}
 /* ========================================================================================= */
 .btn_transparent {
   display: flex;
   padding: 8px;
   width: 100px;
   font-size: 14px;
-  /* color: #ffffff; */
   color: var(--white-color);
   border-radius: 4px;
   justify-content: center;
@@ -301,8 +256,6 @@ body {
   box-shadow: 0px 0px 3px 0px var(--dark-color);
 }
 .btn_transparent:hover {
-  /* color: #ffffff; */
-  /* background-color: #000; */
   color: var(--white-color);
   background-color: var(--dark-color);
   box-shadow: 0px 0px 6px 0px gray;
@@ -322,7 +275,6 @@ body {
   margin-right: 50px;
 }
 .table_wrapper .p-paginator {
-  /* background-color: #000; */
   background-color: var(--dark-color);
 }
 .table_wrapper .p-paginator-bottom {
@@ -346,17 +298,14 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  /* background: #f1f1f1; */
   background-color: var(--scroll-background-track);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  /* background: #5b626d; */
   background: var(--scroll-background);
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  /* background: #555; */
   background: var(--scroll-background-hover);
 }
 
@@ -376,7 +325,6 @@ body {
 .loader_Wrapper .loader {
   height: 80px;
   width: 80px;
-  /* color: #ffffff; */
   color: var(--white-color);
 }
 
@@ -384,14 +332,11 @@ body {
   border-radius: 20px;
   margin: 50px;
   box-shadow: 0px 0px 10px 0px gray;
-  /* background-color: #000; */
-  /* color: #ffffff; */
   background-color: var(--dark-color);
   color: var(--white-color);
   padding: 20px;
 }
 .amount_content .input_number {
-  /* border: 1px solid #454545; */
   border: 1px solid var(--normal-background-color);
   border-radius: 8px;
   padding: 10px 12px;
@@ -416,17 +361,27 @@ body {
 }
 .p-progress-spinner-circle {
   animation: none;
-  /* stroke: #fff; */
   stroke: var(--white-color);
 }
 
-.personal-details {
-  /* border-left: 1px solid #90909198; */
+.responsive-card-details-1 {
   border-left: 1px solid var(--light-color);
   height: 100% !important;
 }
-.card-details {
-  /* border-left: 1px solid #90909198; */
+.responsive-card-partition .responsive-card-content {
+  font-size: 16px;
+  color: var(--white-color);
+  margin: 0;
+  padding-bottom: 10px;
+  font-weight: 300;
+}
+
+.responsive-card-partition .responsive-card-content span {
+  /* color: red; */
+  font-weight: 600;
+}
+/* ========================================================================================== */
+.responsive-card-details-2 {
   border-left: 1px solid var(--light-color);
 }
 .table_image {
@@ -435,7 +390,7 @@ body {
   border-radius: 10px;
   overflow: hidden;
 }
-.card-image {
+.responsive-table-product-card .card-image {
   height: 200px;
   width: 150px;
   border-radius: 10px;
@@ -444,22 +399,17 @@ body {
   border-radius: 10px;
   overflow: hidden;
 }
-
 .p-datatable-thead {
   border-bottom: 1px solid;
 }
 .p-datatable-thead tr th {
-  /* background-color: #000; */
-  /* color: #818181; */
   color: var(--tabal-thead);
   background-color: var(--dark-color);
 }
 .p-datatable-tbody tr {
-  /* border-bottom: 1px solid #90909198; */
   border-bottom: 1px solid var(--light-color);
 }
 .p-datatable .p-datatable-tbody > tr {
-  /* background-color: #000; */
   background-color: var(--dark-color);
 }
 
@@ -469,7 +419,6 @@ body {
 
 .header_title {
   padding: 20px 50px;
-  /* border-bottom: 1px solid #90909198; */
   border-bottom: 1px solid var(--light-color);
 }
 .header_title .header_logo {
@@ -477,18 +426,16 @@ body {
 }
 
 .header_title .add_btn {
-  /* color: #fff !important; */
-  /* border: 1px solid #90909198; */
   color: var(--white-color) !important;
-  border: 1px solid var(--light-color);
+  font-size: 16px;
+  padding: 7px 12px;
+  border-radius: 5px;
 }
 .header_title .search-partition {
   gap: 10px;
 }
 
 .table_wrapper .p-inputwrapper {
-  /* background-color: #000; */
-  /* border: 1px solid #90909198 !important; */
   background-color: var(--dark-color);
   border: 1px solid var(--normal-background-color) !important;
 }
@@ -496,11 +443,9 @@ body {
   padding: 0 !important;
 }
 .p-dropdown-panel {
-  /* background-color: #000; */
   background-color: var(--dark-color);
 }
 .p-dialog-mask {
-  /* background-color: red; */
   background-color: var(--red-color);
 }
 .p-dialog-mask::after {
@@ -512,25 +457,21 @@ body {
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
-.main__modal-area {
-  /* background-color: #000; */
+.main_modal_area {
   background-color: var(--dark-color);
 }
-.main__modal-area .modal__gap {
-  /* background-color: #000; */
+.main_modal_area .modal__gap {
   background-color: var(--dark-color);
 }
-.main__modal-area .modal_title {
+.main_modal_area .modal_title {
   padding: 20px 50px;
   font-size: 22px;
-  /* border-bottom: 1px solid #90909198; */
   border-bottom: 1px solid var(--light-color);
 }
-.main__modal-area .form__container {
-  /* padding: 20px; */
+.main_modal_area .form__container {
   padding: 20px 50px;
 }
-.main__modal-area .main_modal_add_btn {
+.main_modal_area .main_modal_add_btn {
   padding-right: 50px;
 }
 .attendence_modal .p-inputtext.p-component.p-inputtext.p-component {
@@ -549,17 +490,7 @@ body {
 .chat_wrapper {
   padding: 30px 50px;
 }
-/* .chart_title {
-  padding-bottom: 10px;
-}
-.chart_title .value_title {
-  font-size: 28px;
-  padding-bottom: 8px;
-}
-.chart_title .total_title {
-  font-size: 18px;
-  color: var(--white-color);
-} */
+
 .chat_header {
   border-bottom: 1px solid var(--light-color) !important;
 }
@@ -587,10 +518,7 @@ body {
   font-weight: 300;
 }
 
-/* inear-gradient(to right, #121212, #232526) */
-
 .gradient_common_btn:hover {
-  /* background: var(--white-color) !important; */
   background: var(--light-color) !important;
   color: var(--white-color) !important;
   border: 2px solid var(--light-color);
@@ -730,6 +658,17 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+.responsive-card-details-1,
+.responsive-card-details-2 {
+  padding: 10px;
+}
+.delete_btn {
+  margin-left: 15px;
+}
+.delete_btn,
+.edit_btn {
+  padding: 5px 15px !important;
+}
 /*================================== responsive *==================================*/
 
 @media (max-width: 1279px) {
@@ -750,7 +689,7 @@ body {
   .header_title {
     padding: 20px 20px !important;
   }
-  .product-card {
+  .responsive-table-product-card {
     margin: 0 !important;
     max-width: 100% !important;
     width: 100% !important;
@@ -760,20 +699,20 @@ body {
     border-spacing: 0px;
     border: 1px solid #90909198;
   }
-  .card-image {
+  .responsive-table-product-card .card-image {
     padding: 0 !important;
     border-radius: 10px !important;
     overflow: hidden !important;
   }
-  .card-image img {
+  .responsive-table-product-card .card-image img {
     border-radius: 10px !important;
     overflow: hidden !important;
   }
-  .main__modal-area .main_modal_add_btn {
+  .main_modal_area .main_modal_add_btn {
     padding-right: 20px;
   }
-  .main__modal-area .modal_title,
-  .main__modal-area .form__container {
+  .main_modal_area .modal_title,
+  .main_modal_area .form__container {
     padding: 20px;
   }
   .amount_content {
@@ -785,6 +724,9 @@ body {
   .card___item {
     padding: 20px;
   }
+  .p-datatable-tbody tr {
+    border-bottom: none;
+  }
 }
 @media (max-width: 1200px) {
   .card___item .card-items .item-content {
@@ -792,14 +734,14 @@ body {
   }
 }
 @media (max-width: 1024px) {
-  .main__modal-area .input_select,
+  .main_modal_area .input_select,
   .date_wrapper,
   .input_wrap {
     padding: 8px;
   }
   .input_select .p-placeholder,
   .date_wrapper .p-component,
-  .main__modal-area .input_wrap::placeholder {
+  .main_modal_area .input_wrap::placeholder {
     font-size: 12px;
   }
   .amount_content {
@@ -849,7 +791,7 @@ body {
   .table_wrapper .p-inputwrapper .p-dropdown-trigger {
     height: 100%;
   }
-  .personal-details .product-description {
+  .responsive-card-details-1 .personal_details_description {
     height: 40px !important;
   }
   .table_wrapper .p-inputwrapper .p-dropdown-label {
@@ -877,11 +819,11 @@ body {
   .input_box_gap {
     padding: 10px 0;
   }
-  .main__modal-area .input_box_gap {
+  .main_modal_area .input_box_gap {
     padding: 8px 0px 0 !important;
     margin-bottom: 0px !important;
   }
-  .main__modal-area .modal_title {
+  .main_modal_area .modal_title {
     /* padding: 10px; */
     padding: 10px 20px;
     font-size: 18px;
@@ -909,15 +851,15 @@ body {
     width: 50%;
   }
   /* ================ */
-  .personal-details {
+  .responsive-card-details-1 {
     border-top: 1px solid #90909198;
     border-left: 0px;
   }
-  .card-details {
+  .responsive-card-details-2 {
     border-top: 0px;
     border-left: 0px;
   }
-  .card-image {
+  .responsive-table-product-card .card-image {
     width: 100%;
   }
   .form_input {
@@ -969,10 +911,16 @@ body {
   .card___item .card-items:nth-child(n + 3) {
     padding-top: 15px;
   }
+  .responsive-card-details-1 {
+    padding-bottom: 0px;
+  }
+  .responsive-card-details-2 {
+    padding-top: 0;
+  }
 }
 
 @media (max-width: 575px) {
-  .card-image {
+  .responsive-table-product-card .card-image {
     height: 350px;
   }
 

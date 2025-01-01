@@ -89,13 +89,17 @@ const CommonDataTable = (props) => {
             </IconField>
           </div>
           {isDisable && (
-            <Button className="btn_primary add_btn" onClick={handleAddItem}>
+            <Button
+              className="btn_primary add_btn gradient_common_btn"
+              onClick={handleAddItem}
+            >
               + Add
             </Button>
           )}
         </div>
       </div>
 
+      {/* <div className=""> */}
       <div className="table_wrapper ">
         <DataTable
           value={allItemList?.list}

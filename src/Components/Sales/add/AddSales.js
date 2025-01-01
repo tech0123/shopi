@@ -17,8 +17,8 @@ const initialSalesValue = {
 const AddSales = () => {
   return (
     <>
-      <div className="container-fluidm-0 p-0 overflow-hidden main__modal-area">
-        <div className="p-2 bg-orange-200 modal__gap">
+      <div className="container-fluid m-0 p-0 overflow-hidden main_modal_area">
+        <div className="p-2 modal__gap">
           <CommonAddEditSales initialValue={initialSalesValue} />
         </div>
       </div>
