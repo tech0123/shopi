@@ -374,7 +374,7 @@ const CustomerList = () => {
               >
                 Cancel
               </Button>
-              <Button type="submit" className="btn_primary">
+              <Button type="submit" className="btn_primary gradient_common_btn">
                 Submit
               </Button>
             </div>

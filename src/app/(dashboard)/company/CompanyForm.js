@@ -19,7 +19,7 @@ const initialState = {
   user_email: "",
   password: "",
   emp_no: "",
-  role: ""
+  role: "",
 };
 
 const schema = yup.object().shape({
@@ -35,7 +35,7 @@ const schema = yup.object().shape({
   user_email: yup.string().required("Please enter User Email."),
   password: yup.string().required("Please enter Password."),
   emp_no: yup.string().required("Please enter Emp No."),
-  role: yup.string().required("Please enter Role.")
+  role: yup.string().required("Please enter Role."),
 });
 
 const CompanyForm = () => {
@@ -44,19 +44,21 @@ const CompanyForm = () => {
     handleSubmit,
     formState: { errors },
     getFieldState,
-    getValues
+    getValues,
   } = useForm({
     resolver: yupResolver(schema),
-    defaultValues: initialState
+    defaultValues: initialState,
   });
 
-  const onSubmit = data => {
+  const onSubmit = (data) => {
     console.log(data);
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      {/* <div className=""> */}
       <h5 className="fw-bold">Company Profile</h5>
+      {/* </div> */}
       <div className="form_container">
         <Row>
           <Col lg={3}>
@@ -71,10 +73,11 @@ const CompanyForm = () => {
                   className="input_wrap"
                   {...register("company_name", { required: true })}
                 />
-                {errors.company_name &&
+                {errors.company_name && (
                   <p className="text-red-500 text-xs mt-1">
                     Please enter your Company Name.
-                  </p>}
+                  </p>
+                )}
               </div>
             </div>
           </Col>
@@ -91,10 +94,11 @@ const CompanyForm = () => {
                   // className="p-2 w-full"
                   {...register("legal_name", { required: true })}
                 />
-                {errors.legal_name &&
+                {errors.legal_name && (
                   <p className="text-red-500 text-xs mt-1">
                     Please enter your Legal Name.
-                  </p>}
+                  </p>
+                )}
               </div>
             </div>
           </Col>
@@ -111,10 +115,11 @@ const CompanyForm = () => {
                   // className="p-2 w-full"
                   {...register("business_type", { required: true })}
                 />
-                {errors.business_type &&
+                {errors.business_type && (
                   <p className="text-red-500 text-xs mt-1">
                     Please enter your Business Type.
-                  </p>}
+                  </p>
+                )}
               </div>
             </div>
           </Col>
@@ -130,10 +135,11 @@ const CompanyForm = () => {
                   className="input_wrap"
                   {...register("director_name", { required: true })}
                 />
-                {errors.director_name &&
+                {errors.director_name && (
                   <p className="text-red-500 text-xs mt-1">
                     Please enter your Director Name.
-                  </p>}
+                  </p>
+                )}
               </div>
             </div>
           </Col>
@@ -149,10 +155,11 @@ const CompanyForm = () => {
                   className="input_wrap"
                   {...register("email_id", { required: true })}
                 />
-                {errors.email_id &&
+                {errors.email_id && (
                   <p className="text-red-500 text-xs mt-1">
                     Please enter your Email Id.
-                  </p>}
+                  </p>
+                )}
               </div>
             </div>
           </Col>
@@ -168,10 +175,11 @@ const CompanyForm = () => {
                   className="input_wrap"
                   {...register("mobile_no", { required: true })}
                 />
-                {errors.mobile_no &&
+                {errors.mobile_no && (
                   <p className="text-red-500 text-xs mt-1">
                     Please enter your Mobile No.
-                  </p>}
+                  </p>
+                )}
               </div>
             </div>
           </Col>
@@ -187,10 +195,11 @@ const CompanyForm = () => {
                   className="input_wrap"
                   {...register("pan_no", { required: true })}
                 />
-                {errors.pan_no &&
+                {errors.pan_no && (
                   <p className="text-red-500 text-xs mt-1">
                     Please enter your PAN No.
-                  </p>}
+                  </p>
+                )}
               </div>
             </div>
           </Col>
@@ -206,10 +215,11 @@ const CompanyForm = () => {
                   className="input_wrap"
                   {...register("gst_no", { required: true })}
                 />
-                {errors.gst_no &&
+                {errors.gst_no && (
                   <p className="text-red-500 text-xs mt-1">
                     Please enter your GST No.
-                  </p>}
+                  </p>
+                )}
               </div>
             </div>
           </Col>

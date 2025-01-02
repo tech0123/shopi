@@ -371,7 +371,7 @@ const CommonAddEditSales = (props) => {
       <div className="modal_title">{salesId ? "Edit" : "Add"} Sales Item</div>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
-          <div className="form__container">
+          <div className="form_container">
             <Row>
               <Col lg={3}>
                 <CommonInputText

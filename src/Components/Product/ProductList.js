@@ -28,6 +28,7 @@ import { memo, useCallback, useEffect } from "react";
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
 import Image from "next/image";
 import { product_search_key } from "@/helper/commonValues";
+import { Tooltip } from "primereact/tooltip";
 
 const initialState = {
   image: "",
@@ -269,7 +270,6 @@ const ProductList = () => {
       search: searchParam,
     };
     const res = await dispatch(deleteItem(payload));
-
     if (res?.payload) {
       dispatch(setDeleteProductDialog(false));
     }
@@ -277,26 +277,26 @@ const ProductList = () => {
 
   const actionBodyResponsiveTemplate = (rowData) => {
     return (
-      <>
+      <div className="responsivecard-btn-group">
         <Button
-          className="text-left text-sm bg-white text-black px-2 py-1 m-1"
+          className="edit_btn gradient_common_btn"
           onClick={() => handleEditItem(rowData)}
         >
           Edit
         </Button>
         <Button
-          className="text-left text-sm bg-white text-black px-2 py-1 m-1"
+          className="delete_btn gradient_common_btn"
           onClick={() => handleDeleteItem(rowData)}
         >
           Delete
         </Button>
-      </>
+      </div>
     );
   };
 
   const responsiveTableTemplete = (rowData) => {
     return (
-      <div className="container flex flex-md-row flex-column product-card">
+      <div className="container flex flex-md-row flex-column responsive-table-product-card">
         <div className="flex justify-center card-image">
           <Image
             src={rowData?.image || ""}
@@ -307,25 +307,64 @@ const ProductList = () => {
             height={100}
           />
         </div>
-        <div className="flex flex-1 flex-col flex-md-row card-partition">
-          <div className="flex-1 p-2 personal-details">
-            <p className="text-left text-sm">ID: {rowData.id}</p>
-            <p className="text-left text-sm">Name: {rowData.name}</p>
-            <p className="text-left text-sm product-description">
-              Description: {rowData.description}
+        <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
+          <div className="flex-1 lg:col-3 responsive-card-details-1">
+            <p className="responsive-card-content">
+              <span>ID:</span> {rowData.id}
             </p>
-            <p className="text-left text-sm">
-              Available Qty: {rowData.available_quantity}
+            <p className="responsive-card-content">
+              <span>Name:</span> {rowData.name}
+            </p>
+            {/* <p className="text-left text-sm product-description"> */}
+            {/* <p
+              className="responsive-card-content responsive-card-description text-truncate"
+              title={rowData.description || "No description available"}
+            >
+              <span>Description:</span> {rowData.description}
+            </p> */}
+
+            {/* <p
+              className="text-left text-sm product-description text-truncate"
+              // title={rowData.description}
+              tooltip={rowData.description}
+              tooltipOptions={{ position: "top" }}
+            >
+              Description: {rowData.description}
+            </p> */}
+
+            <Tooltip target=".tooltipClass" />
+            <span
+              className="tooltipClass"
+              data-pr-tooltip={rowData.description}
+              data-pr-position="top"
+            >
+              <p className="text-left text-sm product-description text-truncate">
+                Description: {rowData.description}
+              </p>
+            </span>
+
+            {/* <p>{tooltipExample(rowData)}</p> */}
+            {/* <p>
+              {" "}
+              {TooltipExample(rowData)}
+              <TooltipExample rowData={rowData} />
+            </p> */}
+            <p className="responsive-card-content">
+              <span>Available Qty:</span> {rowData.available_quantity}
             </p>
           </div>
-          <div className="flex-1 p-2 flex flex-col card-details">
-            <p className="text-left text-sm">Discount: {rowData.discount}</p>
-            <p className="text-left text-sm">Tax: {rowData.tax}</p>
-            <p className="text-left text-sm">
-              Selling Price: {rowData.selling_price}
+          <div className="flex-1 lg:col-3 flex flex-col responsive-card-details-2">
+            <p className="responsive-card-content">
+              <span>Discount:</span> {rowData.discount}
             </p>
-            <p className="text-left text-sm">
-              Cost Price: {rowData.cost_price}
+            <p className="responsive-card-content">
+              <span>Tax:</span> {rowData.tax}
+            </p>
+            <p className="responsive-card-content">
+              <span>Selling Price:</span> {rowData.selling_price}
+            </p>
+            <p className="responsive-card-content">
+              <span>Cost Price:</span> {rowData.cost_price}
             </p>
             <div className="text-left mt-1">
               {actionBodyResponsiveTemplate(rowData)}
@@ -400,7 +439,7 @@ const ProductList = () => {
                 />
               </div> */}
             </div>
-            <div className="mt-3 me-2 flex justify-end items-center gap-4 modal__btn__group">
+            <div className="mt-3 me-2 flex justify-end items-center gap-4 modal_btn_group">
               <Button
                 className="btn_transparent"
                 onClick={(e) => {
@@ -410,7 +449,7 @@ const ProductList = () => {
               >
                 Cancel
               </Button>
-              <Button type="submit" className="btn_primary">
+              <Button type="submit" className="btn_primary gradient_common_btn">
                 Submit
               </Button>
             </div>

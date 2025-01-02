@@ -52,7 +52,7 @@ const CommonInputText = (props) => {
                 placeholder={`Enter ${title}`}
                 showIcon
                 dateFormat="dd-mm-yy"
-                // maxDate={new Date()}s
+                // maxDate={new Date()}
                 readOnlyInput
                 onChange={(e) =>
                   setValue(name, e.target.value, { shouldValidate: true })
@@ -82,7 +82,6 @@ const CommonInputText = (props) => {
                   setValue(name, e.value, { shouldValidate: true });
                   console.log("e.value", e.value);
                 }}
-
                 // {...register(time, { required: true })}
               />
             )}

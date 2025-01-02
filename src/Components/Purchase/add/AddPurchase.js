@@ -12,13 +12,17 @@ const initialPurchaseValue = {
   sub_total: 0,
   discount: 0,
   tax: 0,
-  total_amount: 0
+  total_amount: 0,
 };
 
 const AddPurchase = () => {
   return (
     <div>
-      <CommonAddEditPurchase initialValue={initialPurchaseValue} />
+      <div className="container-fluid m-0 p-0 overflow-hidden main_modal_area">
+        <div className="p-2 modal__gap">
+          <CommonAddEditPurchase initialValue={initialPurchaseValue} />
+        </div>
+      </div>
     </div>
   );
 };

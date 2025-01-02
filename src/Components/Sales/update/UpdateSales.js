@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import React, { useCallback, useEffect, useState } from "react";
 import CommonAddEditSales from "../CommonAddEditSales";
 import { setSalesTableData } from "@/store/slice/salesSlice";
@@ -8,19 +8,18 @@ import { useDispatch } from "react-redux";
 import { useParams } from "next/navigation";
 
 const initialSalesValue = {
-    customer_name: "",
-    customer: "",
-    sales_date: "",
-    bill_no: "",
-    mobile_number: "",
-    address: "",
-    sales_record_table: [],
-    sub_total: 0,
-    discount: 0,
-    tax: 0,
-    total_amount: 0
-  };
-
+  customer_name: "",
+  customer: "",
+  sales_date: "",
+  bill_no: "",
+  mobile_number: "",
+  address: "",
+  sales_record_table: [],
+  sub_total: 0,
+  discount: 0,
+  tax: 0,
+  total_amount: 0,
+};
 
 const UpdateSales = () => {
   const dispatch = useDispatch();
@@ -40,9 +39,9 @@ const UpdateSales = () => {
           updatedSalesTableData = res?.sales_record_table?.map((item) => {
             return {
               ...item,
-              unique_id: generateUniqueId()
-            }
-          })
+              unique_id: generateUniqueId(),
+            };
+          });
         }
 
         const getItemData = {
@@ -56,28 +55,28 @@ const UpdateSales = () => {
           sales_record_table: updatedSalesTableData,
           tax: res?.tax,
           discount: res?.discount,
-          sub_total: '',
-          total_amount: ''
-        }
+          sub_total: "",
+          total_amount: "",
+        };
 
         setInitialState(getItemData);
-        dispatch(setSalesTableData(updatedSalesTableData))
+        dispatch(setSalesTableData(updatedSalesTableData));
       }
     },
     [salesId]
   );
 
-  useEffect(
-    () => {
-      fetchPurchaseData();
-    },
-    [salesId]
-  );
+  useEffect(() => {
+    fetchPurchaseData();
+  }, [salesId]);
 
   return (
     <>
-        <CommonAddEditSales initialValue={initialState}/>
-
+      <div className="container-fluid m-0 p-0 overflow-hidden main_modal_area">
+        <div className="p-2 modal__gap">
+          <CommonAddEditSales initialValue={initialState} />
+        </div>
+      </div>
     </>
   );
 };
