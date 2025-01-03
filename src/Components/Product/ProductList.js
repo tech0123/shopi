@@ -315,22 +315,6 @@ const ProductList = () => {
             <p className="responsive-card-content">
               <span>Name:</span> {rowData.name}
             </p>
-            {/* <p className="text-left text-sm product-description"> */}
-            {/* <p
-              className="responsive-card-content responsive-card-description text-truncate"
-              title={rowData.description || "No description available"}
-            >
-              <span>Description:</span> {rowData.description}
-            </p> */}
-
-            {/* <p
-              className="text-left text-sm product-description text-truncate"
-              // title={rowData.description}
-              tooltip={rowData.description}
-              tooltipOptions={{ position: "top" }}
-            >
-              Description: {rowData.description}
-            </p> */}
 
             <Tooltip target=".tooltipClass" />
             <span
@@ -338,17 +322,10 @@ const ProductList = () => {
               data-pr-tooltip={rowData.description}
               data-pr-position="top"
             >
-              <p className="text-left text-sm product-description text-truncate">
-                Description: {rowData.description}
+              <p className="text-left text-sm product-description text-truncate responsive-card-content">
+                <span>Description:</span> {rowData.description}
               </p>
             </span>
-
-            {/* <p>{tooltipExample(rowData)}</p> */}
-            {/* <p>
-              {" "}
-              {TooltipExample(rowData)}
-              <TooltipExample rowData={rowData} />
-            </p> */}
             <p className="responsive-card-content">
               <span>Available Qty:</span> {rowData.available_quantity}
             </p>

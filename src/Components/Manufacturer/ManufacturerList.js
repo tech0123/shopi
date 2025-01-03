@@ -28,6 +28,7 @@ import {
 } from "@/store/slice/commonSlice";
 import { manufacturer_search_key } from "@/helper/commonValues";
 import Image from "next/image";
+import { Tooltip } from "primereact/tooltip";
 
 const initialState = {
   code: "",
@@ -285,35 +286,35 @@ const ManufacturerList = () => {
 
   const actionBodyResponsiveTemplate = (rowData) => {
     return (
-      <>
-        <p
-          className="text-left text-sm"
+      <div className="responsivecard-btn-group">
+        <Button
+          className="edit_btn gradient_common_btn"
           onClick={() => handleEditItem(rowData)}
         >
           Edit
-        </p>
-        <p
-          className="text-left text-sm"
+        </Button>
+        <Button
+          className="delete_btn gradient_common_btn"
           onClick={() => handleDeleteItem(rowData)}
         >
           Delete
-        </p>
-      </>
+        </Button>
+      </div>
     );
   };
 
   const responsiveTableTemplete = (rowData) => {
     return (
-      <div className="container flex flex-col border-white border-2 w-full">
-        <div className="flex justify-center border-b-2 border-white p-2">
+      <div className="container flex flex-md-row flex-column responsive-table-product-card manufacturer-responsive-table-product-card">
+        {/* <div className="flex justify-center border-b-2 border-white p-2">
           <Image
             src={rowData?.image}
             alt={rowData?._id}
             width={150}
             height={150}
           />
-        </div>
-        <div className="flex flex-1 flex-col md:flex-row">
+        </div> */}
+        {/* <div className="flex flex-1 flex-col md:flex-row">
           <div className="flex-1 border-r-2 border-white p-2">
             <p className="text-left text-sm">Code: {rowData.code}</p>
             <p className="text-left text-sm">Full Name: {rowData.name}</p>
@@ -337,7 +338,86 @@ const ManufacturerList = () => {
               {actionBodyResponsiveTemplate(rowData)}
             </div>
           </div>
+        </div> */}
+        <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
+          <div className="flex-1 lg:col-3 responsive-card-details-1">
+            {/* <div className="flex-1 border-r-2 border-white p-2"> */}
+            <p className="responsive-card-content">
+              <span>Code:</span> {rowData.code}
+            </p>
+            <p className="responsive-card-content">
+              <span>Full Name:</span> {rowData.name}
+            </p>
+            {/* <p className="responsive-card-content">
+              <span>Email Address:</span> {rowData.email_address}
+            </p> */}
+            <Tooltip target=".tooltipClass" />
+            <span
+              className="tooltipClass"
+              data-pr-tooltip={rowData.email_address}
+              data-pr-position="top"
+            >
+              <p className="text-left text-sm product-description text-truncate responsive-card-content">
+                <span>Email Address:</span> {rowData.email_address}
+              </p>
+            </span>
+            <p className="responsive-card-content">
+              <span>Phone Number:</span> {rowData.mobile_number}
+            </p>
+            <p className="responsive-card-content">
+              <span>GST No.:</span> {rowData.gst_no}
+            </p>
+            <p className="responsive-card-content">
+              <span>Country:</span> {rowData.country}
+            </p>
+          </div>
+          <div className="flex-1 lg:col-3 flex flex-col responsive-card-details-2">
+            <p className="responsive-card-content">
+              <span>State:</span> {rowData.state}
+            </p>
+            <p className="responsive-card-content">
+              <span>City:</span> {rowData.pin_codeity}
+            </p>
+            {/* <p className="responsive-card-content">
+              <span>Pin code:</span> {rowData.pin_code}
+            </p> */}
+
+            <Tooltip target=".tooltipClass" />
+            <span
+              className="tooltipClass"
+              data-pr-tooltip={rowData.pin_code}
+              data-pr-position="top"
+            >
+              <p className="text-left text-sm product-description text-truncate responsive-card-content">
+                <span>Pin code:</span> {rowData.pin_code}
+              </p>
+            </span>
+
+            {/* <p className="responsive-card-content">
+              <span>Address:</span> {rowData.address}
+            </p> */}
+
+            <Tooltip target=".tooltipClass" />
+            <span
+              className="tooltipClass"
+              data-pr-tooltip={rowData.address}
+              data-pr-position="top"
+            >
+              <p className="text-left text-sm product-description text-truncate responsive-card-content">
+                <span>Address:</span> {rowData.address}
+              </p>
+            </span>
+
+            <div className="text-left mt-1">
+              {actionBodyResponsiveTemplate(rowData)}
+            </div>
+          </div>
         </div>
+
+        {/* <div className="flex-1 border-l-2 border-white p-2 flex flex-col"> */}
+
+        {/* </div> */}
+        {/* </div> */}
       </div>
     );
   };

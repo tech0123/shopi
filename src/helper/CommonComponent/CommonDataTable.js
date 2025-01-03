@@ -113,6 +113,7 @@ const CommonDataTable = (props) => {
           className="max-xl:hidden"
         >
           {tableColumns?.map((column, i) => {
+            console.log(column, "column");
             return (
               <Column
                 key={i}

@@ -17,6 +17,8 @@ import {
 } from "@/store/slice/salesSlice";
 import { sales_search_key } from "@/helper/commonValues";
 import Loader from "@/helper/CommonComponent/Loader";
+import { Button } from "react-bootstrap";
+import { Tooltip } from "primereact/tooltip";
 
 const tableColumns = [
   { field: "customer_name", header: "Customer Name" },
@@ -145,45 +147,66 @@ const SalesListing = () => {
 
   const actionBodyResponsiveTemplate = (rowData) => {
     return (
-      <>
-        <p
-          className="text-left text-sm"
-          onClick={() => handleEditItem(rowData?._id)}
+      <div className="responsivecard-btn-group">
+        <button
+          className="edit_btn gradient_common_btn"
+          onClick={() => handleEditItem(rowData)}
         >
           Edit
-        </p>
-        <p
-          className="text-left text-sm"
+        </button>
+        <button
+          className="delete_btn gradient_common_btn"
           onClick={() => handleDeleteItem(rowData)}
         >
           Delete
-        </p>
-      </>
+        </button>
+      </div>
     );
   };
 
   const responsiveTableTemplete = (rowData) => {
     return (
-      <div className="container flex flex-col border-white border-2 w-full">
-        <div className="flex flex-1 flex-col md:flex-row">
-          <div className="flex-1 border-r-2 border-white p-2">
-            <p className="text-left text-sm">Code: {rowData?.code}</p>
-            <p className="text-left text-sm">
-              Full Name: {rowData?.manufacturer_name}
+      <div className="container flex flex-md-row flex-column responsive-table-product-card sales-list-responsive-table-product-card">
+        <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
+          <div className="flex-1 lg:col-3 responsive-card-details-1">
+            <p className="responsive-card-content">
+              <span>Code:</span> {rowData?.code}
             </p>
-            <p className="text-left text-sm">
-              Phone Number: {rowData?.mobile_number}
+            <p className="responsive-card-content">
+              <span>Full Name:</span> {rowData?.manufacturer_name}
+            </p>
+            <p className="responsive-card-content">
+              <span>Phone Number:</span> {rowData?.mobile_number}
             </p>
           </div>
-          <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
-            <p className="text-left text-sm">GST No.: {rowData?.gst_no}</p>
-            <p className="text-left text-sm">Address: {rowData.address}</p>
-          </div>
-          <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
+          <div className="flex-1 lg:col-3 flex flex-col responsive-card-details-2">
+            <p className="responsive-card-content">
+              <span>GST No.:</span> {rowData?.gst_no}
+            </p>
+            {/* <p className="responsive-card-content">
+              <span>Address:</span> {rowData.address}
+            </p> */}
+            
+            <Tooltip target=".tooltipClass" />
+            <span
+              className="tooltipClass"
+              data-pr-tooltip={rowData.address}
+              data-pr-position="top"
+            >
+              <p className="text-left text-sm product-description text-truncate responsive-card-content">
+                <span>Address:</span> {rowData.address}
+              </p>
+            </span>
+
             <div className="text-left mt-1">
               {actionBodyResponsiveTemplate(rowData)}
             </div>
           </div>
+          {/* <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
+            <div className="text-left mt-1">
+              {actionBodyResponsiveTemplate(rowData)}
+            </div>
+          </div> */}
         </div>
       </div>
     );

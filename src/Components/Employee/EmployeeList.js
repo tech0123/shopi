@@ -311,45 +311,54 @@ const EmployeeList = () => {
 
   const actionBodyResponsiveTemplate = (rowData) => {
     return (
-      <>
-        <p
-          className="text-left text-sm"
+      <div className="responsivecard-btn-group">
+        <Button
+          className="edit_btn gradient_common_btn"
           onClick={() => handleEditItem(rowData)}
         >
           Edit
-        </p>
-        <p
-          className="text-left text-sm"
+        </Button>
+        <Button
+          className="delete_btn gradient_common_btn"
           onClick={() => handleDeleteItem(rowData)}
         >
           Delete
-        </p>
-      </>
+        </Button>
+      </div>
     );
   };
 
   const responsiveTableTemplete = (rowData) => {
     return (
-      <div className="container flex flex-col border-white border-2 w-full">
-        <div className="flex justify-center border-b-2 border-white p-2">
+      <div className="container flex flex-md-row flex-column responsive-table-product-card">
+        <div className="flex justify-center card-image customers_image">
           <Image
             src={rowData?.image || ""}
             alt={rowData?._id || "Image not found"}
-            width={150}
-            height={150}
+            width={100}
+            height={100}
+            className="card-img w-100 object-cover object-center h-100 transition duration-300 ease-in-out hover:scale-110"
           />
         </div>
-        <div className="flex flex-1 flex-col md:flex-row">
-          <div className="flex-1 border-r-2 border-white p-2">
-            <p className="text-left text-sm">Name: {rowData?.name}</p>
-            <p className="text-left text-sm">Email: {rowData?.email}</p>
-            <p className="text-left text-sm">
-              Mobile Number: {rowData?.mobile_number}
+        <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
+          <div className="flex-1 lg:col-3 responsive-card-details-1">
+            <p className="responsive-card-content">
+              <span>Name:</span> {rowData?.name}
+            </p>
+            <p className="responsive-card-content">
+              <span>Email:</span> {rowData?.email}
+            </p>
+            <p className="responsive-card-content">
+              <span>Mobile Number:</span> {rowData?.mobile_number}
             </p>
           </div>
-          <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
-            <p className="text-left text-sm">Role: {rowData?.role}</p>
-            <p className="text-left text-sm">Salary: {rowData?.salary}</p>
+          <div className="flex-1 lg:col-3 flex flex-col responsive-card-details-2">
+            <p className="responsive-card-content">
+              <span>Role:</span> {rowData?.role}
+            </p>
+            <p className="responsive-card-content">
+              <span>Salary:</span> {rowData?.salary}
+            </p>
             <div className="text-left mt-1">
               {actionBodyResponsiveTemplate(rowData)}
             </div>

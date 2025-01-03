@@ -45,6 +45,7 @@ import CustomPaginator from "@/helper/CommonComponent/CustomPaginator";
 import Image from "next/image";
 import { setAllProductsData } from "@/store/slice/cartSlice";
 import { Dropdown } from "primereact/dropdown";
+import { Tooltip } from "primereact/tooltip";
 
 const intialDialogState = {
   product: "",
@@ -302,29 +303,83 @@ const CommonAddEditPurchase = (props) => {
 
   const actionBodyTemplate = (rowData) => {
     return (
-      <>
+      <div className="responsivecard-btn-group">
         <Button
-          icon="pi pi-pencil"
-          rounded
-          outlined
-          className="mr-2"
-          onClick={(e) => {
-            e.preventDefault();
-            handleEditItem(rowData);
-          }}
-        />
+          className="edit_btn gradient_common_btn"
+          onClick={() => handleEditItem(rowData)}
+        >
+          Edit
+        </Button>
+        <Button
+          className="delete_btn gradient_common_btn"
+          onClick={() => handleDeleteItem(rowData)}
+        >
+          Delete
+        </Button>
+      </div>
+    );
+  };
 
-        <Button
-          icon="pi pi-trash"
-          rounded
-          outlined
-          severity="danger"
-          onClick={(e) => {
-            e.preventDefault();
-            handleDeleteItem(rowData);
-          }}
-        />
-      </>
+  const responsiveTableTemplete = (rowData) => {
+    return (
+      <div className="container flex flex-md-row flex-column product-card responsive-table-product-card">
+        <div className="flex justify-center card-image">
+          <Image
+            src={rowData?.image || ""}
+            alt={rowData?._id || "Image not found"}
+            // className="card-img w-100 h-100 object-cover transition duration-300 ease-in-out hover:scale-110"
+            className="card-img w-100 object-cover object-center h-100 transition duration-300 ease-in-out hover:scale-110"
+            width={100}
+            height={100}
+          />
+        </div>
+        <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
+          <div className="flex-1 responsive-card-details-1">
+            <p className="responsive-card-content">
+              <span>ID: </span>
+              {rowData.id}
+            </p>
+            <p className="responsive-card-content">
+              <span>Name: </span>
+              {rowData.name}
+            </p>
+            {/* <p className="responsive-card-content product-description">
+              <span>Description:</span> {rowData.description}
+            </p> */}
+            <Tooltip target=".tooltipClass" />
+            <span
+              className="tooltipClass"
+              data-pr-tooltip={rowData.description}
+              data-pr-position="top"
+            >
+              <p className="text-left text-sm product-description text-truncate responsive-card-content">
+                <span>Description: </span>
+                {rowData.description}
+              </p>
+            </span>
+            <p className="responsive-card-content">
+              <span>Available Qty: </span>
+              {rowData.available_quantity}
+            </p>
+          </div>
+          <div className="flex-1 flex flex-col responsive-card-details-2">
+            <p className="responsive-card-content">
+              <span>Discount: </span>
+              {rowData.discount}
+            </p>
+            <p className="responsive-card-content">
+              <span>Tax:</span> {rowData.tax}
+            </p>
+            <p className="responsive-card-content">
+              <span>Selling Price:</span> {rowData.selling_price}
+            </p>
+            <p className="responsive-card-content">
+              <span>Cost Price:</span> {rowData.cost_price}
+            </p>
+            <div className="text-left mt-1">{actionBodyTemplate(rowData)}</div>
+          </div>
+        </div>
+      </div>
     );
   };
 
@@ -578,6 +633,7 @@ const CommonAddEditPurchase = (props) => {
           <div>
             <div className="table_wrapper">
               <DataTable
+                className="max-xl:hidden"
                 value={purchaseTableData}
                 dataKey="id"
                 paginator
@@ -600,6 +656,19 @@ const CommonAddEditPurchase = (props) => {
                   header="Action"
                   body={actionBodyTemplate}
                   exportable={false}
+                  style={{ minWidth: "12rem" }}
+                />
+              </DataTable>
+              <DataTable
+                value={purchaseTableData}
+                dataKey="id"
+                paginator
+                rows={10}
+                rowsPerPageOptions={[5, 10, 25]}
+                className="mt-10 block xl:hidden"
+              >
+                <Column
+                  body={responsiveTableTemplete}
                   style={{ minWidth: "12rem" }}
                 />
               </DataTable>

@@ -416,6 +416,9 @@ body {
   border-radius: 10px;
   overflow: hidden;
 }
+.responsive-table-product-card .card-image.customers_image {
+  height: 150px !important;
+}
 .p-datatable-thead {
   border-bottom: 1px solid;
 }
@@ -429,11 +432,9 @@ body {
 .p-datatable .p-datatable-tbody > tr {
   background-color: var(--dark-color);
 }
-
 .p-datatable .p-datatable-tbody > tr > td {
   padding: 10px;
 }
-
 .header_title {
   padding: 20px 50px;
   border-bottom: 1px solid var(--light-color);
@@ -690,6 +691,17 @@ body {
   border: 2px solid var(--light-color);
   font-size: 14px;
 }
+
+.table_data_wrap {
+  column-count: 2;
+  column-rule: solid 1px var(--light-color);
+} 
+
+.sales-list-responsive-table-product-card .responsive-card-details-1 ,
+.manufacturer-responsive-table-product-card .responsive-card-details-1 {
+  border: none;
+}
+
 /*================================== responsive *==================================*/
 
 @media (max-width: 1279px) {
@@ -801,16 +813,20 @@ body {
   .pro_card_gap .pi-plus-circle:before {
     font-size: 25px;
   }
+  .header_title .add_btn {
+    padding: 7px !important;
+    font-size: 12px;
+  }
 }
 @media (max-width: 992px) {
   .input_wrap,
   .date_wrapper {
     padding: 8px;
   }
-  .header_title .add_btn {
+  /* .header_title .add_btn {
     padding: 8px !important;
     font-size: 12px;
-  }
+  } */
   .table_wrapper .p-inputwrapper {
     height: 40px;
   }
@@ -889,10 +905,12 @@ body {
   .responsive-card-details-1 {
     border-top: 1px solid #90909198;
     border-left: 0px;
+    padding-bottom: 0 !important;
   }
   .responsive-card-details-2 {
     border-top: 0px;
     border-left: 0px;
+    padding-top: 0 !important;
   }
   .responsive-table-product-card .card-image {
     width: 100%;
@@ -951,6 +969,14 @@ body {
   }
   .responsive-card-details-2 {
     padding-top: 0;
+  }
+  .table_data_wrap {
+    column-count: 1 !important;
+    /* column-rule-color: red; */
+    column-rule: none;
+  }
+  .manufacturer-responsive-table-product-card .responsive-card-details-1{
+    border-top: 0;
   }
 }
 

@@ -340,20 +340,28 @@ const Attendance = () => {
 
   const actionBodyResponsiveTemplate = (rowData) => {
     return (
-      <div className="flex flex-col items-start">
-        <p
-          className="cursor-pointer text-sm"
-          onClick={() => handleEditItem(rowData)}
-        >
-          Edit
-        </p>
-        <div className="mt-2 w-full">
-          <Button className="w-full" onClick={() => clickInFunction(rowData)}>
+      <div className="responsivecard-btn-group d-flex align-items-center gap-2 justify-content-md-start justify-content-center">
+        <div>
+          <button
+            className="cursor-pointer w-fit gradient_common_btn"
+            onClick={() => handleEditItem(rowData)}
+          >
+            Edit
+          </button>
+        </div>
+        <div className="">
+          <Button
+            className="gradient_common_btn"
+            onClick={() => clickInFunction(rowData)}
+          >
             In
           </Button>
         </div>
-        <div className="mt-2 w-full">
-          <Button className="w-full" onClick={() => clickOutFunction(rowData)}>
+        <div className="">
+          <Button
+            className=" gradient_common_btn"
+            onClick={() => clickOutFunction(rowData)}
+          >
             Out
           </Button>
         </div>
@@ -363,10 +371,12 @@ const Attendance = () => {
 
   const responsiveTableTemplete = (rowData) => {
     return (
-      <div className="container flex flex-col border-white border-2 w-full">
-        <div className="flex flex-1 flex-col md:flex-row">
-          <div className="flex-1 border-r-2 border-white p-2">
-            <p className="text-left text-sm">Name: {rowData?.name}</p>
+      <div className="container flex flex-col w-full">
+        <div className=" responsive-table-product-card">
+          <div className="flex-1 p-2">
+            <p className="responsive-card-content">
+              <span>Name:</span> {rowData?.name}
+            </p>
 
             <div className="text-left mt-1">
               {actionBodyResponsiveTemplate(rowData)}
