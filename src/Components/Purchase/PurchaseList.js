@@ -1,6 +1,6 @@
-'use client';
+"use client";
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
-import _ from 'lodash';
+import _ from "lodash";
 import Loader from "@/helper/CommonComponent/Loader";
 import {
   deleteItem,
@@ -9,71 +9,69 @@ import {
   setPageLimit,
   setSearchParam,
 } from "@/store/slice/commonSlice";
-import { setDeletePurchaseDialog, setPurchaseTableData } from "@/store/slice/purchaseSlice";
+import {
+  setDeletePurchaseDialog,
+  setPurchaseTableData,
+} from "@/store/slice/purchaseSlice";
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { purchase_search_key } from "@/helper/commonValues";
+import { Tooltip } from "primereact/tooltip";
+import { Button } from "react-bootstrap";
 
 const tableColumns = [
-  { field: 'manufacturer_name', header: "Manufacturer Name" },
-  { field: 'purchase_date', header: "Purchase Date" },
-  { field: 'bill_no', header: "Bill No" },
-  { field: 'gst_no', header: "GST No." },
-  { field: 'mobile_number', header: "Mobile Number" },
-  { field: 'address', header: "Address" },
-]
+  { field: "manufacturer_name", header: "Manufacturer Name" },
+  { field: "purchase_date", header: "Purchase Date" },
+  { field: "bill_no", header: "Bill No" },
+  { field: "gst_no", header: "GST No." },
+  { field: "mobile_number", header: "Mobile Number" },
+  { field: "address", header: "Address" },
+];
 
 function PurchaseList() {
   const router = useRouter();
   const dispatch = useDispatch();
 
   const [selectedPurchaseData, setSelectedPurchaseData] = useState({});
-  const { allPurchaseListData, deletePurchaseDialog } = useSelector(({ purchase }) => purchase)
-  const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(({ common }) => common)
+  const { allPurchaseListData, deletePurchaseDialog } = useSelector(
+    ({ purchase }) => purchase
+  );
+  const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(
+    ({ common }) => common
+  );
 
-  const fetchPurchaseList = useCallback(async (
-    start = 1,
-    limit = 7,
-    search = ''
-  ) => {
-    const payload = {
-      modal_to_pass: "Purchase",
-      search_key: purchase_search_key,
-      start: start,
-      limit: limit,
-      search: search?.trim(),
-    }
-    const res = await dispatch(getAllDataList(payload))
-
-  }, [dispatch])
+  const fetchPurchaseList = useCallback(
+    async (start = 1, limit = 7, search = "") => {
+      const payload = {
+        modal_to_pass: "Purchase",
+        search_key: purchase_search_key,
+        start: start,
+        limit: limit,
+        search: search?.trim(),
+      };
+      const res = await dispatch(getAllDataList(payload));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
-    fetchPurchaseList(
-      currentPage,
-      pageLimit,
-      searchParam
-    )
+    fetchPurchaseList(currentPage, pageLimit, searchParam);
   }, []);
 
-  const onPageChange = page => {
+  const onPageChange = (page) => {
     if (page !== currentPage) {
       let pageIndex = currentPage;
-      if (page?.page === 'Prev') pageIndex--;
-      else if (page?.page === 'Next') pageIndex++;
+      if (page?.page === "Prev") pageIndex--;
+      else if (page?.page === "Next") pageIndex++;
       else pageIndex = page;
 
       dispatch(setCurrentPage(pageIndex));
-      fetchPurchaseList(
-        pageIndex,
-        pageLimit,
-        searchParam,
-
-      );
+      fetchPurchaseList(pageIndex, pageLimit, searchParam);
     }
   };
 
-  const onPageRowsChange = page => {
+  const onPageRowsChange = (page) => {
     dispatch(setCurrentPage(page === 0 ? 0 : 1));
     dispatch(setPageLimit(page));
     const pageValue =
@@ -92,49 +90,40 @@ function PurchaseList() {
       prevPageValue < allPurchaseListData?.totalRows ||
       pageValue < allPurchaseListData?.totalRows
     ) {
-      fetchPurchaseList(
-        page === 0 ? 0 : 1,
-        page,
-        searchParam,
-
-      );
+      fetchPurchaseList(page === 0 ? 0 : 1, page, searchParam);
     }
   };
 
-  const handleSearchInput = e => {
+  const handleSearchInput = (e) => {
     dispatch(setCurrentPage(1));
 
-    fetchPurchaseList(
-      currentPage,
-      pageLimit,
-      e.target.value?.trim(),
-    );
+    fetchPurchaseList(currentPage, pageLimit, e.target.value?.trim());
   };
 
-  const handleChangeSearch = e => {
+  const handleChangeSearch = (e) => {
     debounceHandleSearchInput(e);
     dispatch(setSearchParam(e.target.value));
-  }
+  };
 
   const debounceHandleSearchInput = useCallback(
-    _.debounce(e => {
+    _.debounce((e) => {
       handleSearchInput(e);
     }, 800),
-    [],
+    []
   );
 
   const handleAddItem = () => {
-    dispatch(setPurchaseTableData([]))
-    router.push('/purchase/add')
+    dispatch(setPurchaseTableData([]));
+    router.push("/purchase/add");
   };
 
   const handleEditItem = async (id) => {
-    router.push(`/purchase/${id}`)
+    router.push(`/purchase/${id}`);
   };
 
-  const handleDeleteItem = item => {
+  const handleDeleteItem = (item) => {
     dispatch(setDeletePurchaseDialog(true));
-    setSelectedPurchaseData(item)
+    setSelectedPurchaseData(item);
   };
 
   const hidePurchaseDeleteDialog = () => {
@@ -143,62 +132,91 @@ function PurchaseList() {
 
   const handleDeletePurchaseItem = async () => {
     const payload = {
-      modal_to_pass: 'purchase',
+      modal_to_pass: "purchase",
       id: selectedPurchaseData?._id,
       search_key: purchase_search_key,
       start: currentPage,
       limit: pageLimit,
-      search: searchParam
+      search: searchParam,
     };
-    const res = await dispatch(deleteItem(payload))
+    const res = await dispatch(deleteItem(payload));
     if (res?.payload) {
       dispatch(setDeletePurchaseDialog(false));
     }
   };
 
-  const actionBodyResponsiveTemplate = rowData => {
+  const actionBodyResponsiveTemplate = (rowData) => {
     return (
-      <>
-        <p className="text-left text-sm" onClick={() => handleEditItem(rowData?._id)}>
+      // <>
+      //   <p
+      //     className="text-left text-sm m-0"
+      //     onClick={() => handleEditItem(rowData?._id)}
+      //   >
+      //     Edit
+      //   </p>
+      //   <p
+      //     className="text-left text-sm m-0"
+      //     onClick={() => handleDeleteItem(rowData)}
+      //   >
+      //     Delete
+      //   </p>
+      // </>
+
+      <div className="responsivecard-btn-group">
+        <button
+          className="edit_btn gradient_common_btn"
+          onClick={() => handleEditItem(rowData)}
+        >
           Edit
-        </p>
-        <p
-          className="text-left text-sm"
+        </button>
+        <button
+          className="delete_btn gradient_common_btn"
           onClick={() => handleDeleteItem(rowData)}
         >
           Delete
-        </p>
-      </>
+        </button>
+      </div>
     );
   };
 
-  const responsiveTableTemplete = rowData => {
-
+  const responsiveTableTemplete = (rowData) => {
     return (
-      <div className="container flex flex-col border-white border-2 w-full">
-        <div className="flex flex-1 flex-col md:flex-row">
-          <div className="flex-1 border-r-2 border-white p-2">
-            <p className="text-left text-sm">
-              Code: {rowData?.code}
-            </p>
-            <p className="text-left text-sm">
-              Full Name: {rowData?.manufacturer_name}
-            </p>
-            <p className="text-left text-sm">
-              Phone Number: {rowData?.mobile_number}
-            </p>
-          </div>
-          <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
-            <p className="text-left text-sm">
-              GST No.: {rowData?.gst_no}
-            </p>
-            <p className="text-left text-sm">
-              Address: {rowData.address}
-            </p>
-          </div>
-          <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
-            <div className="text-left mt-1">
-              {actionBodyResponsiveTemplate(rowData)}
+      <div className="purchase-list_card w-100">
+        <div className="container flex flex-md-row flex-column responsive-table-product-card">
+          <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
+            <div className="flex-1 lg:col-3 responsive-card-details-first">
+              <p className="responsive-card-content">
+                <span>Code:</span> {rowData?.code}
+              </p>
+              <p className="responsive-card-content">
+                <span>Full Name:</span> {rowData?.manufacturer_name}
+              </p>
+              <p className="responsive-card-content">
+                <span>Phone Number:</span> {rowData?.mobile_number}
+              </p>
+            </div>
+            <div className="flex-1 lg:col-3 responsive-card-details-1">
+              <p className="responsive-card-content">
+                <span>GST No.:</span> {rowData?.gst_no}
+              </p>
+              {/* <p className="responsive-card-content">
+              <span>Address:</span> {rowData.address}
+            </p> */}
+              <Tooltip target=".tooltipClass" />
+              <span
+                className="tooltipClass"
+                data-pr-tooltip={rowData.description}
+                data-pr-position="top"
+              >
+                <p className="text-left text-sm product-description text-truncate responsive-card-content">
+                  <span>Address:</span> {rowData.address}
+                </p>
+              </span>
+            </div>
+            <div className="flex-1 lg:col-3 responsive-card-details-2">
+              <div className="text-left">
+                {actionBodyResponsiveTemplate(rowData)}
+              </div>
             </div>
           </div>
         </div>
@@ -228,7 +246,7 @@ function PurchaseList() {
         currentPage={currentPage}
       />
     </>
-  )
+  );
 }
 
 export default PurchaseList;

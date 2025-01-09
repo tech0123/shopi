@@ -108,6 +108,7 @@ const AllProductsTable = () => {
         <IconField iconPosition="right" className="min-w-full min-h-10">
           <InputIcon className="pi pi-search mr-6" />
           <InputText
+            autoComplete="off"
             id="search"
             placeholder={`${
               Object.keys(selectedCustomer)?.length
@@ -211,31 +212,49 @@ const AllProductsTable = () => {
 
   const multiBodyTemplate = (data) => {
     return (
-      <div className="container flex flex-col w-full">
+      <div className="container flex flex-md-row flex-column responsive-table-product-card">
         {/* Centered Image */}
-        <div className="flex justify-center p-3">
-          <Image src={data.image} alt={data?._id} width={150} height={150} />
+        <div className="flex justify-center card-image">
+          <Image
+            src={data.image}
+            alt={data?._id}
+            width={100}
+            height={100}
+            className="h-100 w-100 object-fit-cover"
+          />
         </div>
 
         {/* Bottom Sections */}
         {/* <div className="flex flex-1 bg-gray-900 "> */}
-        <div className="flex flex-1">
+        <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
           {/* Left Section */}
-          <div className="flex-1 p-3">
-            <p className="text-left">Name: {data.name}</p>
-            <p className="text-left">QTY: {qtyBody(data)}</p>
-            <p className="text-left">
-              Available Quantity: {data.available_quantity}
+          <div className="flex-1 lg:col-3 responsive-card-details-1 text-left">
+            <p className="responsive-card-content">
+              <span>Name:</span> {data.name}
+            </p>
+            <p className="responsive-card-content modal_input">
+              <span>QTY: </span>
+              {qtyBody(data)}
+            </p>
+            <p className="responsive-card-content ">
+              <span>Available Quantity:</span> {data.available_quantity}
             </p>
           </div>
 
           {/* Right Section */}
-          <div className="flex-1 p-3 flex flex-col">
-            <p className="text-left">Discount: {discountBody(data)}</p>
-            <p className="text-left">MRP: {data.selling_price}</p>
-            <p className="text-left">Amount: {data.amount || 0}</p>
+          <div className="flex-1 lg:col-3 flex flex-col responsive-card-details-2 text-left">
+            <p className="responsive-card-content modal_input">
+              <span>Discount:</span> {discountBody(data)}
+            </p>
+            <p className="responsive-card-content">
+              <span>MRP:</span> {data.selling_price}
+            </p>
+            <p className="responsive-card-content">
+              <span>Amount:</span> {data.amount || 0}
+            </p>
             <Button
-              type="button"
+              className="gradient_common_btn add_card_add_btn"
+              type="button "
               disabled={!data.qty || error[data?._id]}
               onClick={(e) => {
                 handleSelectProduct(data);
@@ -304,7 +323,7 @@ const AllProductsTable = () => {
             }
           }}
           onChange={handleChange}
-          className={`w-full h-10 p-3 ${
+          className={` list_qty_input_fild ${
             error[data?._id]?.qty ? "border-red-500 border-2" : ""
           }`}
         />
@@ -384,7 +403,7 @@ const AllProductsTable = () => {
               setAllProductList({ ...allProductList, list: newProduct })
             );
           }}
-          className={`w-full h-10 p-3 ${
+          className={`list_qty_input_fild ${
             error[data?._id]?.discount ? "border-red-500 border-2" : ""
           }`}
         />
@@ -399,29 +418,36 @@ const AllProductsTable = () => {
 
   const customerBodyTemplate = (data) => {
     return (
-      <div className="container flex flex-col w-full">
-        {/* Bottom Sections */}
-        <div className="flex flex- mx-3 ">
-          {/* Left Section */}
-          <div className="flex-1 p-3">
-            <p className="text-left">Name: {data.name}</p>
-            <p className="text-left">Available Quantity: {data.email}</p>
-          </div>
+      <div className="customer_list_table w-100">
+        <div className="container-fluidflex flex-col w-full responsive-table-product-card">
+          {/* Bottom Sections */}
+          <div className="flex responsive-card-partition">
+            {/* Left Section */}
+            <div className="flex-1 responsive-card-details-1 text-start">
+              <p className="responsive-card-content m-0">
+                <span>Name:</span> {data.name}
+              </p>
+              <p className="responsive-card-content m-0">
+                <span>Email:</span> {data.email}
+              </p>
+            </div>
 
-          {/* Right Section */}
-          <div className="flex-1 p-3 flex flex-col">
-            {/* <p className='text-left'>MRP: {data.selling_price}</p> */}
-            <Button
-              type="button"
-              disabled={error[data?._id]}
-              onClick={(e) => {
-                dispatch(setSelectedCustomer(data));
-                dispatch(setSearchCustomer(data?.name));
-                setHideMe(false);
-              }}
-            >
-              Select
-            </Button>
+            {/* Right Section */}
+            <div className="flex-1 flex flex-col responsive-card-details-2">
+              {/* <p className='text-left'>MRP: {data.selling_price}</p> */}
+              <Button
+                className="gradient_common_btn select_btn"
+                type="button"
+                disabled={error[data?._id]}
+                onClick={(e) => {
+                  dispatch(setSelectedCustomer(data));
+                  dispatch(setSearchCustomer(data?.name));
+                  setHideMe(false);
+                }}
+              >
+                Select
+              </Button>
+            </div>
           </div>
         </div>
       </div>

@@ -300,18 +300,21 @@ const CommonAddEditSales = (props) => {
 
   const actionBodyTemplate = (rowData) => {
     return (
-      <>
+      <div className="responsivecard-btn-group">
         <Button
           icon="pi pi-pencil"
           rounded
           outlined
-          className="mr-2"
+          // className="mr-2 gradient_common_btn"
           onClick={(e) => {
             e.preventDefault();
             handleEditItem(rowData);
           }}
-        />
+        >
+          Edit
+        </Button>
         <Button
+          // className="gradient_common_btn"
           icon="pi pi-trash"
           rounded
           outlined
@@ -320,14 +323,48 @@ const CommonAddEditSales = (props) => {
             e.preventDefault();
             handleDeleteItem(rowData);
           }}
-        />
-      </>
+        >
+          {" "}
+          Delete
+        </Button>
+      </div>
+    );
+  };
+  const actionBodyTemplateIcon = (rowData) => {
+    return (
+      <div className="responsivecard-btn-group">
+        <Button
+          // icon="pi pi-pencil"
+          rounded
+          outlined
+          // className="mr-2 gradient_common_btn"
+          onClick={(e) => {
+            e.preventDefault();
+            handleEditItem(rowData);
+          }}
+        >
+          Edit
+        </Button>
+        <Button
+          // className="gradient_common_btn"
+          icon="pi pi-trash"
+          rounded
+          outlined
+          severity="danger"
+          onClick={(e) => {
+            e.preventDefault();
+            handleDeleteItem(rowData);
+          }}
+        >
+          Delete
+        </Button>
+      </div>
     );
   };
 
   const responsiveTableTemplete = (rowData) => {
     return (
-      <div className="container flex flex-md-row flex-column product-card">
+      <div className="container flex flex-md-row flex-column responsive-table-product-card">
         <div className="flex justify-center card-image">
           <Image
             src={rowData?.image || ""}
@@ -338,25 +375,33 @@ const CommonAddEditSales = (props) => {
             height={100}
           />
         </div>
-        <div className="flex flex-1 flex-col flex-md-row card-partition">
-          <div className="flex-1 p-2 personal-details">
-            <p className="text-left text-sm">ID: {rowData.id}</p>
-            <p className="text-left text-sm">Name: {rowData.name}</p>
-            <p className="text-left text-sm product-description">
-              Description: {rowData.description}
+        <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
+          <div className="flex-1 lg:col-3 responsive-card-details-1">
+            <p className="responsive-card-content">
+              <span>ID:</span> {rowData.id}
             </p>
-            <p className="text-left text-sm">
-              Available Qty: {rowData.available_quantity}
+            <p className="responsive-card-content">
+              <span>Name:</span> {rowData.name}
+            </p>
+            <p className="responsive-card-content product-description">
+              <span>Description:</span> {rowData.description}
+            </p>
+            <p className="responsive-card-content">
+              <span>Available Qty:</span> {rowData.available_quantity}
             </p>
           </div>
-          <div className="flex-1 p-2 flex flex-col card-details">
-            <p className="text-left text-sm">Discount: {rowData.discount}</p>
-            <p className="text-left text-sm">Tax: {rowData.tax}</p>
-            <p className="text-left text-sm">
-              Selling Price: {rowData.selling_price}
+          <div className="flex-1 lg:col-3 flex flex-col responsive-card-details-2">
+            <p className="responsive-card-content">
+              <span>Discount:</span> {rowData.discount}
             </p>
-            <p className="text-left text-sm">
-              Cost Price: {rowData.cost_price}
+            <p className="responsive-card-content">
+              <span>Tax:</span> {rowData.tax}
+            </p>
+            <p className="responsive-card-content">
+              <span>Selling Price:</span> {rowData.selling_price}
+            </p>
+            <p className="responsive-card-content">
+              <span>Cost Price:</span> {rowData.cost_price}
             </p>
             <div className="text-left mt-1">{actionBodyTemplate(rowData)}</div>
           </div>
@@ -459,7 +504,7 @@ const CommonAddEditSales = (props) => {
                 })}
                 <Column
                   header="Action"
-                  body={actionBodyTemplate}
+                  body={actionBodyTemplateIcon}
                   exportable={false}
                   style={{ minWidth: "12rem" }}
                 />

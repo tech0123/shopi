@@ -301,6 +301,26 @@ const CommonAddEditPurchase = (props) => {
     setSelectedPurchaseData(product);
   };
 
+  const actionBodyTemplateIcon = (rowData) => {
+    return (
+      <div className="responsivecard-btn-group">
+        <Button
+          icon="pi pi-pencil"
+          className="edit_btn"
+          onClick={() => handleEditItem(rowData)}
+        >
+          {/* Edit */}
+        </Button>
+        <Button
+          icon="pi pi-trash"
+          className="delete_btn"
+          onClick={() => handleDeleteItem(rowData)}
+        >
+          {/* Delete5 */}
+        </Button>
+      </div>
+    );
+  };
   const actionBodyTemplate = (rowData) => {
     return (
       <div className="responsivecard-btn-group">
@@ -654,7 +674,7 @@ const CommonAddEditPurchase = (props) => {
                 })}
                 <Column
                   header="Action"
-                  body={actionBodyTemplate}
+                  body={actionBodyTemplateIcon}
                   exportable={false}
                   style={{ minWidth: "12rem" }}
                 />

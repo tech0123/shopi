@@ -295,6 +295,48 @@ const SelectedProductsTable = () => {
 
   const PreviouslyOrderedTable = () => {
     return (
+      // <Accordion className="gap-2 pro_card_gap">
+      //   <AccordionTab header="Previously Bought Products">
+      //     {selectedProducts?.length > 0 ? (
+      //       selectedProducts.map((product, index) => (
+      //         <div
+      //           key={index}
+      //           className="flex sm:flex-row justify-between align-items-center items-center sm:items-start"
+      //         >
+      //           <div className="d-flex align-items-center">
+      //             <div className="flex justify-center select_product_image">
+      //               <Image
+      //                 src={product.image}
+      //                 alt={product?._id}
+      //                 width={100}
+      //                 height={100}
+      //               />
+      //             </div>
+      //             <p className="m-0 select_product_content">
+      //               <strong>{product.name}</strong>
+      //               <br />
+      //               Qty: {product.qty} | Price: {product.selling_price}
+      //             </p>
+      //           </div>
+      //           <Button
+      //             type="button"
+      //             icon="pi pi-plus-circle"
+      //             className="action-icon-size sm:mt-0"
+      //             onClick={() => {
+      //               dispatch(setSearchParam(product.name.trim()));
+      //               handleSearchInput(product.name.trim());
+      //               // debounceHandleSearchInput("kevDia")
+      //             }}
+      //             rounded
+      //           />
+      //         </div>
+      //       ))
+      //     ) : (
+      //       <p>No previously bought products.</p>
+      //     )}
+      //   </AccordionTab>
+      // </Accordion>
+
       <Accordion className="gap-2 pro_card_gap">
         <AccordionTab header="Previously Bought Products">
           {selectedProducts?.length > 0 ? (
@@ -303,19 +345,21 @@ const SelectedProductsTable = () => {
                 key={index}
                 className="flex sm:flex-row justify-between align-items-center items-center sm:items-start"
               >
-                <div className="d-flex align-items-center">
-                  <div className="flex justify-center select_product_image">
+                <div className="container flex flex-md-row flex-column responsive-table-product-card">
+                  <div className="flex justify-center card-image select_product_image">
                     <Image
                       src={product.image}
                       alt={product?._id}
                       width={100}
                       height={100}
+                      className="w-100 h-100 object-fit-cover"
                     />
                   </div>
-                  <p className="m-0 select_product_content">
+                  <p className=" m-0 select_product_content modal_inputs">
                     <strong>{product.name}</strong>
                     <br />
-                    Qty: {product.qty} | Price: {product.selling_price}
+                    <span>Qty:</span> {product.qty} | Price:{" "}
+                    {product.selling_price}
                   </p>
                 </div>
                 <Button
@@ -332,7 +376,7 @@ const SelectedProductsTable = () => {
               </div>
             ))
           ) : (
-            <p>No previously bought products.</p>
+            <p className="m-0">No previously bought products.</p>
           )}
         </AccordionTab>
       </Accordion>
@@ -379,7 +423,7 @@ const SelectedProductsTable = () => {
         type="button"
         disabled={!data?.qty}
         icon="pi pi-minus-circle"
-        className="action-icon-size p-5"
+        className="action-icon-size p-5 gradient_common_bt"
         onClick={(e) => {
           handleUnselectProduct(data);
         }}
@@ -390,25 +434,44 @@ const SelectedProductsTable = () => {
 
   const multiBodyTemplate = (data) => {
     return (
-      <div className="container flex flex-col  w-full">
-        <div className="flex justify-center p-3">
-          <Image src={data?.image} alt={data?._id} width={100} height={100} />
+      <div className="container flex flex-md-row flex-column responsive-table-product-card">
+        <div className="flex justify-center card-image">
+          <Image
+            src={data?.image}
+            alt={data?._id}
+            width={100}
+            height={100}
+            className="ard-img w-100 object-cover object-center h-100 transition duration-300 ease-in-out hover:scale-110"
+          />
         </div>
-
-        <div className="flex flex-1 bg-gray-900">
-          <div className="flex-1  p-3">
+        <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
+          <div className="flex-1 lg:col-3 responsive-card-details-1">
             {/* <p className='text-left'>Date: {new Date(data?.date).toLocaleDateString()}</p> */}
-            <p className="text-left">Name: {data?.name}</p>
-            <p className="text-left">QTY: {qtyBody(data)}</p>
-            <p className="text-left">Stock: {data?.available_quantity}</p>
+            <p className="responsive-card-content">
+              <span>Name:</span> {data?.name}
+            </p>
+            <p className="responsive-card-content modal_input">
+              <span>QTY:</span> {qtyBody(data)}
+            </p>
+            <p className="responsive-card-content">
+              <span>Stock:</span> {data?.available_quantity}
+            </p>
           </div>
-
-          <div className="flex-1 p-3 flex flex-col ">
-            <p className="text-left">Discount: {discountBody(data)}</p>
-            <p className="text-left">MRP: {data?.selling_price}</p>
-            <p className="text-left">Amount: {data?.amount}</p>
+          <div className="flex-1 lg:col-3 flex flex-col responsive-card-details-2">
+            <p className="responsive-card-content modal_input">
+              <span>Discount:</span> {discountBody(data)}
+            </p>
+            <p className="responsive-card-content">
+              <span>MRP: </span>
+              {data?.selling_price}
+            </p>
+            <p className="responsive-card-content">
+              <span>Amount: </span>
+              {data?.amount}
+            </p>
             <Button
-              type="button"
+              className="gradient_common_btn add_card_remove_btn"
+              type="button "
               onClick={(e) => {
                 handleUnselectProduct(data);
               }}
@@ -419,6 +482,56 @@ const SelectedProductsTable = () => {
         </div>
       </div>
     );
+
+    // return (
+    //   <div className="container flex flex-md-row flex-column responsive-table-product-card sales-list-responsive-table-product-card">
+    //     <div className="flex justify-center card-image">
+    //       <Image
+    //         src={data?.image}
+    //         alt={data?._id}
+    //         width={100}
+    //         height={100}
+    //         className="w-100 h-100 object-fit-cover"
+    //       />
+    //     </div>
+    //     <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
+    //       <div className="flex-1 lg:col-3 responsive-card-details-1">
+    //         {/* <p className='text-left'>Date: {new Date(data?.date).toLocaleDateString()}</p> */}
+    //         <p className="responsive-card-content">
+    //           <span>Name:</span> {data?.name}
+    //         </p>
+    //         <p className="responsive-card-content modal_input">
+    //           <span>QTY: </span>
+    //           {qtyBody(data)}
+    //         </p>
+    //         <p className="responsive-card-content">
+    //           <span>Stock:</span> {data?.available_quantity}
+    //         </p>
+    //       </div>
+    //       <div className="flex-1 lg:col-3 flex flex-col responsive-card-details-2">
+    //         <p className="responsive-card-content modal_input">
+    //           <span>Discount: </span>
+    //           {discountBody(data)}
+    //         </p>
+    //         <p className="responsive-card-content">
+    //           <span>MRP:</span> {data?.selling_price}
+    //         </p>
+    //         <p className="responsive-card-content">
+    //           <span>Amount:</span> {data?.amount}
+    //         </p>
+    //         <Button
+    //           className="gradient_common_btn remove_btn"
+    //           type="button"
+    //           onClick={(e) => {
+    //             handleUnselectProduct(data);
+    //           }}
+    //         >
+    //           Remove
+    //         </Button>
+    //       </div>
+    //     </div>
+    //   </div>
+    // );
   };
 
   const qtyBody = (data) => {
@@ -439,6 +552,7 @@ const SelectedProductsTable = () => {
         amount: amount,
         discount: discount,
       };
+
       dispatch(setSelectedProducts(newCustomers));
 
       setError((prevErrors) => {
@@ -499,7 +613,7 @@ const SelectedProductsTable = () => {
             }
           }}
           onChange={handleChange}
-          className={`h-10 p-3 ${
+          className={`list_qty_input_fild ${
             error[data?._id]?.qty ? "border-red-500 border-2" : ""
           }`}
         />
@@ -600,7 +714,7 @@ const SelectedProductsTable = () => {
             newCustomers[index] = { ...newCustomers[index], discount: value };
             dispatch(setSelectedProducts(newCustomers));
           }}
-          className={`h-10 p-3 ${
+          className={`list_qty_input_fild ${
             error[data?._id]?.discount ? "border-red-500 border-2" : ""
           }`}
         />
@@ -620,7 +734,7 @@ const SelectedProductsTable = () => {
         <Image
           src={rowData?.image || ""}
           alt={rowData?._id || "Image not found"}
-          className="shadow-2 border-round table_img h-100 w-100 object-cover transition duration-300 ease-in-out hover:scale-110"
+          className="shadow-2 border-round table_img h-100 w-100 transition object-fit-cover duration-300 ease-in-out hover:scale-110"
           width={100}
           height={100}
           style={{ objectFit: "cover" }}
@@ -640,7 +754,7 @@ const SelectedProductsTable = () => {
         }`}
       >
         <DataTable
-          className="max-xl:hidden mx-5"
+          className="max-xl:hidden"
           value={selectedProducts}
           paginator
           rows={10}
@@ -684,11 +798,19 @@ const SelectedProductsTable = () => {
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
         >
           <Column
+            // headerStyle={{ width: "8rem", textAlign: "center" }}
+            // bodyStyle={{ textAlign: "center", overflow: "visible" }}
+            body={multiBodyTemplate}
+          />
+        </DataTable>
+        {/* <DataTable className="block xl:hidden">
+          {" "}
+          <Column
             headerStyle={{ width: "8rem", textAlign: "center" }}
             bodyStyle={{ textAlign: "center", overflow: "visible" }}
             body={multiBodyTemplate}
           />
-        </DataTable>
+        </DataTable> */}
         <PreviouslyOrderedTable />
       </div>
       <Footer />

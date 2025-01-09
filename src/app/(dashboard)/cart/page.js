@@ -13,11 +13,13 @@ export default function Cart() {
 
       <div className="main flex flex-col justify-center items-center">
         {/* <div className="container w-full p-6 pb-0 mt-6 mx-10 lg:mx-24"> */}
-        <div className="container w-full details_container">
+        {/* <div className="container w-full details_container"> */}
+        <div className="container-fluid w-full details_container">
           <AllProductsTable />
         </div>
         {/* <div className="container w-full p-6 pt-0 mx-10 lg:mx-24 "> */}
-        <div className="container w-full">
+        {/* <div className="container w-full"> */}
+        <div className="container-fluid w-full details_container">
           <SelectedProductsTable />
         </div>
         {/* <div className="container w-full p-6 mt-6 mx-10 lg:mx-24 border-2 border-white">
