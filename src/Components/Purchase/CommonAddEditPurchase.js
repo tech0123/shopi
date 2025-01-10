@@ -307,14 +307,22 @@ const CommonAddEditPurchase = (props) => {
         <Button
           icon="pi pi-pencil"
           className="edit_btn"
-          onClick={() => handleEditItem(rowData)}
+          // onClick={() => handleEditItem(rowData)}
+          onClick={(e) => {
+            e.preventDefault();
+            handleEditItem(rowData);
+          }}
         >
           {/* Edit */}
         </Button>
         <Button
           icon="pi pi-trash"
           className="delete_btn"
-          onClick={() => handleDeleteItem(rowData)}
+          // onClick={() => handleDeleteItem(rowData)}
+          onClick={(e) => {
+            e.preventDefault();
+            handleDeleteItem(rowData);
+          }}
         >
           {/* Delete5 */}
         </Button>
@@ -412,7 +420,7 @@ const CommonAddEditPurchase = (props) => {
   };
 
   const deleteProductDialogFooter = (
-    <div className="d-flex justify-end gap-4">
+    <div className="d-flex justify-content-end gap-4">
       <Button
         label="No"
         icon="pi pi-times"
@@ -813,7 +821,7 @@ const CommonAddEditPurchase = (props) => {
               </Row>
             </div>
           </div>
-          <div className="me-10 flex justify-end items-center gap-3 mb-5">
+          <div className="me-10 flex justify-content-end items-center gap-3 mb-5">
             <Button
               className="btn_transparent"
               onClick={(e) => {

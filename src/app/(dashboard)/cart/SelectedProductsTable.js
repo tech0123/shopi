@@ -278,7 +278,7 @@ const SelectedProductsTable = () => {
         <div className="flex justify-center items-center w-full product_save_btm">
           <Button
             type="button"
-            className="px-4 py-2 mx-2 ounded-lg save-btn"
+            className="px-4 py-2 mx-2 ounded-lg save-btn gradient_common_btn"
             disabled={
               !selectedProducts?.length ||
               Object.keys(selectedCustomer).length === 0
@@ -343,9 +343,10 @@ const SelectedProductsTable = () => {
             selectedProducts.map((product, index) => (
               <div
                 key={index}
-                className="flex sm:flex-row justify-between align-items-center items-center sm:items-start"
+                className="flex sm:flex-row justify-between align-item-md-start align-items-center items-center sm:items-start responsive-table-product-card responsive-table-product-card-wreaper"
               >
-                <div className="container flex flex-md-row flex-column responsive-table-product-card">
+                {/* <div className="container-fluid flex flex-md-row flex-column responsive-table-product-card"> */}
+                <div className="container-fluid d-flex flex-md-row flex-column p-0 ">
                   <div className="flex justify-center card-image select_product_image">
                     <Image
                       src={product.image}
@@ -373,6 +374,7 @@ const SelectedProductsTable = () => {
                   }}
                   rounded
                 />
+                {/* </div> */}
               </div>
             ))
           ) : (

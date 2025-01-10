@@ -270,7 +270,7 @@ const CommonAddEditSales = (props) => {
   };
 
   const deleteProductDialogFooter = (
-    <div className="d-flex justify-end gap-4">
+    <div className="d-flex justify-content-end gap-4">
       <Button
         label="No"
         icon="pi pi-times"
@@ -467,7 +467,8 @@ const CommonAddEditSales = (props) => {
               })}
             </Row>
           </div>
-          <div className="d-flex justify-end main_modal_add_btn ">
+          {/* <div className="d-flex justify-content-end main_modal_add_btn "> */}
+          <div className="d-flex justify-content-end main_modal_add_btn ">
             <Button
               className="btn_primary gradient_common_btn modal_add_btn"
               onClick={(e) => {
@@ -645,8 +646,8 @@ const CommonAddEditSales = (props) => {
               </Row>
             </div>
           </div>
-          {/* <div className="me-10 flex justify-end items-center gap-3 mb-5"> */}
-          <div className="me-10 flex justify-end items-center gap-3 mb-5 main_modal_btn_grup_group">
+          {/* <div className="me-10 flex justify-content-end items-center gap-3 mb-5"> */}
+          <div className="me-10 flex justify-content-end items-item-center gap-3 mb-2 main_modal_btn_grup_group">
             <Button
               className="btn_transparent"
               onClick={(e) => {

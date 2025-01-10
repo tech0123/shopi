@@ -18,7 +18,7 @@ const AddSales = () => {
   return (
     <>
       <div className="container-fluid m-0 p-0 overflow-hidden main_modal_area">
-        <div className="p-2 modal__gap">
+        <div className="p-2 sales_purchase_main_gap">
           <CommonAddEditSales initialValue={initialSalesValue} />
         </div>
       </div>

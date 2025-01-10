@@ -165,7 +165,7 @@ function PurchaseList() {
       <div className="responsivecard-btn-group">
         <button
           className="edit_btn gradient_common_btn"
-          onClick={() => handleEditItem(rowData)}
+          onClick={() => handleEditItem(rowData?._id)}
         >
           Edit
         </button>

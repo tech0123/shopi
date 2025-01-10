@@ -19,7 +19,7 @@ const AddPurchase = () => {
   return (
     <div>
       <div className="container-fluid m-0 p-0 overflow-hidden main_modal_area">
-        <div className="p-2 modal__gap">
+        <div className="p-2 sales_purchase_main_gap">
           <CommonAddEditPurchase initialValue={initialPurchaseValue} />
         </div>
       </div>
@@ -232,7 +232,7 @@ export default AddPurchase;
 //   };
 
 //   const deleteProductDialogFooter = (
-//     <div className="d-flex justify-end gap-4">
+//     <div className="d-flex justify-content-end gap-4">
 //       <Button
 //         label="No"
 //         icon="pi pi-times"
@@ -281,7 +281,7 @@ export default AddPurchase;
 //             })}
 //           </Row>
 //         </div>
-//         <div className="m-5 d-flex justify-end">
+//         <div className="m-5 d-flex justify-content-end">
 //           <Button
 //             className="btn_primary"
 //             onClick={e => {
@@ -390,7 +390,7 @@ export default AddPurchase;
 //               </Row>
 //             </div>
 //           </div>
-//         <div className="me-10 flex justify-end items-center gap-3 mb-5">
+//         <div className="me-10 flex justify-content-end items-center gap-3 mb-5">
 //           <Button
 //             className="btn_transparent"
 //             onClick={e => {

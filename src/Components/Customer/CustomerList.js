@@ -400,7 +400,7 @@ const CustomerList = () => {
                 })}
               </Row>
             </div>
-            <div className="mt-3 me-2 flex justify-end items-center gap-4 modal__btn__group">
+            <div className="mt-3 me-2 flex justify-content-end items-center gap-4 modal_footer_gap_btn_group">
               <Button
                 className="btn_transparent"
                 onClick={(e) => {

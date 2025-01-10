@@ -472,7 +472,7 @@ const ManufacturerList = () => {
                 })}
               </Row>
             </div>
-            <div className="mt-3 me-2 flex justify-end items-center gap-4">
+            <div className="mt-3 me-2 flex justify-content-end items-center gap-4">
               <Button
                 className="btn_transparent"
                 onClick={(e) => {

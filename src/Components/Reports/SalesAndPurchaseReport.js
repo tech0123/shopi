@@ -82,7 +82,7 @@ const SalesAndPurchaseReport = () => {
 
   return (
     <>
-      <Row className=" card___item m-0 justify-start flex-wrap">
+      <Row className=" reports_title_card_item m-0 justify-start flex-wrap">
         <Col lg={3} md={4} sm={6} className="card-items">
           <div className="item-content">
             <h6 className="main_title m-0">{`₹ ${
@@ -101,7 +101,7 @@ const SalesAndPurchaseReport = () => {
         </Col>
         <Col lg={3} md={4} sm={6} className="card-items">
           <div className="item-content">
-            <h6 className="m-0 main_title">$24,500</h6>
+            <h6 className="m-0 main_title">$ 24,500</h6>
             <h5 className="m-0 sub_title">Todays Revenue</h5>
           </div>
         </Col>
@@ -113,13 +113,13 @@ const SalesAndPurchaseReport = () => {
         </Col>
         <Col lg={3} md={4} sm={6} className="card-items">
           <div className="item-content">
-            <h6 className="m-0 main_title">$9982.00</h6>
+            <h6 className="m-0 main_title">$ 9982.00</h6>
             <h5 className="m-0 sub_title">Total Expenses</h5>
           </div>
         </Col>
         <Col lg={3} md={4} sm={6} className="card-items">
           <div className="item-content">
-            <h6 className="m-0 main_title">$80.5</h6>
+            <h6 className="m-0 main_title">$ 80.5</h6>
             <h5 className="m-0 sub_title">Avg. Value</h5>
           </div>
         </Col>

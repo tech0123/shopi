@@ -40,7 +40,7 @@ const CommonDataTable = (props) => {
   };
 
   const deleteProductDialogFooter = (
-    <div className="d-flex justify-end gap-4">
+    <div className="d-flex justify-content-end gap-4">
       <Button
         label="No"
         icon="pi pi-times"
