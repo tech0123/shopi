@@ -8,6 +8,7 @@ const Loader = () => {
         strokeWidth="3"
         fill="transparent"
         animationDuration=".8s"
+        // animationDuration="10s"
       />
     </div>
   );

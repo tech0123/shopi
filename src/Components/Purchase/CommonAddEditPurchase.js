@@ -562,9 +562,7 @@ const CommonAddEditPurchase = (props) => {
 
   return (
     <>
-      <div className="modal_title">
-        {purchaseId ? "Edit" : "Add"} Purchase Item
-      </div>
+      <div className="modal_title">{purchaseId ? "Edit" : "Add"} Purchase</div>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="form_container">
@@ -637,7 +635,7 @@ const CommonAddEditPurchase = (props) => {
               })}
             </Row>
           </div>
-          <div className=" d-flex justify-end main_modal_add_btn ">
+          <div className=" d-flex justify-content-end main_modal_add_btn ">
             <Button
               className="btn_primary gradient_common_btn"
               onClick={(e) => {
