@@ -302,7 +302,7 @@ const CommonAddEditSales = (props) => {
     return (
       <div className="responsivecard-btn-group">
         <Button
-          icon="pi pi-pencil"
+          // icon="pi pi-pencil"
           rounded
           outlined
           // className="mr-2 gradient_common_btn"
@@ -314,8 +314,8 @@ const CommonAddEditSales = (props) => {
           Edit
         </Button>
         <Button
-          // className="gradient_common_btn"
-          icon="pi pi-trash"
+          className="gradient_common_btn"
+          // icon="pi pi-trash"
           rounded
           outlined
           severity="danger"
@@ -334,7 +334,7 @@ const CommonAddEditSales = (props) => {
     return (
       <div className="responsivecard-btn-group">
         <Button
-          // icon="pi pi-pencil"
+          icon="pi pi-pencil"
           rounded
           outlined
           // className="mr-2 gradient_common_btn"
@@ -343,7 +343,7 @@ const CommonAddEditSales = (props) => {
             handleEditItem(rowData);
           }}
         >
-          Edit
+          {/* Edit */}
         </Button>
         <Button
           // className="gradient_common_btn"
@@ -356,7 +356,7 @@ const CommonAddEditSales = (props) => {
             handleDeleteItem(rowData);
           }}
         >
-          Delete
+          {/* Delete */}
         </Button>
       </div>
     );

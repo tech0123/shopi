@@ -7,6 +7,8 @@ import { IconField } from "primereact/iconfield";
 import { InputText } from "primereact/inputtext";
 import CommonDeleteConfirmation from "./CommonDeleteConfirmation";
 import CustomPaginator from "./CustomPaginator";
+import { Image } from "react-bootstrap";
+import { Dialog } from "primereact/dialog";
 
 const CommonDataTable = (props) => {
   const {
@@ -28,8 +30,14 @@ const CommonDataTable = (props) => {
     currentPage,
     isDisable = true,
   } = props;
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageDialog, setImageDialog] = useState(false);
 
   const [globalFilter, setGlobalFilter] = useState(null);
+  const handleImageClick = (rowData) => {
+    setSelectedImage(rowData.image); // Store the image of the clicked row
+    setImageDialog(true); // Open the dialog
+  };
 
   const deleteProductDialogFooter = (
     <div className="d-flex justify-end gap-4">
@@ -70,7 +78,6 @@ const CommonDataTable = (props) => {
       </div>
     );
   };
-
   return (
     <>
       <div className="d-flex justify-between align-items-center header_title">
@@ -119,10 +126,34 @@ const CommonDataTable = (props) => {
                 key={i}
                 field={column?.field}
                 header={column?.header}
-                body={column?.body}
+                body={(rowData) =>
+                  column?.field === "image" ? (
+                    // Only the "image" column is clickable
+                    <div
+                      onClick={() => handleImageClick(rowData)} // Open the image dialog when clicked
+                      style={{ cursor: "pointer" }}
+                    >
+                      <Image
+                        src={rowData?.image || ""}
+                        alt={rowData?._id || "Image not found"}
+                        className="shadow-2 border-round table_img object-cover transition duration-300 ease-in-out hover:scale-110"
+                        width={100}
+                        height={100}
+                        style={{ objectFit: "cover" }}
+                      />
+                    </div>
+                  ) : (
+                    // For other columns, just display the data
+                    <span>{rowData[column?.field]}</span>
+                  )
+                }
                 sortable
                 style={{ minWidth: "12rem" }}
-                className="max-xl:hidden"
+                className={
+                  column?.field === "image"
+                    ? "addd max-xl:hidden"
+                    : "max-xl:hidden"
+                }
               />
             );
           })}
@@ -159,7 +190,22 @@ const CommonDataTable = (props) => {
           totalCount={allItemList?.totalRows}
         />
       </div>
-
+      <Dialog
+        visible={imageDialog}
+        onHide={() => setImageDialog(false)} // Close the dialog
+        // header="Image"
+        style={{ width: "100%", height: "100%" }} // Adjust the size as needed
+        className="image_modal"
+      >
+        <Image
+          src={selectedImage}
+          alt="Selected Image"
+          className="shadow-2 border-round w-100 h-100 object-fit-cover"
+          width={100}
+          height={100}
+          style={{ objectFit: "cover" }}
+        />
+      </Dialog>
       <CommonDeleteConfirmation
         open={deleteItemDialog}
         hideContent={hideDeleteDialog}

@@ -293,7 +293,6 @@ const ProductList = () => {
       </div>
     );
   };
-
   const responsiveTableTemplete = (rowData) => {
     return (
       <div className="container flex flex-md-row flex-column responsive-table-product-card">

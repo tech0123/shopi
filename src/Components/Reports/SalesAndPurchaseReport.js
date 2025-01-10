@@ -101,26 +101,26 @@ const SalesAndPurchaseReport = () => {
         </Col>
         <Col lg={3} md={4} sm={6} className="card-items">
           <div className="item-content">
-            <h6 className="m-0 main_title">lorem-input</h6>
-            <h5 className="m-0 sub_title">lorem-input</h5>
+            <h6 className="m-0 main_title">$24,500</h6>
+            <h5 className="m-0 sub_title">Today's Revenue</h5>
           </div>
         </Col>
         <Col lg={3} md={4} sm={6} className="card-items">
           <div className="item-content">
-            <h6 className="m-0 main_title">lorem-input</h6>
-            <h5 className="m-0 sub_title">lorem-input</h5>
+            <h6 className="m-0 main_title">82.8%</h6>
+            <h5 className="m-0 sub_title">Conversion Rate</h5>
           </div>
         </Col>
         <Col lg={3} md={4} sm={6} className="card-items">
           <div className="item-content">
-            <h6 className="m-0 main_title">lorem-input</h6>
-            <h5 className="m-0 sub_title">lorem-input</h5>
+            <h6 className="m-0 main_title">$9982.00</h6>
+            <h5 className="m-0 sub_title">Total Expenses</h5>
           </div>
         </Col>
         <Col lg={3} md={4} sm={6} className="card-items">
           <div className="item-content">
-            <h6 className="m-0 main_title">lorem-input</h6>
-            <h5 className="m-0 sub_title">lorem-input</h5>
+            <h6 className="m-0 main_title">$80.5</h6>
+            <h5 className="m-0 sub_title">Avg. Value</h5>
           </div>
         </Col>
       </Row>

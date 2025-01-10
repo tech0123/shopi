@@ -745,6 +745,7 @@ body {
   background-color: var(--drop-item);
   border: 2px solid var(--light-color);
 }
+
 /* 
 .list_qty_input_fild{
     margin: 0 !important;
@@ -757,6 +758,14 @@ body {
     border: 2px solid var(--light-color);
     background-color: var(--drop-item);
 } */
+
+.image_modal {
+  background-color: transparent;
+}
+.image_modal .p-dialog-content,
+.image_modal .p-dialog-header {
+  background-color: transparent;
+}
 
 /*================================== responsive *==================================*/
 
@@ -830,7 +839,6 @@ body {
     max-width: 250px;
     padding: 8px 12px;
   }
-  
 }
 @media (max-width: 1200px) {
   .card___item .card-items .item-content {
@@ -1063,10 +1071,9 @@ body {
     padding-bottom: 0;
   }
   .purchase-list_card .responsive-table-product-card .responsive-card-partition .responsive-card-details-1 {
-  border-top: 0;
-  padding-top: 0;
+    border-top: 0;
+    padding-top: 0;
   }
-
 }
 
 @media (max-width: 575px) {

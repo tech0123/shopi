@@ -371,7 +371,7 @@ const Attendance = () => {
 
   const responsiveTableTemplete = (rowData) => {
     return (
-      <div className="container flex flex-col w-full">
+      <div className="container-fluid p-0 flex flex-col w-full">
         <div className=" responsive-table-product-card">
           <div className="flex-1 p-2">
             <p className="responsive-card-content">
