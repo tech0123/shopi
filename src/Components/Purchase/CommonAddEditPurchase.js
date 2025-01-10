@@ -562,9 +562,7 @@ const CommonAddEditPurchase = (props) => {
 
   return (
     <>
-      <div className="modal_title">
-        {purchaseId ? "Edit" : "Add"} Purchase Item
-      </div>
+      <div className="modal_title">{purchaseId ? "Edit" : "Add"} Purchase</div>
       <FormProvider {...methods}>
         <form onSubmit={methods.handleSubmit(onSubmit)}>
           <div className="form_container">
