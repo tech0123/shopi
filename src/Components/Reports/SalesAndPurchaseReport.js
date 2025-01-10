@@ -102,7 +102,7 @@ const SalesAndPurchaseReport = () => {
         <Col lg={3} md={4} sm={6} className="card-items">
           <div className="item-content">
             <h6 className="m-0 main_title">$24,500</h6>
-            <h5 className="m-0 sub_title">Today's Revenue</h5>
+            <h5 className="m-0 sub_title">Todays Revenue</h5>
           </div>
         </Col>
         <Col lg={3} md={4} sm={6} className="card-items">
