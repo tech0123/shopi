@@ -278,7 +278,6 @@ body {
   background-color: var(--dark-color);
   box-shadow: 0px 0px 6px 0px gray;
 }
-
 .modal_datatable .p-datatable-header,
 .modal_datatable td {
   padding: 0px;
@@ -329,7 +328,6 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--scroll-background-hover);
 }
-
 .loader_Wrapper {
   position: fixed;
   left: 0;
@@ -356,7 +354,7 @@ body {
 .amount_content {
   border-radius: 20px;
   margin: 50px;
-  box-shadow: 0px 0px 10px 0px gray;
+  box-shadow: rgb(248, 248, 248) 0px 3px 5px;
   background-color: var(--dark-color);
   color: var(--white-color);
   padding: 20px;
@@ -621,7 +619,7 @@ body {
   padding-bottom: 10px;
 }
 .details_container {
-  padding: 20px 50px 20px 50px !important;
+  padding: 0px 50px 20px 50px !important;
 }
 .product_add_content {
   padding: 30px 50px;
@@ -700,6 +698,14 @@ body {
 .edit_btn {
   padding: 5px 15px !important;
 }
+.select_add_btn_area {
+  padding-right: 30px;
+}
+.select_add_btn_area .select_add_btn {
+  padding: 8px 12px !important;
+  border-radius: 5px !important;
+  font-size: 14px !important;
+}
 .main_modal_btn_grup_group .gradient_common_btn {
   padding: 8px 12px;
   border-radius: 5px;
@@ -751,30 +757,38 @@ body {
   border: 2px solid var(--light-color);
 }
 
-/* 
-.list_qty_input_fild{
-    margin: 0 !important;
-    width: 100%;
-    /* width: auto !important; *
-    padding: 12px;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 17px;
-    border: 2px solid var(--light-color);
-    background-color: var(--drop-item);
-} */
-
 .image_modal {
   background-color: transparent;
+  max-width: 1050px;
+  max-height: 650px;
+  box-shadow: none;
 }
 .image_modal .p-dialog-content,
 .image_modal .p-dialog-header {
   background-color: transparent;
 }
-
+.table_card_content {
+  display: none;
+  margin-top: 20px;
+}
+.table_data_image {
+  height: 80px;
+  width: 80px;
+  border-radius: 15px;
+  overflow: hidden;
+}
 /*================================== responsive *==================================*/
+@media (max-width: 1440px) {
+  .image_modal {
+    max-width: 900px;
+    max-height: 600px;
+  }
+}
 
 @media (max-width: 1279px) {
+  .table_card_content {
+    display: block;
+  }
   .p-datatable .p-datatable-tbody > tr > td {
     border: 0px;
     display: flex;
@@ -843,6 +857,10 @@ body {
   .modal_input input {
     max-width: 250px;
     padding: 8px 12px;
+  }
+  .image_modal {
+    max-width: 700px;
+    max-height: 500px;
   }
 }
 @media (max-width: 1200px) {
@@ -928,6 +946,37 @@ body {
   .top_filter_wrap .customers_table_title {
     font-size: 22px;
   }
+  .select_btn,
+  .add_card_add_btn,
+  .add_card_remove_btn,
+  .remove_btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .common_modal .gradient_common_btn,
+  .common_modal .btn_transparent {
+    width: auto;
+  }
+  .select_add_btn_area .select_add_btn,
+  .common_modal .gradient_common_btn,
+  .common_modal .btn_transparent,
+  .product_save_btm .save-btn,
+  .header_title .add_btn,
+  .common_modal .btn_primary,
+  .main_modal_area .modal_add_btn,
+  .main_modal_btn_grup_group .gradient_common_btn,
+  .responsivecard-btn-group .gradient_common_btn,
+  .common_modal .gradient_common_btn {
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+  }
+  .header_title .add_btn {
+    width: auto;
+  }
+  /* .select_add_btn_area .select_add_btn {
+    padding: 6px 10px !important;
+    font-size: 14px !important;
+  } */
 }
 @media (max-width: 991px) {
   .p-dialog .p-dialog-content {
@@ -961,14 +1010,18 @@ body {
   .p-dialog-footer {
     padding: 20px;
   }
-  /* .chart_title .value_title {
-    line-height: 22px;
-  } */
   .reports_title_card_item .card-items:nth-child(n + 4) {
     padding-top: 20px;
   }
   .common_modal .modal_btn_group {
     padding-bottom: 10px;
+  }
+  .image_modal {
+    max-width: 700px;
+    max-height: 450px;
+  }
+  .image_modal .p-dialog-header {
+    padding: 10px 20px;
   }
 }
 @media (max-width: 912px) {
@@ -1082,6 +1135,10 @@ body {
   .responsive-table-product-card-wreaper {
     flex-direction: column !important;
     justify-content: baseline;
+  }
+  .select_add_btn_area {
+    padding-right: 0;
+    padding-bottom: 15px;
   }
 }
 

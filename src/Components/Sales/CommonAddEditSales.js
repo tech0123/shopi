@@ -516,7 +516,7 @@ const CommonAddEditSales = (props) => {
                 paginator
                 rows={10}
                 rowsPerPageOptions={[5, 10, 25]}
-                className="mt-10 block xl:hidden"
+                className="table_card_content"
               >
                 <Column
                   body={responsiveTableTemplete}

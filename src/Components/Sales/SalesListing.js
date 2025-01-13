@@ -150,8 +150,9 @@ const SalesListing = () => {
       <div className="responsivecard-btn-group">
         <button
           className="edit_btn gradient_common_btn"
-          onClick={() => handleEditItem(rowData)}
+          onClick={() => handleEditItem(rowData?._id)}
         >
+          {" "}
           Edit
         </button>
         <button
@@ -186,7 +187,7 @@ const SalesListing = () => {
             {/* <p className="responsive-card-content">
               <span>Address:</span> {rowData.address}
             </p> */}
-            
+
             <Tooltip target=".tooltipClass" />
             <span
               className="tooltipClass"

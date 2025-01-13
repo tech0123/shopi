@@ -27,15 +27,21 @@ import {
 } from "@/store/slice/commonSlice";
 import _ from "lodash";
 import jwt from "jsonwebtoken";
-
+import CommonImageDialog from "@/helper/CommonComponent/CommonImageDialog";
+// const { imageDialog, setImageDialog } = props;
 const SelectedProductsTable = () => {
   const dispatch = useDispatch();
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageDialog, setImageDialog] = useState(false);
+
   const {
     selectedProducts,
     subTotal,
     calcValues,
     modeOfPayment,
     selectedCustomer,
+    // imageDialog,
+    // setImageDialog,
   } = useSelector(({ cart }) => cart);
   const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(
     ({ common }) => common
@@ -347,13 +353,16 @@ const SelectedProductsTable = () => {
               >
                 {/* <div className="container-fluid flex flex-md-row flex-column responsive-table-product-card"> */}
                 <div className="container-fluid d-flex flex-md-row flex-column p-0 ">
-                  <div className="flex justify-center card-image select_product_image">
+                  <div
+                    className="flex justify-center card-image select_product_image 12"
+                    onClick={() => handleImageClick(product)}
+                  >
                     <Image
                       src={product.image}
                       alt={product?._id}
                       width={100}
                       height={100}
-                      className="w-100 h-100 object-fit-cover"
+                      className="w-100 h-100 object-fit-cover transition duration-300 ease-in-out hover:scale-110"
                     />
                   </div>
                   <p className=" m-0 select_product_content modal_inputs">
@@ -363,18 +372,21 @@ const SelectedProductsTable = () => {
                     {product.selling_price}
                   </p>
                 </div>
-                <Button
-                  type="button"
-                  icon="pi pi-plus-circle"
-                  className="action-icon-size sm:mt-0"
-                  onClick={() => {
-                    dispatch(setSearchParam(product.name.trim()));
-                    handleSearchInput(product.name.trim());
-                    // debounceHandleSearchInput("kevDia")
-                  }}
-                  rounded
-                />
-                {/* </div> */}
+                <div className="select_add_btn_area">
+                  <Button
+                    // action-icon-size
+                    type="button"
+                    // icon="pi pi-plus-circle"
+                    className=" select_add_btn gradient_common_btn"
+                    onClick={() => {
+                      dispatch(setSearchParam(product.name.trim()));
+                      handleSearchInput(product.name.trim());
+                    }}
+                    rounded
+                  >
+                    Add
+                  </Button>
+                </div>
               </div>
             ))
           ) : (
@@ -433,11 +445,20 @@ const SelectedProductsTable = () => {
       ></Button>
     );
   };
+  const handleImageClick = (rowData) => {
+    console.log(handleImageClick, "handleImageClick");
+
+    setSelectedImage(rowData.image); // Store the image of the clicked row
+    setImageDialog(true); // Open the dialog
+  };
 
   const multiBodyTemplate = (data) => {
     return (
       <div className="container flex flex-md-row flex-column responsive-table-product-card">
-        <div className="flex justify-center card-image">
+        <div
+          className="flex justify-center card-image 12"
+          onClick={() => handleImageClick(data)}
+        >
           <Image
             src={data?.image}
             alt={data?._id}
@@ -732,7 +753,7 @@ const SelectedProductsTable = () => {
       // <div className="flex align-items-center gap-2 max-w-1rem lg:max-w-1rem">
       //     <Image alt={rowData?._id} src={rowData?.image} height={150} width={150} style={{ maxWidth: "4rem" }} className="max-w-1rem lg:max-w-1rem shadow-2 border-round" />
       // </div>
-      <div className="table_image">
+      <div className="table_image" onClick={() => handleImageClick(rowData)}>
         <Image
           src={rowData?.image || ""}
           alt={rowData?._id || "Image not found"}
@@ -746,66 +767,67 @@ const SelectedProductsTable = () => {
   };
 
   return (
-    <div className="card !border-none product_card">
-      <h6 className="m-0 product_add">Products Added:</h6>
-      <div
-        className={` ${
-          searchParam || Object.keys(selectedCustomer)?.length === 0
-            ? "!hidden"
-            : ""
-        }`}
-      >
-        <DataTable
-          className="max-xl:hidden"
-          value={selectedProducts}
-          paginator
-          rows={10}
-          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-          rowsPerPageOptions={[10, 25, 50]}
-          emptyMessage="No Products Found."
-          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    <>
+      <div className="card !border-none product_card">
+        <h6 className="m-0 product_add">Products Added:</h6>
+        <div
+          className={` ${
+            searchParam || Object.keys(selectedCustomer)?.length === 0
+              ? "!hidden"
+              : ""
+          }`}
         >
-          <Column header="" body={imageBodyTemplate} className="pl-5" />
-          <Column header="Name" field="name" />
-          <Column
-            header="Qty"
-            field="qty"
-            body={qtyBody}
-            style={{ minWidth: "14rem" }}
-          />
-          <Column header="Stock" field="available_quantity" />
-          <Column
-            header="Discount"
-            field="discount"
-            body={discountBody}
-            style={{ minWidth: "14rem" }}
-          />
-          <Column header="MRP" field="selling_price" sortable />
-          <Column header="Amount" field="amount" body={amountBody} />
-          <Column
-            headerStyle={{ textAlign: "center" }}
-            bodyStyle={{ textAlign: "center", overflow: "visible" }}
-            body={actionBodyTemplate}
-          />
-        </DataTable>
+          <DataTable
+            className="max-xl:hidden"
+            value={selectedProducts}
+            paginator
+            rows={10}
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+            rowsPerPageOptions={[10, 25, 50]}
+            emptyMessage="No Products Found."
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+          >
+            <Column header="" body={imageBodyTemplate} className="pl-5" />
+            <Column header="Name" field="name" />
+            <Column
+              header="Qty"
+              field="qty"
+              body={qtyBody}
+              style={{ minWidth: "14rem" }}
+            />
+            <Column header="Stock" field="available_quantity" />
+            <Column
+              header="Discount"
+              field="discount"
+              body={discountBody}
+              style={{ minWidth: "14rem" }}
+            />
+            <Column header="MRP" field="selling_price" sortable />
+            <Column header="Amount" field="amount" body={amountBody} />
+            <Column
+              headerStyle={{ textAlign: "center" }}
+              bodyStyle={{ textAlign: "center", overflow: "visible" }}
+              body={actionBodyTemplate}
+            />
+          </DataTable>
 
-        <DataTable
-          className="block xl:hidden"
-          value={selectedProducts}
-          paginator
-          rows={10}
-          paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-          rowsPerPageOptions={[10, 25, 50]}
-          emptyMessage="No Products found."
-          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        >
-          <Column
-            // headerStyle={{ width: "8rem", textAlign: "center" }}
-            // bodyStyle={{ textAlign: "center", overflow: "visible" }}
-            body={multiBodyTemplate}
-          />
-        </DataTable>
-        {/* <DataTable className="block xl:hidden">
+          <DataTable
+            className="block xl:hidden"
+            value={selectedProducts}
+            paginator
+            rows={10}
+            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+            rowsPerPageOptions={[10, 25, 50]}
+            emptyMessage="No Products found."
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+          >
+            <Column
+              // headerStyle={{ width: "8rem", textAlign: "center" }}
+              // bodyStyle={{ textAlign: "center", overflow: "visible" }}
+              body={multiBodyTemplate}
+            />
+          </DataTable>
+          {/* <DataTable className="block xl:hidden">
           {" "}
           <Column
             headerStyle={{ width: "8rem", textAlign: "center" }}
@@ -813,10 +835,19 @@ const SelectedProductsTable = () => {
             body={multiBodyTemplate}
           />
         </DataTable> */}
-        <PreviouslyOrderedTable />
+          <PreviouslyOrderedTable />
+        </div>
+
+        <Footer />
       </div>
-      <Footer />
-    </div>
+
+      {/* Common Image Dialog */}
+      <CommonImageDialog
+        setImageDialog={setImageDialog}
+        imageDialog={imageDialog}
+        selectedImage={selectedImage}
+      />
+    </>
   );
 };
 

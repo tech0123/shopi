@@ -24,11 +24,13 @@ import {
   setSelectedProductData,
   setProductDialog,
 } from "@/store/slice/productItemSlice";
-import { memo, useCallback, useEffect } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import CommonDataTable from "@/helper/CommonComponent/CommonDataTable";
 import Image from "next/image";
 import { product_search_key } from "@/helper/commonValues";
 import { Tooltip } from "primereact/tooltip";
+import { Skeleton } from "primereact/skeleton";
+import CommonImageDialog from "@/helper/CommonComponent/CommonImageDialog";
 
 const initialState = {
   image: "",
@@ -121,7 +123,8 @@ const inputFieldsList = [
 
 const ProductList = () => {
   const dispatch = useDispatch();
-
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageDialog, setImageDialog] = useState(false);
   const {
     allProductList,
     productDialog,
@@ -131,6 +134,10 @@ const ProductList = () => {
   const { commonLoading, currentPage, searchParam, pageLimit } = useSelector(
     ({ common }) => common
   );
+  const handleImageClick = (rowData) => {
+    setSelectedImage(rowData.image); // Store the image of the clicked row
+    setImageDialog(true); // Open the dialog
+  };
 
   const fetchProductList = useCallback(
     async (start = 1, limit = 7, search = "") => {
@@ -296,7 +303,10 @@ const ProductList = () => {
   const responsiveTableTemplete = (rowData) => {
     return (
       <div className="container flex flex-md-row flex-column responsive-table-product-card">
-        <div className="flex justify-center card-image">
+        <div
+          className="flex justify-center card-image"
+          onClick={() => handleImageClick(rowData)}
+        >
           <Image
             src={rowData?.image || ""}
             alt={rowData?._id || "Image not found"}
@@ -314,7 +324,6 @@ const ProductList = () => {
             <p className="responsive-card-content">
               <span>Name:</span> {rowData.name}
             </p>
-
             <Tooltip target=".tooltipClass" />
             <span
               className="tooltipClass"
@@ -329,6 +338,7 @@ const ProductList = () => {
               <span>Available Qty:</span> {rowData.available_quantity}
             </p>
           </div>
+          {/*<Skeleton width="75%"></Skeleton> */}
           <div className="flex-1 lg:col-3 flex flex-col responsive-card-details-2">
             <p className="responsive-card-content">
               <span>Discount:</span> {rowData.discount}
@@ -352,7 +362,7 @@ const ProductList = () => {
   };
   return (
     <>
-      {commonLoading && <Loader />}
+      {/* {commonLoading && <Loader />} */}
       <CommonDataTable
         tableName="Products"
         moduleName="product"
@@ -371,8 +381,8 @@ const ProductList = () => {
         onPageChange={onPageChange}
         onPageRowsChange={onPageRowsChange}
         currentPage={currentPage}
+        handleImageClick={handleImageClick}
       />
-
       <Dialog
         visible={productDialog}
         style={{ width: "55rem" }}
@@ -432,6 +442,13 @@ const ProductList = () => {
           </form>
         </FormProvider>
       </Dialog>
+
+      {/* Common Image Dilog */}
+      <CommonImageDialog
+        setImageDialog={setImageDialog}
+        imageDialog={imageDialog}
+        selectedImage={selectedImage}
+      />
     </>
   );
 };

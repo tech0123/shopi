@@ -8,9 +8,11 @@ import { InputText } from "primereact/inputtext";
 import CommonDeleteConfirmation from "./CommonDeleteConfirmation";
 import CustomPaginator from "./CustomPaginator";
 import { Image } from "react-bootstrap";
-import { Dialog } from "primereact/dialog";
+import CommonImageDialog from "./CommonImageDialog";
 
 const CommonDataTable = (props) => {
+  console.log(props, "props");
+
   const {
     tableName,
     tableColumns,
@@ -29,16 +31,13 @@ const CommonDataTable = (props) => {
     onPageRowsChange,
     currentPage,
     isDisable = true,
+    selectedImage,
+    imageDialog,
+    setImageDialog,
+    handleImageClick,
   } = props;
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imageDialog, setImageDialog] = useState(false);
 
   const [globalFilter, setGlobalFilter] = useState(null);
-  const handleImageClick = (rowData) => {
-    setSelectedImage(rowData.image); // Store the image of the clicked row
-    setImageDialog(true); // Open the dialog
-  };
-
   const deleteProductDialogFooter = (
     <div className="d-flex justify-content-end gap-4">
       <Button
@@ -86,6 +85,7 @@ const CommonDataTable = (props) => {
           <div>
             <IconField iconPosition="left">
               <InputText
+                autoComplete="off"
                 id="search"
                 placeholder="Search"
                 type="search"
@@ -128,15 +128,15 @@ const CommonDataTable = (props) => {
                 header={column?.header}
                 body={(rowData) =>
                   column?.field === "image" ? (
-                    // Only the "image" column is clickable
                     <div
-                      onClick={() => handleImageClick(rowData)} // Open the image dialog when clicked
+                      onClick={() => handleImageClick(rowData)}
                       style={{ cursor: "pointer" }}
+                      className="table_data_image"
                     >
                       <Image
                         src={rowData?.image || ""}
                         alt={rowData?._id || "Image not found"}
-                        className="shadow-2 border-round table_img object-cover transition duration-300 ease-in-out hover:scale-110"
+                        className="shadow-2 h-100 w-100 border-round table_img object-cover transition duration-300 ease-in-out hover:scale-110"
                         width={100}
                         height={100}
                         style={{ objectFit: "cover" }}
@@ -174,7 +174,7 @@ const CommonDataTable = (props) => {
           // totalRecords={totalRecords}
           // onPage={onPageChange}
           globalFilter={globalFilter}
-          className="mt-10 block xl:hidden"
+          className="table_card_content"
         >
           <Column
             body={responsiveTableTemplete}
@@ -190,7 +190,7 @@ const CommonDataTable = (props) => {
           totalCount={allItemList?.totalRows}
         />
       </div>
-      <Dialog
+      {/* <Dialog
         visible={imageDialog}
         onHide={() => setImageDialog(false)} // Close the dialog
         // header="Image"
@@ -205,7 +205,8 @@ const CommonDataTable = (props) => {
           height={100}
           style={{ objectFit: "cover" }}
         />
-      </Dialog>
+      </Dialog> */}
+
       <CommonDeleteConfirmation
         open={deleteItemDialog}
         hideContent={hideDeleteDialog}

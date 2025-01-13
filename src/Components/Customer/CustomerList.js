@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import * as yup from "yup";
 import {
   setDeleteCustomerDialog,
@@ -32,6 +32,7 @@ import {
 } from "@/helper/commonValues";
 import Image from "next/image";
 import { Tooltip } from "primereact/tooltip";
+import CommonImageDialog from "@/helper/CommonComponent/CommonImageDialog";
 
 const initialState = {
   image: "",
@@ -112,7 +113,8 @@ const inputFieldsList = [
 
 const CustomerList = () => {
   const dispatch = useDispatch();
-
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageDialog, setImageDialog] = useState(false);
   const {
     allCustomerList,
     selectedCustomerData,
@@ -282,18 +284,30 @@ const CustomerList = () => {
     );
   };
 
+  const handleImageClick = (rowData) => {
+    setSelectedImage(rowData.image); // Store the image of the clicked row
+    setImageDialog(true); // Open the dialog
+  };
+
   const responsiveTableTemplete = (rowData) => {
+    console.log(rowData.image, "rowData");
+
     return (
       <div className="container flex flex-md-row flex-column responsive-table-product-card">
-        <div className="flex justify-center card-image customers_image">
+        <div
+          className="flex justify-center card-image customers_image customers_image"
+          onClick={() => handleImageClick(rowData)}
+        >
           <Image
             src={rowData?.image || ""}
             alt={rowData?._id || "Image not found"}
             width={100}
             height={100}
-            className="card-img w-100 object-cover object-center h-100 transition duration-300 ease-in-out hover:scale-110"
+            className="card-img w-100 object-cover object-center 
+            h-100 transition duration-300 ease-in-out hover:scale-110"
           />
         </div>
+
         {/* <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
           <div className="flex-1 lg:col-3 responsive-card-details-1">
             {/* <p className="text-left text-sm">Name: {rowData?.name}</p> *
@@ -318,6 +332,7 @@ const CustomerList = () => {
             </div>
           </div>
         </div> */}
+
         <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
           <div className="flex-1 lg:col-3 responsive-card-details-1">
             {/* <p className="text-left text-sm">Name: {rowData?.name}</p> */}
@@ -325,9 +340,19 @@ const CustomerList = () => {
               <span>Name:</span> {rowData.name}
             </p>
 
-            <p className="responsive-card-content">
+            {/* <p className="responsive-card-content">
               <span>Email:</span> {rowData?.email}
-            </p>
+            </p> */}
+            <Tooltip target=".tooltipClass" />
+            <span
+              className="tooltipClass"
+              data-pr-tooltip={rowData.description}
+              data-pr-position="top"
+            >
+              <p className="text-left text-sm product-description text-truncate responsive-card-content">
+                <span>Email:</span> {rowData?.email}
+              </p>
+            </span>
 
             <p className="responsive-card-content">
               <span>Mobile Number: </span>
@@ -367,6 +392,8 @@ const CustomerList = () => {
         onPageChange={onPageChange}
         onPageRowsChange={onPageRowsChange}
         currentPage={currentPage}
+        selectedImage={selectedImage}
+        handleImageClick={handleImageClick}
       />
 
       <Dialog
@@ -417,6 +444,13 @@ const CustomerList = () => {
           </form>
         </FormProvider>
       </Dialog>
+
+      {/* Common Image Dialog */}
+      <CommonImageDialog
+        setImageDialog={setImageDialog}
+        imageDialog={imageDialog}
+        selectedImage={selectedImage}
+      />
     </>
   );
 };

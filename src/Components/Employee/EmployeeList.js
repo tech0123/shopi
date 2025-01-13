@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import * as yup from "yup";
 import {
   setDeleteEmployeeDialog,
@@ -31,6 +31,7 @@ import {
   employeeRoleOptions,
 } from "@/helper/commonValues";
 import Image from "next/image";
+import CommonImageDialog from "@/helper/CommonComponent/CommonImageDialog";
 
 const initialState = {
   image: "",
@@ -50,7 +51,6 @@ const schema = yup.object().shape({
   password: yup.string().required("Please enter valid Password."),
   salary: yup.string().required("Please enter Salary."),
 });
-
 const imageBodyTemplate = (rowData) => {
   return (
     // <Image
@@ -62,7 +62,7 @@ const imageBodyTemplate = (rowData) => {
     //   style={{ objectFit: "cover" }}
     // />
 
-    <div className="table_image">
+    <div className="table_image" onClick={() => handleImageClick(rowData)}>
       <Image
         src={rowData?.image || ""}
         alt={rowData?._id || "Image not found"}
@@ -130,6 +130,8 @@ const inputFieldsList = [
 
 const EmployeeList = () => {
   const dispatch = useDispatch();
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imageDialog, setImageDialog] = useState(false);
 
   const {
     allEmployeeList,
@@ -331,7 +333,10 @@ const EmployeeList = () => {
   const responsiveTableTemplete = (rowData) => {
     return (
       <div className="container flex flex-md-row flex-column responsive-table-product-card">
-        <div className="flex justify-center card-image customers_image">
+        <div
+          className="flex justify-center card-image"
+          onClick={() => handleImageClick(rowData)}
+        >
           <Image
             src={rowData?.image || ""}
             alt={rowData?._id || "Image not found"}
@@ -367,6 +372,10 @@ const EmployeeList = () => {
       </div>
     );
   };
+  const handleImageClick = (rowData) => {
+    setSelectedImage(rowData.image); // Store the image of the clicked row
+    setImageDialog(true); // Open the dialog
+  };
   return (
     <>
       {commonLoading && <Loader />}
@@ -389,6 +398,8 @@ const EmployeeList = () => {
         onPageChange={onPageChange}
         onPageRowsChange={onPageRowsChange}
         currentPage={currentPage}
+        selectedImage={selectedImage}
+        handleImageClick={handleImageClick}
       />
 
       <Dialog
@@ -439,6 +450,13 @@ const EmployeeList = () => {
           </form>
         </FormProvider>
       </Dialog>
+
+      {/* Common Image Dialog */}
+      <CommonImageDialog
+        setImageDialog={setImageDialog}
+        imageDialog={imageDialog}
+        selectedImage={selectedImage}
+      />
     </>
   );
 };
