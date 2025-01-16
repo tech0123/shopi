@@ -433,7 +433,7 @@ const EmployeeList = () => {
                 })}
               </Row>
             </div>
-            <div className="mt-3 me-2 flex justify-content-end items-center gap-4 modal_footer_gap_btn_group">
+            <div className="flex justify-content-end items-center gap-4 common_modal_btn_group modal_footer_gap_btn_group">
               <Button
                 className="btn_transparent"
                 onClick={(e) => {

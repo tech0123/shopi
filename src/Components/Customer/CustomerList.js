@@ -349,7 +349,7 @@ const CustomerList = () => {
               data-pr-tooltip={rowData.description}
               data-pr-position="top"
             >
-              <p className="text-left text-sm product-description text-truncate responsive-card-content">
+              <p className="product-description text-truncate responsive-content-widths responsive-card-content">
                 <span>Email:</span> {rowData?.email}
               </p>
             </span>
@@ -427,7 +427,7 @@ const CustomerList = () => {
                 })}
               </Row>
             </div>
-            <div className="mt-3 me-2 flex justify-content-end items-center gap-4 modal_footer_gap_btn_group">
+            <div className="flex justify-content-end items-center gap-4 common_modal_btn_group modal_footer_gap_btn_group">
               <Button
                 className="btn_transparent"
                 onClick={(e) => {

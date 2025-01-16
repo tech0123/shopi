@@ -339,9 +339,11 @@ const ManufacturerList = () => {
             </div>
           </div>
         </div> */}
+
         <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
-          <div className="flex-1 lg:col-3 responsive-card-details-1">
+          <di v className="flex-1 lg:col-3 responsive-card-details-1">
             {/* <div className="flex-1 border-r-2 border-white p-2"> */}
+
             <p className="responsive-card-content">
               <span>Code:</span> {rowData.code}
             </p>
@@ -351,13 +353,14 @@ const ManufacturerList = () => {
             {/* <p className="responsive-card-content">
               <span>Email Address:</span> {rowData.email_address}
             </p> */}
+
             <Tooltip target=".tooltipClass" />
             <span
               className="tooltipClass"
               data-pr-tooltip={rowData.email_address}
               data-pr-position="top"
             >
-              <p className="text-left text-sm product-description text-truncate responsive-card-content">
+              <p className="product-description text-truncate responsive-content-width responsive-card-content">
                 <span>Email Address:</span> {rowData.email_address}
               </p>
             </span>
@@ -370,7 +373,7 @@ const ManufacturerList = () => {
             <p className="responsive-card-content">
               <span>Country:</span> {rowData.country}
             </p>
-          </div>
+          </di>
           <div className="flex-1 lg:col-3 flex flex-col responsive-card-details-2">
             <p className="responsive-card-content">
               <span>State:</span> {rowData.state}
@@ -388,7 +391,7 @@ const ManufacturerList = () => {
               data-pr-tooltip={rowData.pin_code}
               data-pr-position="top"
             >
-              <p className="text-left text-sm product-description text-truncate responsive-card-content">
+              <p className="product-description text-truncate responsive-content-width responsive-card-content">
                 <span>Pin code:</span> {rowData.pin_code}
               </p>
             </span>
@@ -403,7 +406,7 @@ const ManufacturerList = () => {
               data-pr-tooltip={rowData.address}
               data-pr-position="top"
             >
-              <p className="text-left text-sm product-description text-truncate responsive-card-content">
+              <p className="product-description text-truncate responsive-content-width responsive-card-content">
                 <span>Address:</span> {rowData.address}
               </p>
             </span>
@@ -472,7 +475,7 @@ const ManufacturerList = () => {
                 })}
               </Row>
             </div>
-            <div className="mt-3 me-2 flex justify-content-end items-center gap-4">
+            <div className="flex justify-content-end items-center gap-4 common_modal_btn_group ">
               <Button
                 className="btn_transparent"
                 onClick={(e) => {

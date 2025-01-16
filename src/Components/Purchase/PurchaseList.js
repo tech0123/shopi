@@ -208,7 +208,7 @@ function PurchaseList() {
                 data-pr-tooltip={rowData.description}
                 data-pr-position="top"
               >
-                <p className="text-left text-sm product-description text-truncate responsive-card-content">
+                <p className="product-description responsive-content-width text-truncate responsive-card-content">
                   <span>Address:</span> {rowData.address}
                 </p>
               </span>

@@ -372,7 +372,7 @@ const Attendance = () => {
                 })}
               </Row>
             </div>
-            <div className="mt-3 me-2 flex justify-content-end items-center gap-4">
+            <div className="flex justify-content-end items-center gap-4 common_modal_btn_group">
               <Button
                 className="btn_transparent"
                 onClick={(e) => {
