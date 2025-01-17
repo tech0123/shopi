@@ -11,7 +11,7 @@ export default function Cart() {
     <>
       {commonLoading && <Loader />}
 
-      <div className="main flex flex-col justify-center items-center">
+      <div className="main flex flex-col justify-center items-center cart_wrapper">
         {/* <div className="container w-full p-6 pb-0 mt-6 mx-10 lg:mx-24"> */}
         {/* <div className="container w-full details_container"> */}
         <div className="container-fluid w-full details_container pb-0">

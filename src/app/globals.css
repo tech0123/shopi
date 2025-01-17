@@ -145,6 +145,7 @@ body {
 .date_wrapper .p-component,
 .p-datepicker-header {
   background-color: var(--dark-color);
+  /* background-color: red; */
 }
 .p-datepicker-header {
   background-color: var(--normal-background-color);
@@ -606,11 +607,12 @@ body {
 }
 .product_add_content {
   background-color: var(--dark-color) !important;
-  padding: 10px 0;
+  /* padding: 10px 0; */
   color: var(--white-color) !important;
   border: 1px solid var(--light-color) !important;
   border-radius: 15px !important;
   overflow: hidden;
+  padding: 30px;
 }
 .product_add_content .p-inputnumber-input {
   border: 1px solid var(--light-color);
@@ -620,9 +622,6 @@ body {
 }
 .details_container {
   padding: 0px 50px 20px 50px !important;
-}
-.product_add_content {
-  padding: 30px 50px;
 }
 .cash_option {
   border: 1px solid var(--light-color);
@@ -777,6 +776,9 @@ body {
   border-radius: 15px;
   overflow: hidden;
 }
+.cart_wrapper {
+  padding-top: 50px;
+}
 /*================================== responsive *==================================*/
 @media (max-width: 1440px) {
   .image_modal {
@@ -917,6 +919,9 @@ body {
     padding: 7px !important;
     font-size: 12px;
   }
+  .cart_wrapper {
+    padding-top: 0;
+  }
 }
 @media (max-width: 992px) {
   .input_wrap,
@@ -958,7 +963,7 @@ body {
     width: auto;
   }
   .header_title .add_btn {
-    padding: 6px 10px !important              ;
+    padding: 6px 10px !important;
     font-size: 13px !important;
   }
   /* .header_title .add_btn, */
