@@ -308,6 +308,10 @@ const CommonAddEditPurchase = (props) => {
           icon="pi pi-pencil"
           className="edit_btn"
           // onClick={() => handleEditItem(rowData)}
+          // onClick={(e) => {
+          //   e.preventDefault();
+          //   handleEditItem(rowData);
+          // }}
           onClick={(e) => {
             e.preventDefault();
             handleEditItem(rowData);
@@ -821,7 +825,7 @@ const CommonAddEditPurchase = (props) => {
               </Row>
             </div>
           </div>
-          <div className="me-10 flex justify-content-end items-center gap-3 mb-5">
+          <div className=" flex justify-content-end items-center gap-3 main_modal_button_group">
             <Button
               className="btn_transparent"
               onClick={(e) => {

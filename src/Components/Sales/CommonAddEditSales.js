@@ -238,7 +238,6 @@ const CommonAddEditSales = (props) => {
       if (page?.page === "Prev") pageIndex--;
       else if (page?.page === "Next") pageIndex++;
       else pageIndex = page;
-
       dispatch(setCurrentPage(pageIndex));
       fetchSalesList(modal, pageIndex, pageLimit);
     }
@@ -305,7 +304,7 @@ const CommonAddEditSales = (props) => {
           // icon="pi pi-pencil"
           rounded
           outlined
-          // className="mr-2 gradient_common_btn"
+          className="mr-2 gradient_common_btn"
           onClick={(e) => {
             e.preventDefault();
             handleEditItem(rowData);
@@ -647,7 +646,7 @@ const CommonAddEditSales = (props) => {
             </div>
           </div>
           {/* <div className="me-10 flex justify-content-end items-center gap-3 mb-5"> */}
-          <div className="me-10 flex justify-content-end items-item-center gap-3 mb-2 main_modal_btn_grup_group">
+          <div className="flex justify-content-end items-item-center gap-3 main_modal_btn_grup_group main_modal_button_group ">
             <Button
               className="btn_transparent"
               onClick={(e) => {

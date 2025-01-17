@@ -779,6 +779,9 @@ body {
 .cart_wrapper {
   padding-top: 50px;
 }
+.main_modal_button_group {
+  padding-right: 50px !important;
+}
 /*================================== responsive *==================================*/
 @media (max-width: 1440px) {
   .image_modal {
@@ -828,7 +831,7 @@ body {
     overflow: hidden !important;
   }
   .main_modal_area .main_modal_add_btn {
-    padding-right: 20px;
+    padding-right: 32px;
   }
   .main_modal_area .modal_title,
   .main_modal_area .form_container {
@@ -863,6 +866,9 @@ body {
   .image_modal {
     max-width: 700px;
     max-height: 500px;
+  }
+  .main_modal_button_group {
+    padding-right: 20px !important;
   }
 }
 @media (max-width: 1200px) {

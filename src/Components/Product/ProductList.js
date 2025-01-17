@@ -287,7 +287,8 @@ const ProductList = () => {
       <div className="responsivecard-btn-group">
         <Button
           className="edit_btn gradient_common_btn"
-          onClick={() => handleEditItem(rowData)}
+          // onClick={() => handleEditItem(rowData)}
+          onClick={() => handleEditItem(rowData?._id)}
         >
           Edit
         </Button>

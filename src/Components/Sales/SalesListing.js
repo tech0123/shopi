@@ -167,7 +167,50 @@ const SalesListing = () => {
 
   const responsiveTableTemplete = (rowData) => {
     return (
-      <div className="container flex flex-md-row flex-column sales-list-responsive-table-product-card">
+      // <div className="container flex flex-md-row flex-column sales-list-responsive-table-product-card">
+      //   <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
+      //     <div className="flex-1 lg:col-3 responsive-card-details-1">
+      //       <p className="responsive-card-content">
+      //         <span>Code:</span> {rowData?.code}
+      //       </p>
+      //       <p className="responsive-card-content">
+      //         <span>Full Name:</span> {rowData?.manufacturer_name}
+      //       </p>
+      //       <p className="responsive-card-content">
+      //         <span>Phone Number:</span> {rowData?.mobile_number}
+      //       </p>
+      //     </div>
+      //     <div className="flex-1 lg:col-3 flex flex-col responsive-card-details-2">
+      //       <p className="responsive-card-content">
+      //         <span>GST No.:</span> {rowData?.gst_no}
+      //       </p>
+      //       {/* <p className="responsive-card-content">
+      //         <span>Address:</span> {rowData.address}
+      //       </p> */}
+
+      //       <Tooltip target=".tooltipClass" />
+      //       <span
+      //         className="tooltipClass"
+      //         data-pr-tooltip={rowData.address}
+      //         data-pr-position="top"
+      //       >
+      //         <p className="product-description text-truncate responsive-content-width responsive-card-content">
+      //           <span>Address:</span> {rowData.address}
+      //         </p>
+      //       </span>
+
+      //       <div className="text-left mt-1">
+      //         {actionBodyResponsiveTemplate(rowData)}
+      //       </div>
+      //     </div>
+      //     {/* <div className="flex-1 border-l-2 border-white p-2 flex flex-col">
+      //       <div className="text-left mt-1">
+      //         {actionBodyResponsiveTemplate(rowData)}
+      //       </div>
+      //     </div> */}
+      //   </div>
+      // </div>
+      <div className="container flex flex-md-row flex-column responsive-table-product-card sales-list-responsive-table-product-card">
         <div className="flex flex-1 flex-col flex-md-row responsive-card-partition">
           <div className="flex-1 lg:col-3 responsive-card-details-1">
             <p className="responsive-card-content">
@@ -194,7 +237,7 @@ const SalesListing = () => {
               data-pr-tooltip={rowData.address}
               data-pr-position="top"
             >
-              <p className="product-description text-truncate responsive-content-width responsive-card-content">
+              <p className="text-left text-sm product-description text-truncate responsive-card-content">
                 <span>Address:</span> {rowData.address}
               </p>
             </span>
